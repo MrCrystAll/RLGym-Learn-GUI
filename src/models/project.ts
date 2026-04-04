@@ -3,7 +3,7 @@ export interface ProjectMetadata{
     description?: string
     version: string
     id: string
-    path: string
+    path: string | undefined
 }
 
 export interface ProjectData{

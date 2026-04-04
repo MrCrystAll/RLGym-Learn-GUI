@@ -15,17 +15,18 @@ function App() {
   const [error, setError] = useState("");
   const [currentProject, setCurrentProject] = useState();
 
-  const addProject = async () => {
+  const addProject = async (name: string) => {
     if(folderPath === undefined) {
       setError("You need to specify a folder path to add a project")
       return
     }
 
     const project: ProjectMetadata = {
-      id: "aaaa",
-      name: "Test",
+      id: crypto.randomUUID(),
+      name: name,
       version: "0.0.1",
-      description: "A test"
+      description: "A test",
+      path: undefined
     }
 
     axios({
