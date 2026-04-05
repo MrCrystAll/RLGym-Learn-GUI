@@ -1,6 +1,5 @@
 export interface ProjectMetadata{
     name: string
-    description?: string
     id: string
     path: string | undefined
 }

@@ -3,8 +3,9 @@ import ActionButtons from "./project/ActionButtons"
 import ProjectMetadata from "./project/ProjectMetadata"
 import axios, { type AxiosResponse } from "axios";
 import ProjectData from "./project/ProjectData";
+import { BASE_URL } from "../api";
 
-function Project({projectMetadata, setCurrentProject, removeProject}) {
+function Project({projectMetadata, updateProject, setCurrentProject, removeProject}) {
 
     const [projectData, setProjectData] = useState();
 
@@ -25,6 +26,27 @@ function Project({projectMetadata, setCurrentProject, removeProject}) {
         fetchProjectData()
     }, [])
 
+    const updateProjectName = async (name: string) => {
+        axios({
+            method: "PUT",
+            baseURL: `${BASE_URL}/project`,
+            headers: {},
+            data: {
+                metadata: {
+                    ...projectMetadata,
+                    name: name
+                }
+            }
+        }).then(
+            () => {
+                updateProject({
+                    ...projectMetadata,
+                    name: name
+                })
+            }
+        )
+    }
+
     const removeProjectNoArgs = () => {
         setCurrentProject(undefined);
         setProjectData(undefined)
@@ -35,7 +57,7 @@ function Project({projectMetadata, setCurrentProject, removeProject}) {
     <>
         <header>
             <div className="m-2">
-                <ProjectMetadata projectMetadata={projectMetadata}></ProjectMetadata>
+                <ProjectMetadata updateProjectName={updateProjectName} projectMetadata={projectMetadata}></ProjectMetadata>
             </div>
         </header>
 

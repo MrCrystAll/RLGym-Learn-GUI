@@ -3,13 +3,7 @@ function ProjectInfo({project, setCurrentProject}) {
     <div className="card w-25">
         <div className="card-header">
             <p className="display-6">{project.name}</p>
-        </div>
-        <div className="card-body">
-            <b>Description</b>
-            <p>{project.description}</p>
-        </div>
-        <div className="card-footer">
-          <button className="btn btn-success" onClick={() => setCurrentProject(project)}>Open project</button>
+            <button className="btn btn-success" onClick={() => setCurrentProject(project)}>Open project</button>
         </div>
     </div>
   )

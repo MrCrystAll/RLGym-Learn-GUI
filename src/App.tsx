@@ -6,14 +6,14 @@ import axios, { AxiosError, type AxiosResponse } from "axios";
 import type { ProjectMetadata } from "./models/project";
 import ProjectInfo from "./components/ProjectInfo";
 import Project from "./components/Project";
-
-const BASE_URL: string = "http://localhost:8000"
+import { BASE_URL } from "./api";
 
 function App() {
   const [folderPath, setFolderPath] = useState();
   const [projectList, setProjectList] = useState([]);
   const [error, setError] = useState("");
   const [currentProject, setCurrentProject] = useState();
+
 
   const addProject = async (name: string) => {
     if(folderPath === undefined) {
@@ -24,7 +24,6 @@ function App() {
     const project: ProjectMetadata = {
       id: crypto.randomUUID(),
       name: name,
-      version: "0.0.1",
       description: "A test",
       path: undefined
     }
@@ -78,10 +77,22 @@ function App() {
         metadata: metadata
       }
     }).then(
-      () => {setProjectList(projectList.filter((meta: ProjectMetadata) => meta.id != metadata.id))}
+      () => {setProjectList(projectList.filter((meta: ProjectMetadata) => meta.id !== metadata.id))}
     ).catch(
       (reason: AxiosError) => {setError(reason.message)}
     )
+  }
+
+  const updateProject = (project: ProjectMetadata) => {
+    console.log(projectList.filter((meta: ProjectMetadata) => meta.id !== project.id));
+    const filteredList = projectList.filter((meta: ProjectMetadata) => meta.id !== project.id)
+    
+    setProjectList([...filteredList, project])
+
+    if(project.id == currentProject.id)
+    {
+      setCurrentProject(project);
+    }
   }
 
   const projects = () => {
@@ -116,7 +127,7 @@ function App() {
   }
   else{
     return (
-      <Project setCurrentProject={setCurrentProject} removeProject={removeProject} projectMetadata={currentProject}></Project>
+      <Project setCurrentProject={setCurrentProject} updateProject={updateProject} removeProject={removeProject} projectMetadata={currentProject}></Project>
   )}
 
   

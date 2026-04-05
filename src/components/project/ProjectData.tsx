@@ -10,7 +10,7 @@ function ProjectData({projectData}) {
         }
         else{
             return (
-                    <p>No reward files found</p>
+                <p>No reward files found</p>
             )
         }
     }
