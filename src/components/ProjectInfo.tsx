@@ -2,7 +2,7 @@ function ProjectInfo({project, setCurrentProject}) {
   return (
     <div className="card w-25">
         <div className="card-header">
-            <p className="display-6">{project.name} - {project.version}</p>
+            <p className="display-6">{project.name}</p>
         </div>
         <div className="card-body">
             <b>Description</b>

@@ -1,4 +1,33 @@
 function ProjectData({projectData}) {
+    const rewardFiles = () => {
+        if(projectData.rewards_files.length > 0){
+            return (
+                <>
+                    <p>Reward files:</p>
+                    {projectData.rewards_files.map((file: string, index: number) => <p key={index}>{file}</p>)}
+                </>
+            )
+        }
+        else{
+            return (
+                    <p>No reward files found</p>
+            )
+        }
+    }
+    
+    const entrypoint = () => {
+        if(projectData.entrypoint !== undefined)
+        {
+            return (
+                <p><b>Entrypoint:</b> {projectData.entrypoint}</p>
+            )
+        }
+        else{
+            return (
+                <p>No entrypoint found</p>
+            )
+        }
+    }
 
     if(projectData === undefined){
         return (
@@ -9,13 +38,11 @@ function ProjectData({projectData}) {
         return (
             <div>
                 <div>
-                    <p className="fw-bold">Reward files:</p>
-                    {projectData.rewards_files.map((file, index) => <p key={index}>{file}</p>)}
+                    {rewardFiles()}
                 </div>
 
                 <div>
-                    <p className="fw-bold">Entrypoint:</p>
-                    <p>{projectData.entrypoint}</p>
+                    {entrypoint()}
                 </div>
             </div>
         )

@@ -44,10 +44,7 @@ function Project({projectMetadata, setCurrentProject, removeProject}) {
         </div>
         
         <footer className="fixed-bottom border bg-dark">
-            <div className="w-25 m-2 float-start">
-                <p className="display-3 text-white">Actions</p>
-            </div>
-            <div className="w-25 m-2 float-end">
+            <div className="m-2">
                 <ActionButtons fetchProjectData={fetchProjectData} setCurrentProject={setCurrentProject} removeProject={removeProjectNoArgs}></ActionButtons>
             </div>
         </footer>

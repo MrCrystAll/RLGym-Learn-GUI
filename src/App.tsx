@@ -48,8 +48,8 @@ function App() {
     )
   }
 
-  const getAllProjects = async () => {
-    if(folderPath === undefined) {
+  const getAllProjects = async (path: string) => {
+    if(path === undefined) {
       setError("You need to specify a folder path to fetch projects")
       return
     }
@@ -58,7 +58,7 @@ function App() {
       url: `${BASE_URL}/all`,
       headers: {},
       data: {
-          path: folderPath
+          path: path
       },
 
     }).then(
@@ -78,24 +78,38 @@ function App() {
         metadata: metadata
       }
     }).then(
-      (value: AxiosResponse) => {setProjectList(projectList.filter((meta: ProjectMetadata) => meta.id != metadata.id))}
+      () => {setProjectList(projectList.filter((meta: ProjectMetadata) => meta.id != metadata.id))}
     ).catch(
       (reason: AxiosError) => {setError(reason.message)}
     )
   }
 
+  const projects = () => {
+    if(projectList.length > 0){
+      return (
+        <>
+          {projectList.map((project, i) => <ProjectInfo project={project} setCurrentProject={setCurrentProject} key={i}></ProjectInfo>)}
+        </>
+      )
+    }
+    else{
+      return (
+        <p>No projects found.</p>
+      )
+    }
+  }
+
   if(currentProject === undefined){
       return (
     <div className="m-2">
-      <button className="btn btn-danger" onClick={getAllProjects}>Get all projects</button>
       <AddProject addProject={addProject}></AddProject>
-      <ChooseDataFolder setFolderPath={setFolderPath}></ChooseDataFolder>
+      <ChooseDataFolder getAllProjects={getAllProjects} setFolderPath={setFolderPath}></ChooseDataFolder>
 
       <p>{folderPath}</p>
       <p className="text-danger">{error}</p>
 
       <div className="my-2">
-        {projectList.map((project, i) => <ProjectInfo project={project} setCurrentProject={setCurrentProject} key={i}></ProjectInfo>)}
+        {projects()}
       </div>
     </div>
   )
