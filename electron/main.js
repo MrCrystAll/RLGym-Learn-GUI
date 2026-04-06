@@ -14,16 +14,17 @@ function createWindow() {
       contextIsolation: true,
       nodeIntegration: false,
     },
+    title: "Project organizer",
+    thickFrame: true
   })
   
 
   if (process.env.VITE_DEV_SERVER_URL) {
     win.loadURL(process.env.VITE_DEV_SERVER_URL)
+    win.webContents.openDevTools()
   } else {
     win.loadFile(path.join(__dirname, "../dist/index.html"))
   }
-
-  win.webContents.openDevTools()
 }
 
 ipcMain.handle("open-folder-path-dialog", () => {
