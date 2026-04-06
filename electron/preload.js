@@ -13,19 +13,18 @@ contextBridge.exposeInMainWorld('api', {
   // 3. Listen for lines
   listenLines(setLines, maxLines){
     ipcRenderer.on("log-lines", (_, entry) => {
-      setLines((prev) => {
-        console.log(prev, entry);
-        
+      
+      setLines((prev) => {        
         const updated = [...prev, ...entry];
         return maxLines ? updated.slice(-maxLines) : updated;  // keep only latest n
       });
     });
   },
-  stopWatch(){    
+  stopWatch(){
     ipcRenderer.send("stop-watch");
   },
   removeAllListeners(){
-    ipcRenderer.removeAllListeners("log-line");
+    ipcRenderer.removeAllListeners("log-lines");
   },
   readLogs(logPath){
     ipcRenderer.send("read-logs", logPath);

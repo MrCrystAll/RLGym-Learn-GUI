@@ -4,7 +4,6 @@ import { useEffect } from "react";
 function LogReader({active, logPath, lines, maxLines}) {
     useEffect(() => {
       window.api.stopWatch();
-      window.api.removeAllListeners();
       if(active){       
         window.api.watchLog(logPath);
       }
@@ -13,7 +12,6 @@ function LogReader({active, logPath, lines, maxLines}) {
     useEffect(() => {
       return () => {
         window.api.stopWatch();
-        window.api.removeAllListeners();
       }
     }, [])
 

@@ -17,10 +17,9 @@ function ProjectData({projectData, loggerActive}) {
     }, [projectData])
 
     useEffect(() => {
-        return () => {
+        return () => {            
             window.api.removeAllListeners();
         }
-        
     }, [])
 
     const rewardFiles = () => {
@@ -53,12 +52,19 @@ function ProjectData({projectData, loggerActive}) {
         }
     }
 
+    const clearLogs = () => {
+        setLines([]);
+    }
+
     const stdoutLog = () => {
         if(projectData.log_config.stdout_log !== undefined)
         {
             if(lines.length > 0 || loggerActive){
                 return (
-                <LogReader maxLines={MAX_LINES} active={loggerActive} lines={lines} setLines={setLines} logPath={projectData.log_config.stdout_log}></LogReader>
+                    <>
+                        <button className="btn btn-success" onClick={clearLogs}>Clear logs</button>
+                        <LogReader maxLines={MAX_LINES} active={loggerActive} lines={lines} logPath={projectData.log_config.stdout_log}></LogReader>
+                    </>
                 )
             }
         }
