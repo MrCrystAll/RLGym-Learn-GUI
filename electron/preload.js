@@ -8,12 +8,10 @@ contextBridge.exposeInMainWorld('api', {
     return ipcRenderer.invoke("open-python-path-dialog");
   },
   watchLog(logPath){
-    console.log("Starting watch");
     return ipcRenderer.send("watch-log", logPath);
   },
   // 3. Listen for lines
   listenLines(setLines, maxLines){
-    console.log("Listening to logs");
     ipcRenderer.on("log-lines", (_, entry) => {
       setLines((prev) => {
         console.log(prev, entry);
@@ -23,17 +21,13 @@ contextBridge.exposeInMainWorld('api', {
       });
     });
   },
-  stopWatch(){
-    console.log("Stopping watch");
-    
+  stopWatch(){    
     ipcRenderer.send("stop-watch");
   },
   removeAllListeners(){
     ipcRenderer.removeAllListeners("log-line");
   },
   readLogs(logPath){
-    console.log("Reading logs");
-    
     ipcRenderer.send("read-logs", logPath);
   }
 });

@@ -1,3 +1,5 @@
+// For now unused, but will be reused to update per project
+
 function ChoosePythonPath({setPythonPath}) {
     const openDialog = () => {
         const result: Promise<string[] | undefined> = window.api.openPythonPathDialog();

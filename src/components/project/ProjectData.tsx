@@ -77,6 +77,7 @@ function ProjectData({projectData, loggerActive}) {
     else{
         return (
             <div>
+                <p>Python interpreter: {projectData.interpreter}</p>
                 {rewardFiles()}
                 {entrypoint()}
                 {stdoutLog()}
