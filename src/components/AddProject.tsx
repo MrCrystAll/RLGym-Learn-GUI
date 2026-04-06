@@ -19,7 +19,6 @@ function AddProject({addProject}) {
       setNameError("Name needs to have a value or be shorter than 25 characters");
       return;
     }
-    
 
     setNameError("");
 

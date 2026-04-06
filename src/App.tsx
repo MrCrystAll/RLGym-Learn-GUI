@@ -7,9 +7,11 @@ import type { ProjectMetadata } from "./models/project";
 import ProjectInfo from "./components/ProjectInfo";
 import Project from "./components/Project";
 import { BASE_URL } from "./api";
+import ChoosePythonPath from "./components/ChoosePythonPath";
 
 function App() {
   const [folderPath, setFolderPath] = useState();
+  const [pythonPath, setPythonPath] = useState();
   const [projectList, setProjectList] = useState([]);
   const [error, setError] = useState("");
   const [currentProject, setCurrentProject] = useState();
@@ -24,7 +26,6 @@ function App() {
     const project: ProjectMetadata = {
       id: crypto.randomUUID(),
       name: name,
-      description: "A test",
       path: undefined
     }
 
@@ -95,6 +96,20 @@ function App() {
     }
   }
 
+  const startProjectEntrypoint = (project: ProjectMetadata, callback: () => void) => {
+    axios({
+      method: "POST",
+      baseURL: `${BASE_URL}/project/start`,
+      headers: {},
+      data: {
+        metadata: project,
+        python_executable: pythonPath
+      }
+    }).then(
+      () => callback()
+    )
+  }
+
   const projects = () => {
     if(projectList.length > 0){
       return (
@@ -115,8 +130,10 @@ function App() {
     <div className="m-2">
       <AddProject addProject={addProject}></AddProject>
       <ChooseDataFolder getAllProjects={getAllProjects} setFolderPath={setFolderPath}></ChooseDataFolder>
+      <ChoosePythonPath setPythonPath={setPythonPath}></ChoosePythonPath>
 
       <p>{folderPath}</p>
+      <p>{pythonPath}</p>
       <p className="text-danger">{error}</p>
 
       <div className="my-2">
@@ -127,7 +144,7 @@ function App() {
   }
   else{
     return (
-      <Project setCurrentProject={setCurrentProject} updateProject={updateProject} removeProject={removeProject} projectMetadata={currentProject}></Project>
+      <Project startProjectEntrypoint={startProjectEntrypoint} setCurrentProject={setCurrentProject} updateProject={updateProject} removeProject={removeProject} projectMetadata={currentProject}></Project>
   )}
 
   

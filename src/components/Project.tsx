@@ -5,9 +5,10 @@ import axios, { type AxiosResponse } from "axios";
 import ProjectData from "./project/ProjectData";
 import { BASE_URL } from "../api";
 
-function Project({projectMetadata, updateProject, setCurrentProject, removeProject}) {
+function Project({projectMetadata, updateProject, setCurrentProject, removeProject, startProjectEntrypoint}) {
 
     const [projectData, setProjectData] = useState();
+    const [loggerActive, setLoggerActive] = useState(false);
 
     const fetchProjectData = async () => {
         axios({
@@ -53,6 +54,11 @@ function Project({projectMetadata, updateProject, setCurrentProject, removeProje
         removeProject(projectMetadata);
     }
 
+    const startRun = () => {
+        setLoggerActive(true);
+        startProjectEntrypoint(projectMetadata, () => setLoggerActive(false));
+    }
+
   return (
     <>
         <header>
@@ -61,13 +67,13 @@ function Project({projectMetadata, updateProject, setCurrentProject, removeProje
             </div>
         </header>
 
-        <div className="m-2">
-            <ProjectData projectData={projectData}></ProjectData>
+        <div className="m-2 mb-5">
+            <ProjectData loggerActive={loggerActive} projectData={projectData}></ProjectData>
         </div>
         
         <footer className="fixed-bottom border bg-dark">
             <div className="m-2">
-                <ActionButtons fetchProjectData={fetchProjectData} setCurrentProject={setCurrentProject} removeProject={removeProjectNoArgs}></ActionButtons>
+                <ActionButtons startEntrypoint={startRun} fetchProjectData={fetchProjectData} setCurrentProject={setCurrentProject} removeProject={removeProjectNoArgs}></ActionButtons>
             </div>
         </footer>
     </>
