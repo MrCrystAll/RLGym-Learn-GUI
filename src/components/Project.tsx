@@ -5,12 +5,15 @@ import axios, { type AxiosResponse } from "axios";
 import ProjectData from "./project/ProjectData";
 import { BASE_URL } from "../api";
 
-function Project({projectMetadata, updateProject, setCurrentProject, removeProject, startProjectEntrypoint}) {
+function Project({checkAPIStatus, projectMetadata, updateProject, setCurrentProject, removeProject, startProjectEntrypoint}) {
 
     const [projectData, setProjectData] = useState();
     const [loggerActive, setLoggerActive] = useState(false);
 
     const fetchProjectData = async () => {
+
+        checkAPIStatus();
+
         axios({
             method: "POST",
             baseURL: "http://localhost:8000/project/getDetails",
@@ -28,6 +31,8 @@ function Project({projectMetadata, updateProject, setCurrentProject, removeProje
     }, [])
 
     const updateProjectName = async (name: string) => {
+        checkAPIStatus();
+
         axios({
             method: "PUT",
             baseURL: `${BASE_URL}/project`,
@@ -49,6 +54,8 @@ function Project({projectMetadata, updateProject, setCurrentProject, removeProje
     }
 
     const updatePythonInterpreter = async (path: string) => {
+        checkAPIStatus();
+
         axios({
             method: "PUT",
             baseURL: `${BASE_URL}/project/interpreter`,

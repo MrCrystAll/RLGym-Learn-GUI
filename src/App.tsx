@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddProject from "./components/AddProject"
 import ChooseDataFolder from "./components/ChooseDataFolder";
 import axios, { AxiosError, type AxiosResponse } from "axios";
@@ -7,12 +7,17 @@ import type { ProjectMetadata } from "./models/project";
 import ProjectInfo from "./components/ProjectInfo";
 import Project from "./components/Project";
 import { BASE_URL } from "./api";
+import IdleAPI from "./components/IdleAPI";
 
 function App() {
   const [folderPath, setFolderPath] = useState();
   const [projectList, setProjectList] = useState([]);
   const [error, setError] = useState("");
   const [currentProject, setCurrentProject] = useState();
+
+  // API
+  const [apiStatus, setApiStatus] = useState(false);
+  const [refresingApiStatus, setRefreshingApiStatus] = useState(false);
 
 
   const addProject = async (name: string) => {
@@ -40,13 +45,37 @@ function App() {
       }
     ).catch(
       (reason: AxiosError) => {setError(
-        `Error while adding a project: ${reason.response?.data}`
+        `Error while adding a project: ${reason.message}`
       );}
       
     )
   }
 
+  const checkAPIConnection = () => {
+    setRefreshingApiStatus(true);
+    axios({
+      method: "GET",
+       baseURL: `${BASE_URL}/`,
+       headers: {},
+       data: {},
+       timeout: 1000
+    }).then(
+      () => {setApiStatus(true); setRefreshingApiStatus(false);}
+    ).catch(() => {setApiStatus(false); setRefreshingApiStatus(false)});
+  }
+
+  useEffect(() => {
+    checkAPIConnection()
+    // setInterval(
+    //   checkAPIConnection,
+    //   10000
+    // )
+  }, [])
+
   const getAllProjects = async (path: string) => {
+
+    checkAPIConnection();
+
     if(path === undefined) {
       setError("You need to specify a folder path to fetch projects")
       return
@@ -121,7 +150,15 @@ function App() {
     }
   }
 
-  if(currentProject === undefined){
+
+  if(!apiStatus)
+  {
+    return (
+      <IdleAPI checkAPIConnection={checkAPIConnection} refresingApiStatus={refresingApiStatus}></IdleAPI>
+      )
+  }
+
+  else if(currentProject === undefined){
       return (
     <div className="m-2">
       <AddProject addProject={addProject}></AddProject>
@@ -138,7 +175,7 @@ function App() {
   }
   else{
     return (
-      <Project startProjectEntrypoint={startProjectEntrypoint} setCurrentProject={setCurrentProject} updateProject={updateProject} removeProject={removeProject} projectMetadata={currentProject}></Project>
+      <Project checkAPIStatus={checkAPIConnection} startProjectEntrypoint={startProjectEntrypoint} setCurrentProject={setCurrentProject} updateProject={updateProject} removeProject={removeProject} projectMetadata={currentProject}></Project>
   )}
 
   
