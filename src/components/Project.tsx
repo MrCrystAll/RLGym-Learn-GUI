@@ -94,7 +94,7 @@ function Project({checkAPIStatus, projectMetadata, updateProject, setCurrentProj
         </header>
 
         <div className="m-2 mb-5">
-            <ProjectData updatePythonInterpreter={updatePythonInterpreter} loggerActive={loggerActive} projectData={projectData}></ProjectData>
+            <ProjectData updatePythonInterpreter={updatePythonInterpreter} loggerActive={loggerActive} setLoggerActive={setLoggerActive} projectData={projectData}></ProjectData>
         </div>
         
         <footer className="fixed-bottom border bg-dark">

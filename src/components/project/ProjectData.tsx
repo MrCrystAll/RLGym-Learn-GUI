@@ -4,7 +4,7 @@ import ChoosePythonPath from "../ChoosePythonPath";
 
 const MAX_LINES: number = 15;
 
-function ProjectData({projectData, loggerActive, updatePythonInterpreter}) {
+function ProjectData({projectData, loggerActive, setLoggerActive, updatePythonInterpreter}) {
     const [lines, setLines] = useState([]);
 
     useEffect(() => {
@@ -63,7 +63,10 @@ function ProjectData({projectData, loggerActive, updatePythonInterpreter}) {
             if(lines.length > 0 || loggerActive){
                 return (
                     <>
-                        <button className="btn btn-success" onClick={clearLogs}>Clear logs</button>
+                        <div className="btn-group">
+                            <button className="btn btn-success" onClick={clearLogs}>Clear logs</button>
+                            <button className="btn btn-dark" onClick={() => setLoggerActive(true)} hidden={loggerActive}>Follow logs</button>
+                        </div>
                         <LogReader maxLines={MAX_LINES} setLines={setLines} active={loggerActive} lines={lines} logPath={projectData.log_config.stdout_log}></LogReader>
                     </>
                 )
