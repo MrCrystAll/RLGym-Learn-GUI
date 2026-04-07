@@ -1,13 +1,13 @@
 
 import { useEffect, useState } from "react";
 import AddProject from "./components/AddProject"
-import ChooseDataFolder from "./components/ChooseDataFolder";
 import axios, { AxiosError, type AxiosResponse } from "axios";
 import type { ProjectMetadata } from "./models/project";
 import ProjectInfo from "./components/ProjectInfo";
 import Project from "./components/Project";
 import { BASE_URL } from "./api";
 import IdleAPI from "./components/IdleAPI";
+import IdleFolderPath from "./components/IdleFolderPath";
 
 function App() {
   const [folderPath, setFolderPath] = useState();
@@ -157,12 +157,16 @@ function App() {
       <IdleAPI checkAPIConnection={checkAPIConnection} refresingApiStatus={refresingApiStatus}></IdleAPI>
       )
   }
+  else if(folderPath === undefined){
+    return (
+      <IdleFolderPath getAllProjects={getAllProjects} setFolderPath={setFolderPath}></IdleFolderPath>
+    )
+  }
 
   else if(currentProject === undefined){
       return (
     <div className="m-2">
       <AddProject addProject={addProject}></AddProject>
-      <ChooseDataFolder getAllProjects={getAllProjects} setFolderPath={setFolderPath}></ChooseDataFolder>
 
       <p>{folderPath}</p>
       <p className="text-danger">{error}</p>

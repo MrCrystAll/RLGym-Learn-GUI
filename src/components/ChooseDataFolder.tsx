@@ -14,7 +14,10 @@ function ChooseDataFolder({setFolderPath, getAllProjects}) {
     }
 
   return (
-    <button className="btn btn-success" onClick={openDialog}>Choose data folder</button>
+    <button className="btn btn-light" onClick={openDialog}>
+        Choose data folder
+        <i className="bi bi-folder ms-2"></i>
+    </button>
   )
 }
 
