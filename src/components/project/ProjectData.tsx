@@ -63,6 +63,7 @@ function ProjectData({projectData, loggerActive, setLoggerActive, updatePythonIn
             if(lines.length > 0 || loggerActive){
                 return (
                     <>
+                        <p>Showing last {MAX_LINES} logs</p>
                         <div className="btn-group">
                             <button className="btn btn-success" onClick={clearLogs}>Clear logs</button>
                             <button className="btn btn-dark" onClick={() => setLoggerActive(true)} hidden={loggerActive}>Follow logs</button>
@@ -86,13 +87,14 @@ function ProjectData({projectData, loggerActive, setLoggerActive, updatePythonIn
     }
     else{
         return (
-            <div>
+            <div className="bg-dark text-light">
                 <div className="d-flex align-items-center">
                     <p>Python interpreter: {projectData.interpreter}</p>
                     <ChoosePythonPath setPythonPath={updatePythonInterpreter}></ChoosePythonPath>
                 </div>
                 {rewardFiles()}
                 {entrypoint()}
+                <hr className="border border-light mx-2"/>
                 {stdoutLog()}
             </div>
         )

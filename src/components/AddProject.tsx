@@ -27,10 +27,9 @@ function AddProject({addProject}) {
 
   if(creating){
     return (
-      <div>
-        <p>Create a project</p>
+      <div className="rounded p-3" style={{backgroundColor: "darkgray"}}>
         <form action={create}>
-          <div className="form-group">
+          <div className="form-group text-light">
           <label htmlFor="pName">Project name</label>
           <input type="text" name="projectName" className="form-control" id="pName" aria-describedby="pName-help" placeholder="My best project"/>
           <small id="pName-help" className="form-text text-muted">The name for your project</small>
@@ -45,7 +44,13 @@ function AddProject({addProject}) {
   }
   else{
     return (
-      <button type="button" className="btn btn-primary" onClick={() => setCreating(true)}>Add project</button>
+
+      <div className="d-flex justify-content-center">
+        <button type="button" className="btn btn-light w-25" onClick={() => setCreating(true)}>
+          Add project
+          <i className="bi bi-file-plus ms-2"></i>
+        </button>
+      </div>
     )
   }
 }

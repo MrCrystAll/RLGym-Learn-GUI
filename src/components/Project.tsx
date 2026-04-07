@@ -86,23 +86,25 @@ function Project({checkAPIStatus, projectMetadata, updateProject, setCurrentProj
     }
 
   return (
-    <>
+    <div className="bg-dark">
         <header>
-            <div className="m-2">
+            <div className="pt-2">
                 <ProjectMetadata updateProjectName={updateProjectName} projectMetadata={projectMetadata}></ProjectMetadata>
             </div>
         </header>
 
-        <div className="m-2 mb-5">
+        <hr className="border border-light mx-5"/>
+
+        <div className="p-2 mp-5 vh-100">
             <ProjectData updatePythonInterpreter={updatePythonInterpreter} loggerActive={loggerActive} setLoggerActive={setLoggerActive} projectData={projectData}></ProjectData>
         </div>
         
-        <footer className="fixed-bottom border bg-dark">
+        <footer className="border border-dark bg-dark">
             <div className="m-2">
                 <ActionButtons startEntrypoint={startRun} fetchProjectData={fetchProjectData} setCurrentProject={setCurrentProject} removeProject={removeProjectNoArgs}></ActionButtons>
             </div>
         </footer>
-    </>
+    </div>
     
   )
 }

@@ -14,7 +14,7 @@ function ChoosePythonPath({setPythonPath}) {
 
   return (
     <button className="btn border" onClick={openDialog}>
-        <i className="bi bi-pencil"></i>
+        <i className="bi bi-pencil-fill text-white"></i>
     </button>
   )
 }

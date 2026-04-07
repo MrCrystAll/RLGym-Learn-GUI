@@ -20,8 +20,7 @@ function LogReader({active, logPath, lines, setLines, maxLines}) {
 
   return (
     <>
-    <p>Showing last {maxLines} logs</p>
-    <div style={{ fontFamily: "monospace", background: "#111", color: "#0f0", padding: 16 }}>
+    <div style={{ fontFamily: "monospace", background: "#111", color: "#0f0", padding: 16 }} className="border border-light rounded my-2">
       <p>Project logs <span style={{ color: "#F88" }}>(STDOUT)</span></p>
       {lines.map((entry, i) => (
         <div key={i}>

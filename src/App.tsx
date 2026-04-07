@@ -138,9 +138,9 @@ function App() {
   const projects = () => {
     if(projectList.length > 0){
       return (
-        <>
+        <div className="d-grid gap-3" style={{gridTemplateColumns: "1fr fr"}}>
           {projectList.map((project, i) => <ProjectInfo project={project} setCurrentProject={setCurrentProject} key={i}></ProjectInfo>)}
-        </>
+        </div>
       )
     }
     else{
@@ -165,13 +165,14 @@ function App() {
 
   else if(currentProject === undefined){
       return (
-    <div className="m-2">
-      <AddProject addProject={addProject}></AddProject>
-
-      <p>{folderPath}</p>
+    <div className="bg-dark vh-100 text-light">
+      <div className="container-fluid pt-3">
+        <AddProject addProject={addProject}></AddProject>
+      </div>
       <p className="text-danger">{error}</p>
 
-      <div className="my-2">
+      <div className="m-2">
+        <p className="display-3">Projects: </p>
         {projects()}
       </div>
     </div>

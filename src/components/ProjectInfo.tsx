@@ -1,9 +1,8 @@
 function ProjectInfo({project, setCurrentProject}) {
   return (
-    <div className="card w-25">
-        <div className="card-header">
-            <p className="display-6">{project.name}</p>
-            <button className="btn btn-success" onClick={() => setCurrentProject(project)}>Open project</button>
+    <div className="card w-25" onClick={() => setCurrentProject(project)}>
+        <div className="card-header" style={{cursor: "pointer"}}>
+            <p className="display-5 text-center">{project.name}</p>
         </div>
     </div>
   )
