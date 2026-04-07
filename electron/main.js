@@ -4,7 +4,6 @@ const fs = require("fs")
 
 function createWindow() {
   const preloadPath = path.join(__dirname, "preload.js")
-  console.log("Preload path:", preloadPath)
 
   const win = new BrowserWindow({
     width: 1000,
@@ -38,15 +37,8 @@ ipcMain.handle("open-python-path-dialog", () => {
 })
 
 
-ipcMain.on("read-logs", (event, logPath) => {
-  fs.readFile(logPath, (err, buffer) => {
-    if(err !== null){
-      console.error(err.message);
-      return;
-    }
-    
-    event.sender.send("log-lines", buffer.toString("utf8").split("\n").filter((value) => value.trim().length > 0).map((value) => JSON.parse(value)))
-  })
+ipcMain.handle("read-logs", (event, logPath) => {
+  return fs.readFileSync(logPath).toString("utf8").split("\n").filter((value) => value.trim().length > 0).map((value) => JSON.parse(value))
 })
 
 ipcMain.on("watch-log", (event, logPath) => {  // <-- receives path

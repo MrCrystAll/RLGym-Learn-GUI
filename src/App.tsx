@@ -83,7 +83,6 @@ function App() {
   }
 
   const updateProject = (project: ProjectMetadata) => {
-    console.log(projectList.filter((meta: ProjectMetadata) => meta.id !== project.id));
     const filteredList = projectList.filter((meta: ProjectMetadata) => meta.id !== project.id)
     
     setProjectList([...filteredList, project])

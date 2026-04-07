@@ -27,6 +27,6 @@ contextBridge.exposeInMainWorld('api', {
     ipcRenderer.removeAllListeners("log-lines");
   },
   readLogs(logPath){
-    ipcRenderer.send("read-logs", logPath);
+    return ipcRenderer.invoke("read-logs", logPath);    
   }
 });

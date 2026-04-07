@@ -1,23 +1,24 @@
 import { useEffect, useState } from "react";
 import LogReader from "./LogReader"
+import ChoosePythonPath from "../ChoosePythonPath";
 
 const MAX_LINES: number = 15;
 
-function ProjectData({projectData, loggerActive}) {
+function ProjectData({projectData, loggerActive, updatePythonInterpreter}) {
     const [lines, setLines] = useState([]);
 
     useEffect(() => {
-        window.api.removeAllListeners();
         // Only update logs if there aren't any already
-        if(projectData !== undefined && lines.length == 0){
-            window.api.readLogs(projectData.log_config.stdout_log);
-            window.api.listenLines(setLines, MAX_LINES);
+        if(projectData !== undefined){            
+            window.api.readLogs(projectData.log_config.stdout_log).then(
+                (value) => setLines(value.slice(-MAX_LINES))
+            )
         }
         
     }, [projectData])
 
     useEffect(() => {
-        return () => {            
+        return () => {                
             window.api.removeAllListeners();
         }
     }, [])
@@ -63,7 +64,7 @@ function ProjectData({projectData, loggerActive}) {
                 return (
                     <>
                         <button className="btn btn-success" onClick={clearLogs}>Clear logs</button>
-                        <LogReader maxLines={MAX_LINES} active={loggerActive} lines={lines} logPath={projectData.log_config.stdout_log}></LogReader>
+                        <LogReader maxLines={MAX_LINES} setLines={setLines} active={loggerActive} lines={lines} logPath={projectData.log_config.stdout_log}></LogReader>
                     </>
                 )
             }
@@ -83,7 +84,10 @@ function ProjectData({projectData, loggerActive}) {
     else{
         return (
             <div>
-                <p>Python interpreter: {projectData.interpreter}</p>
+                <div className="d-flex align-items-center">
+                    <p>Python interpreter: {projectData.interpreter}</p>
+                    <ChoosePythonPath setPythonPath={updatePythonInterpreter}></ChoosePythonPath>
+                </div>
                 {rewardFiles()}
                 {entrypoint()}
                 {stdoutLog()}

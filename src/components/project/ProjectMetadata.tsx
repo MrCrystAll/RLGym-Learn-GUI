@@ -8,9 +8,6 @@ function ProjectMetadata({projectMetadata, updateProjectName}) {
   const applyNameEdit = (formData) => {
     const name: string = formData.get("projectEditedName")
 
-    console.log(name);
-    
-
     // Validate
     if(name === undefined){
       setNameEditionError("Please enter a value for edition");
@@ -22,10 +19,6 @@ function ProjectMetadata({projectMetadata, updateProjectName}) {
       setNameEditionError("Please enter a name between 0 and 25 characters long");
       return;
     }
-
-
-    console.log(`Renaming to ${name.trim()}`);
-    
 
     setNameEditionError("");
     updateProjectName(name.trim())

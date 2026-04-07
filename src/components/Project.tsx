@@ -48,6 +48,25 @@ function Project({projectMetadata, updateProject, setCurrentProject, removeProje
         )
     }
 
+    const updatePythonInterpreter = async (path: string) => {
+        axios({
+            method: "PUT",
+            baseURL: `${BASE_URL}/project/interpreter`,
+            headers: {},
+            data: {
+                metadata: projectMetadata,
+                python_path: path
+            }
+        }).then(
+            () => {
+                setProjectData({
+                    ...projectData,
+                    interpreter: path
+                })
+            }
+        )
+    }
+
     const removeProjectNoArgs = () => {
         setCurrentProject(undefined);
         setProjectData(undefined)
@@ -68,7 +87,7 @@ function Project({projectMetadata, updateProject, setCurrentProject, removeProje
         </header>
 
         <div className="m-2 mb-5">
-            <ProjectData loggerActive={loggerActive} projectData={projectData}></ProjectData>
+            <ProjectData updatePythonInterpreter={updatePythonInterpreter} loggerActive={loggerActive} projectData={projectData}></ProjectData>
         </div>
         
         <footer className="fixed-bottom border bg-dark">

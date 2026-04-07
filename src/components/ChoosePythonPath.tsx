@@ -1,11 +1,9 @@
-// For now unused, but will be reused to update per project
-
 function ChoosePythonPath({setPythonPath}) {
     const openDialog = () => {
         const result: Promise<string[] | undefined> = window.api.openPythonPathDialog();
         result.then(
             (value: string[] | undefined) => {
-                if(value === undefined) setPythonPath(undefined);
+                if(value === undefined) return;
                 else {
                     setPythonPath(value[0].normalize());
                 }
@@ -15,7 +13,9 @@ function ChoosePythonPath({setPythonPath}) {
     }
 
   return (
-    <button className="btn btn-success" onClick={openDialog}>Choose python path</button>
+    <button className="btn border" onClick={openDialog}>
+        <i className="bi bi-pencil"></i>
+    </button>
   )
 }
 
