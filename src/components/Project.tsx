@@ -4,7 +4,6 @@ import ProjectMetadata from "./project/ProjectMetadata"
 import axios, { type AxiosResponse } from "axios";
 import ProjectData from "./project/ProjectData";
 import { BASE_URL } from "../api";
-
 function Project({checkAPIStatus, projectMetadata, updateProject, setCurrentProject, removeProject, startProjectEntrypoint}) {
 
     const [projectData, setProjectData] = useState();
@@ -86,7 +85,7 @@ function Project({checkAPIStatus, projectMetadata, updateProject, setCurrentProj
     }
 
   return (
-    <div className="bg-dark">
+    <div className="bg-dark text-light">
         <header>
             <div className="pt-2">
                 <ProjectMetadata updateProjectName={updateProjectName} projectMetadata={projectMetadata}></ProjectMetadata>
@@ -95,8 +94,8 @@ function Project({checkAPIStatus, projectMetadata, updateProject, setCurrentProj
 
         <hr className="border border-light mx-5"/>
 
-        <div className="p-2 mp-5 vh-100">
-            <ProjectData updatePythonInterpreter={updatePythonInterpreter} loggerActive={loggerActive} setLoggerActive={setLoggerActive} projectData={projectData}></ProjectData>
+        <div className="p-2 mp-5">
+            <ProjectData projectType={projectMetadata.type} updatePythonInterpreter={updatePythonInterpreter} loggerActive={loggerActive} setLoggerActive={setLoggerActive} projectData={projectData}></ProjectData>
         </div>
         
         <footer className="border border-dark bg-dark">

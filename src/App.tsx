@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import AddProject from "./components/AddProject"
 import axios, { AxiosError, type AxiosResponse } from "axios";
-import type { ProjectMetadata } from "./models/project";
+import type { ProjectMetadata, ProjectType } from "./models/project";
 import ProjectInfo from "./components/ProjectInfo";
 import Project from "./components/Project";
 import { BASE_URL } from "./api";
@@ -20,7 +20,7 @@ function App() {
   const [refresingApiStatus, setRefreshingApiStatus] = useState(false);
 
 
-  const addProject = async (name: string) => {
+  const addProject = async (name: string, type: ProjectType) => {
     if(folderPath === undefined) {
       setError("You need to specify a folder path to add a project")
       return
@@ -29,7 +29,8 @@ function App() {
     const project: ProjectMetadata = {
       id: crypto.randomUUID(),
       name: name,
-      path: undefined
+      path: undefined,
+      type: type
     }
 
     axios({
@@ -165,7 +166,7 @@ function App() {
 
   else if(currentProject === undefined){
       return (
-    <div className="bg-dark vh-100 text-light">
+    <div className="bg-dark text-light">
       <div className="container-fluid pt-3">
         <AddProject addProject={addProject}></AddProject>
       </div>

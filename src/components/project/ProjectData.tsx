@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import LogReader from "./LogReader"
 import ChoosePythonPath from "../ChoosePythonPath";
+import LearningCoordinatorConfigEditor from "./rlgym-learn/LearningCoordinatorConfigEditor";
+import type { LearningCoordinatorConfigModel } from "../../models/rlgym-learn/api";
 
 const MAX_LINES: number = 15;
 
-function ProjectData({projectData, loggerActive, setLoggerActive, updatePythonInterpreter}) {
+function ProjectData({projectData, projectType, loggerActive, setLoggerActive, updatePythonInterpreter}) {
     const [lines, setLines] = useState([]);
 
     useEffect(() => {
@@ -79,10 +81,23 @@ function ProjectData({projectData, loggerActive, setLoggerActive, updatePythonIn
             )
         }
     }
+    
+    const updateLearningCoordinatorConfigModel = (config: LearningCoordinatorConfigModel) => {
+        projectData = {
+            ...projectData,
+            learningCoordinatorConfigModel: config
+        }
+    }
 
     if(projectData === undefined){
         return (
             <p>No data found for this project</p>
+        )
+    }
+    else if(projectType == "rlgym-learn")
+    {
+        return (
+                <LearningCoordinatorConfigEditor learningCoordinatorConfig={projectData.learningCoordinatorConfigModel} setLearningCoordinatorConfig={updateLearningCoordinatorConfigModel}/>
         )
     }
     else{

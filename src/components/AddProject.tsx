@@ -1,13 +1,14 @@
 import { useState } from "react"
+import type { ProjectType } from "../models/project";
 
 function AddProject({addProject}) {
   const [creating, setCreating] = useState(false);
 
   const [nameError, setNameError] = useState("");
 
-  const createProject = (name: string) => {
+  const createProject = (name: string, type: ProjectType) => {
     setCreating(false);
-    addProject(name);
+    addProject(name, type);
   }
 
   const create = (formData) => {
@@ -22,7 +23,9 @@ function AddProject({addProject}) {
 
     setNameError("");
 
-    createProject(name.trim())
+    const type: ProjectType = formData.get("projectType")
+
+    createProject(name.trim(), type)
   }
 
   if(creating){
@@ -30,11 +33,27 @@ function AddProject({addProject}) {
       <div className="rounded p-3" style={{backgroundColor: "darkgray"}}>
         <form action={create}>
           <div className="form-group text-light">
-          <label htmlFor="pName">Project name</label>
-          <input type="text" name="projectName" className="form-control" id="pName" aria-describedby="pName-help" placeholder="My best project"/>
-          <small id="pName-help" className="form-text text-muted">The name for your project</small>
-          <p className="form-text text-danger">{nameError}</p>
-        </div>
+            <label htmlFor="pName">Project name</label>
+            <input type="text" name="projectName" className="form-control" id="pName" aria-describedby="pName-help" placeholder="My best project"/>
+            <small id="pName-help" className="form-text text-muted">The name for your project</small>
+            <p className="form-text text-danger">{nameError}</p>
+          </div>
+
+          <p>Type of project</p>
+          <div className="d-flex justify-content-around form-group text-light">
+            
+            <div>
+              <label htmlFor="rlgymLearnChoice" className="me-2">rlgym-learn</label>
+              <input type="radio" name="projectType" id="rlgymLearnChoice" value={"rlgym-learn"}/>
+            </div>
+            <div>
+              <label htmlFor="defaultChoice" className="me-2">default</label>
+              <input type="radio" name="projectType" id="defaultChoice" value={"unknown"} defaultChecked={true}/>
+            </div>
+            
+           
+          </div>
+
 
         <button type="submit" className="btn btn-primary">Create project</button>
         <button className="btn btn-secondary" onClick={() => setCreating(false)}>Cancel</button>

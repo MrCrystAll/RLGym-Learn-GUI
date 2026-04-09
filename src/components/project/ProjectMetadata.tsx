@@ -1,15 +1,21 @@
 import { useState } from "react"
+import type { ProjectMetadata as ProjectMetadataModel } from "../../models/project";
 
-function ProjectMetadata({projectMetadata, updateProjectName}) {
+interface ProjectMetadataArgs {
+  projectMetadata: ProjectMetadataModel
+  updateProjectName: (name: string) => void
+}
+
+function ProjectMetadata({projectMetadata, updateProjectName}: ProjectMetadataArgs) {
 
   const [editingName, setEditingName] = useState(false);
   const [nameEditionError, setNameEditionError] = useState("");
 
-  const applyNameEdit = (formData) => {
-    const name: string = formData.get("projectEditedName")
+  const applyNameEdit = (formData: FormData) => {
+    const name: string | object | undefined = formData.get("projectEditedName")?.valueOf();
 
     // Validate
-    if(name === undefined){
+    if(name === undefined || typeof name == "object"){
       setNameEditionError("Please enter a value for edition");
       return;
     }
