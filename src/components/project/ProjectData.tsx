@@ -3,6 +3,7 @@ import LogReader from "./LogReader"
 import ChoosePythonPath from "../ChoosePythonPath";
 import LearningCoordinatorConfigEditor from "./rlgym-learn/LearningCoordinatorConfigEditor";
 import type { LearningCoordinatorConfigModel } from "../../models/rlgym-learn/api";
+import { DEFAULT_LEARNING_COORDINATOR_CONFIG } from "./rlgym-learn/default_config";
 
 const MAX_LINES: number = 15;
 
@@ -15,6 +16,12 @@ function ProjectData({projectData, projectType, loggerActive, setLoggerActive, u
             window.api.readLogs(projectData.log_config.stdout_log).then(
                 (value) => setLines(value.slice(-MAX_LINES))
             )
+
+            if(projectData.learningCoordinatorConfigModel === undefined){
+                projectData.learningCoordinatorConfigModel = DEFAULT_LEARNING_COORDINATOR_CONFIG;
+                console.log("Object is undefined, redefining to default");
+                
+            }
         }
         
     }, [projectData])
@@ -81,8 +88,14 @@ function ProjectData({projectData, projectType, loggerActive, setLoggerActive, u
             )
         }
     }
+
+    const learningCoordinatorConfig = () => {
+        return projectData.learningCoordinatorConfigModel;
+    } 
     
     const updateLearningCoordinatorConfigModel = (config: LearningCoordinatorConfigModel) => {
+        console.log(config);
+        
         projectData = {
             ...projectData,
             learningCoordinatorConfigModel: config
@@ -97,7 +110,7 @@ function ProjectData({projectData, projectType, loggerActive, setLoggerActive, u
     else if(projectType == "rlgym-learn")
     {
         return (
-                <LearningCoordinatorConfigEditor learningCoordinatorConfig={projectData.learningCoordinatorConfigModel} setLearningCoordinatorConfig={updateLearningCoordinatorConfigModel}/>
+                <LearningCoordinatorConfigEditor learningCoordinatorConfig={learningCoordinatorConfig} setLearningCoordinatorConfig={updateLearningCoordinatorConfigModel}/>
         )
     }
     else{

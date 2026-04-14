@@ -1,21 +1,28 @@
 import type { AgentControllerConfig, PPOAgentControllerConfigModel } from "../../../../models/rlgym-learn/api";
 import PPOConfigEditor from "./ppo/PPOConfigEditor";
 
+interface AgentControllersEditorArgs{
+    agentControllersConfigModel: () => Record<string, AgentControllerConfig>
+    updateControllerConfigModel: (name: string, model: AgentControllerConfig) => void
+}
 
-function AgentControllersEditor({agentControllersConfigModel, agentControllerInput, updateControllerConfigModel}:{agentControllersConfigModel: Record<string, AgentControllerConfig | undefined>, agentControllerInput: Record<string, string>, updateControllerConfigModel: (name: string, model: AgentControllerConfig) => void}) {    
+
+function AgentControllersEditor({agentControllersConfigModel, updateControllerConfigModel}: AgentControllersEditorArgs) {    
     const updateAgentConfig = (name: string, model: AgentControllerConfig) => {
         updateControllerConfigModel(name, model)
     }
     
-    const agentControllerEditors = () => {
-        if(agentControllerInput !== undefined){
-            return Object.entries(agentControllerInput).map(
-                (value: [string, string]) => {
-                    if(value[1] == "ppo"){
-                        return <PPOConfigEditor key={value[0]} agentKey={value[0]} ppoConfig={agentControllersConfigModel[value[0]] as PPOAgentControllerConfigModel} setPPOConfig={(model: AgentControllerConfig) => updateAgentConfig(value[0], model)}/>
+    const agentControllerEditors = () => {        
+        if(agentControllersConfigModel() !== undefined){
+            return Object.entries(agentControllersConfigModel()).map(
+                (value: [string, AgentControllerConfig]) => {
+                    if(value[1].type == "ppo"){
+                        console.log("Hello?");
+                        
+                        return <PPOConfigEditor key={value[0]} agentKey={value[0]} ppoConfig={() => value[1] as PPOAgentControllerConfigModel} setPPOConfig={(model: AgentControllerConfig) => updateAgentConfig(value[0], model)}/>
                     }
                     else{
-                        return <p key={value[0]}>Unknown type "{value[1]}"</p>
+                        return <p key={value[0]}>Unknown type "{value[1].type}" for agent "{value[0]}"</p>
                     }
                 }
             )
@@ -28,7 +35,11 @@ function AgentControllersEditor({agentControllersConfigModel, agentControllerInp
     }
 
     const emptyMessage = () => {
-        const entries = Object.entries(agentControllersConfigModel);
+        if (agentControllersConfigModel() === undefined){
+            return <p>No agent config provided.</p>
+        }
+
+        const entries = Object.entries(agentControllersConfigModel());
 
         if(entries.length === 0){
             return (

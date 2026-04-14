@@ -1,49 +1,47 @@
-import { useEffect, useState } from "react"
-import { type AgentControllerConfig, type LearningCoordinatorConfigModel } from "../../../models/rlgym-learn/api"
+import { useState } from "react"
+import { type AgentControllerConfig, type BaseConfigModel, type LearningCoordinatorConfigModel, type ProcessConfigModel } from "../../../models/rlgym-learn/api"
 import BaseConfigEditor from "./subconfigs/BaseConfigEditor"
 import ProcessConfigEditor from "./subconfigs/ProcessConfigEditor"
 import AgentControllersEditor from "./subconfigs/AgentControllersEditor"
+import { PPO_DEFAULT_CONFIG } from "./subconfigs/ppo/default_config"
 
 export interface LearningCoordinatorConfigEditorArgs{
-    learningCoordinatorConfig: LearningCoordinatorConfigModel | undefined
+    learningCoordinatorConfig: () => LearningCoordinatorConfigModel | undefined
     setLearningCoordinatorConfig: (arg0: LearningCoordinatorConfigModel) => void
 }
 
 function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearningCoordinatorConfig}: LearningCoordinatorConfigEditorArgs) {
+    const baseConfigModel = () => learningCoordinatorConfig().base_config;
+    const setBaseConfigModel = (model: BaseConfigModel) => {setLearningCoordinatorConfig({
+        ...learningCoordinatorConfig(),
+        base_config: model
+    })};
 
-    const [baseConfigModel, setBaseConfigModel] = useState(learningCoordinatorConfig?.base_config)
-    const [processConfigModel, setProcessConfigModel] = useState(learningCoordinatorConfig?.process_config)
-    const [agentControllersConfigModel, setAgentControllersConfigModel] = useState<Record<string, AgentControllerConfig | undefined>>(learningCoordinatorConfig?.agent_controllers_config === undefined ? {} : learningCoordinatorConfig.agent_controllers_config)
-    const [agentControllersEditorInput, setAgentControllersEditorInput] = useState<Record<string, string>>({});
+    const processConfigModel = () => learningCoordinatorConfig().process_config;
+    const setProcessConfigModel = (model: ProcessConfigModel) => {
+        setLearningCoordinatorConfig({
+            ...learningCoordinatorConfig(),
+            process_config: model
+        })
+    }
+
+    const agentControllersConfigModel = () => learningCoordinatorConfig().agent_controllers_config;
+    const setAgentControllersConfigModel = (models: Record<string, AgentControllerConfig>) => {
+        setLearningCoordinatorConfig({
+            ...learningCoordinatorConfig(),
+            agent_controllers_config: models
+        })
+    }
+
+    const setAgentControllerConfigModel = (agent: string, model: AgentControllerConfig) => setAgentControllersConfigModel({
+        ...agentControllersConfigModel(),
+        [agent]: model
+    })
 
     // Agent controllers
     const [agentKeyError, setAgentKeyError] = useState("");
 
     const [addingController, setAddingController] = useState(false);
-
-    useEffect(() => {
-        if(baseConfigModel === undefined) return;
-        if(processConfigModel === undefined) return;
-        if(agentControllersConfigModel === undefined) return;
-
-        let validAgentControllerConfig = true;
-
-        Object.values(agentControllersConfigModel).forEach(
-            (value: AgentControllerConfig | undefined) => validAgentControllerConfig = value !== undefined
-        )
-
-        if(!validAgentControllerConfig) return;
-
-        setLearningCoordinatorConfig(
-            {
-                base_config: baseConfigModel,
-                agent_controllers_config: agentControllersConfigModel,
-                agent_controllers_save_folder: "Test",
-                process_config: processConfigModel
-            }
-        )
-
-    }, [baseConfigModel, processConfigModel, agentControllersConfigModel])
 
     const onAgentAddSubmit = (formData: FormData) => {
 
@@ -56,34 +54,27 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
             return;
         }
 
-        if(agentControllersEditorInput === undefined){
-            setAgentControllersEditorInput({[name]: type})
+        const model = type === "ppo" ? PPO_DEFAULT_CONFIG : {
+            type: "unknown"
+        }
+
+        if(agentControllersConfigModel() === undefined){
+            setAgentControllersConfigModel({[name]: model})
         }
         else{
-            if(agentControllersEditorInput[name] !== undefined){
+            if(agentControllersConfigModel()[name] !== undefined){
                 setAgentKeyError("Agent key already exists, please choose another one.");
                 return;
             }
             else{
-                setAgentControllersEditorInput({
-                    ...agentControllersEditorInput,
-                    [name]: type
+                setAgentControllersConfigModel({
+                    ...agentControllersConfigModel(),
+                    [name]: model
                 })
             }
         }
 
-        setAgentControllersConfigModel({
-            ...agentControllersConfigModel,
-            [name]: undefined
-        })
-
         setAddingController(false);
-    }
-
-    const updateControllerConfigModel = (name: string, model: AgentControllerConfig) => {
-        setAgentControllersConfigModel(
-            {...agentControllersConfigModel, [name]: model}
-        )
     }
 
     const addController = () => {
@@ -124,16 +115,27 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
         }
     }
 
-    return (
-        <>
+    const render = () => {
+        if(learningCoordinatorConfig() === undefined){
+            return <p>No config</p>
+        }
+        else{
+            return <>
             {addController()}
 
             <div>
                 <BaseConfigEditor baseConfig={baseConfigModel} setBaseConfig={setBaseConfigModel}/>
                 <ProcessConfigEditor processConfig={processConfigModel} setProcessConfig={setProcessConfigModel}/>
-                <AgentControllersEditor agentControllersConfigModel={agentControllersConfigModel} agentControllerInput={agentControllersEditorInput} updateControllerConfigModel={updateControllerConfigModel}/>
+                <AgentControllersEditor agentControllersConfigModel={agentControllersConfigModel} updateControllerConfigModel={setAgentControllerConfigModel}/>
                 <button className="btn btn-success w-100" type="submit">Submit</button>
             </div>
+            </>
+        }
+    }
+
+    return (
+        <>
+            {render()}
         </>
 
     )
