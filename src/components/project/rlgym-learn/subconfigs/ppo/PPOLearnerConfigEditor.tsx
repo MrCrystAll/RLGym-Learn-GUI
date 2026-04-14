@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { PPOLearnerConfigModel } from "../../../../../models/rlgym-learn/api";
 
 interface PPOLearnerConfigEditorArgs{
-    ppoLearnerConfig: () => PPOLearnerConfigModel
+    ppoLearnerConfig: PPOLearnerConfigModel
     setPPOLearnerConfig: (config: PPOLearnerConfigModel) => void
 }
 
@@ -33,7 +33,7 @@ function PPOLearnerConfigEditor({ppoLearnerConfig, setPPOLearnerConfig}: PPOLear
     }
     return (
         <div className="border p-2">
-            <p className="text-break">{JSON.stringify(ppoLearnerConfig())}</p>
+            <p className="text-break">{JSON.stringify(ppoLearnerConfig)}</p>
         </div>
         
     )

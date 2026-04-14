@@ -6,35 +6,32 @@ import AgentControllersEditor from "./subconfigs/AgentControllersEditor"
 import { PPO_DEFAULT_CONFIG } from "./subconfigs/ppo/default_config"
 
 export interface LearningCoordinatorConfigEditorArgs{
-    learningCoordinatorConfig: () => LearningCoordinatorConfigModel | undefined
+    learningCoordinatorConfig: LearningCoordinatorConfigModel | undefined
     setLearningCoordinatorConfig: (arg0: LearningCoordinatorConfigModel) => void
 }
 
 function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearningCoordinatorConfig}: LearningCoordinatorConfigEditorArgs) {
-    const baseConfigModel = () => learningCoordinatorConfig().base_config;
     const setBaseConfigModel = (model: BaseConfigModel) => {setLearningCoordinatorConfig({
-        ...learningCoordinatorConfig(),
+        ...learningCoordinatorConfig,
         base_config: model
     })};
 
-    const processConfigModel = () => learningCoordinatorConfig().process_config;
     const setProcessConfigModel = (model: ProcessConfigModel) => {
         setLearningCoordinatorConfig({
-            ...learningCoordinatorConfig(),
+            ...learningCoordinatorConfig,
             process_config: model
         })
     }
 
-    const agentControllersConfigModel = () => learningCoordinatorConfig().agent_controllers_config;
     const setAgentControllersConfigModel = (models: Record<string, AgentControllerConfig>) => {
         setLearningCoordinatorConfig({
-            ...learningCoordinatorConfig(),
+            ...learningCoordinatorConfig,
             agent_controllers_config: models
         })
     }
 
     const setAgentControllerConfigModel = (agent: string, model: AgentControllerConfig) => setAgentControllersConfigModel({
-        ...agentControllersConfigModel(),
+        ...learningCoordinatorConfig?.agent_controllers_config,
         [agent]: model
     })
 
@@ -58,23 +55,30 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
             type: "unknown"
         }
 
-        if(agentControllersConfigModel() === undefined){
+        if(learningCoordinatorConfig?.agent_controllers_config === undefined){
             setAgentControllersConfigModel({[name]: model})
         }
         else{
-            if(agentControllersConfigModel()[name] !== undefined){
+            if(learningCoordinatorConfig?.agent_controllers_config[name] !== undefined){
                 setAgentKeyError("Agent key already exists, please choose another one.");
                 return;
             }
             else{
                 setAgentControllersConfigModel({
-                    ...agentControllersConfigModel(),
+                    ...learningCoordinatorConfig?.agent_controllers_config,
                     [name]: model
                 })
             }
         }
 
         setAddingController(false);
+    }
+
+    const deleteController = (agent: string) => {
+        const object = {...learningCoordinatorConfig?.agent_controllers_config};
+        delete object[agent]
+
+        setAgentControllersConfigModel(object);
     }
 
     const addController = () => {
@@ -116,7 +120,7 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
     }
 
     const render = () => {
-        if(learningCoordinatorConfig() === undefined){
+        if(learningCoordinatorConfig === undefined){
             return <p>No config</p>
         }
         else{
@@ -124,9 +128,9 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
             {addController()}
 
             <div>
-                <BaseConfigEditor baseConfig={baseConfigModel} setBaseConfig={setBaseConfigModel}/>
-                <ProcessConfigEditor processConfig={processConfigModel} setProcessConfig={setProcessConfigModel}/>
-                <AgentControllersEditor agentControllersConfigModel={agentControllersConfigModel} updateControllerConfigModel={setAgentControllerConfigModel}/>
+                <BaseConfigEditor baseConfig={learningCoordinatorConfig.base_config} setBaseConfig={setBaseConfigModel}/>
+                <ProcessConfigEditor processConfig={learningCoordinatorConfig.process_config} setProcessConfig={setProcessConfigModel}/>
+                <AgentControllersEditor deleteAgent={deleteController} agentControllersConfigModel={learningCoordinatorConfig.agent_controllers_config} updateControllerConfigModel={setAgentControllerConfigModel}/>
                 <button className="btn btn-success w-100" type="submit">Submit</button>
             </div>
             </>

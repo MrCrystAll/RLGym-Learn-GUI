@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Serde, type BaseConfigModel } from "../../../../models/rlgym-learn/api";
 
 export interface BaseConfigEditorArgs{
-    baseConfig: () => BaseConfigModel
+    baseConfig: BaseConfigModel
     setBaseConfig: (model: BaseConfigModel) => void
 
 }
@@ -77,7 +77,7 @@ function BaseConfigEditor({baseConfig, setBaseConfig}:BaseConfigEditorArgs) {
                             <label htmlFor="seed" className="col-sm-3 col-form-label">Seed</label>
                             <div className="col-sm-6">
                                 <input type="number" name="seed" className="form-control" id="seed" defaultValue={
-                                    baseConfig().random_seed
+                                    baseConfig.random_seed
                                 }/>
                                 <small className="text-danger">{seedError}</small>
                             </div>
@@ -86,7 +86,7 @@ function BaseConfigEditor({baseConfig, setBaseConfig}:BaseConfigEditorArgs) {
                             <label htmlFor="flinksFolder" className="col-sm-3 col-form-label">FLinks folder</label>
                             <div className="col-sm-6">
                                 <input type="text" className="form-control" name="flinks_folder" id="flinksFolder" defaultValue={
-                                    baseConfig().flinks_folder
+                                    baseConfig.flinks_folder
                                 }/>
                                 <small className="text-danger">{flinksError}</small>
                             </div>
@@ -95,7 +95,7 @@ function BaseConfigEditor({baseConfig, setBaseConfig}:BaseConfigEditorArgs) {
                             <label htmlFor="shMemSize" className="col-sm-3 col-form-label">Shared memory buffer size</label>
                             <div className="col-sm-6">
                                 <input type="number" className="form-control" name="shm_buffer_size" id="shMemSize" defaultValue={
-                                    baseConfig().shm_buffer_size
+                                    baseConfig.shm_buffer_size
                                 }/>
                                 <small className="text-danger">{shmemSizeError}</small>
                             </div>
@@ -104,7 +104,7 @@ function BaseConfigEditor({baseConfig, setBaseConfig}:BaseConfigEditorArgs) {
                             <label htmlFor="tsLimit" className="col-sm-3 col-form-label">Timestep limit</label>
                             <div className="col-sm-6">
                                 <input type="number" className="form-control" name="timestep_limit" id="tsLimit" defaultValue={
-                                    baseConfig().timestep_limit
+                                    baseConfig.timestep_limit
                                 }/>
                                 <small className="text-danger">{tsLimitError}</small>
                             </div>
@@ -113,7 +113,7 @@ function BaseConfigEditor({baseConfig, setBaseConfig}:BaseConfigEditorArgs) {
                             <label htmlFor="batched_aald" className="col-sm-3 col-form-label">Batched tensor action associated learning data</label>
                             <div className="col-sm-6">
                                 <input type="checkbox" className="form-check-input" name="batched_aald" id="batched_aald" defaultChecked={
-                                    baseConfig().batched_tensor_action_associated_learning_data
+                                    baseConfig.batched_tensor_action_associated_learning_data
                                 }/>
                             </div>
                         </div>
@@ -138,7 +138,7 @@ function BaseConfigEditor({baseConfig, setBaseConfig}:BaseConfigEditorArgs) {
                 <button className="btn btn-dark" onClick={() => setEditMode(true)}><i className="bi bi-pencil-fill"></i></button>
             </div>
             
-            <p className="text-break">{JSON.stringify(baseConfig())}</p>
+            <p className="text-break">{JSON.stringify(baseConfig)}</p>
         </>
     )
 }

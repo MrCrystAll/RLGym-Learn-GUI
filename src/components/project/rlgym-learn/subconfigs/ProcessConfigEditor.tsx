@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { ProcessConfigModel } from "../../../../models/rlgym-learn/api";
 
 export interface ProcessConfigModelEditorArgs{
-    processConfig: () => ProcessConfigModel
+    processConfig: ProcessConfigModel
     setProcessConfig: (model: ProcessConfigModel) => void
 }
 
@@ -109,7 +109,7 @@ function ProcessConfigEditor({processConfig, setProcessConfig}:ProcessConfigMode
                         <label htmlFor="minProcInference" className="col-sm-3 col-form-label">Min process step per inference</label>
                         <div className="col-sm-6">
                             <input type="number" name="minProcInference" className="form-control" id="minProcInference" defaultValue={
-                                processConfig().min_process_steps_per_inference
+                                processConfig.min_process_steps_per_inference
                             }/>
                             <small className="text-danger">{minProcInferenceError}</small>
                         </div>
@@ -118,7 +118,7 @@ function ProcessConfigEditor({processConfig, setProcessConfig}:ProcessConfigMode
                         <label htmlFor="nProc" className="col-sm-3 col-form-label">Number of processes</label>
                         <div className="col-sm-6">
                             <input type="number" className="form-control" name="nProc" id="nProc" defaultValue={
-                                processConfig().n_proc
+                                processConfig.n_proc
                             }/>
                             <small className="text-danger">{nProcError}</small>
                         </div>
@@ -127,7 +127,7 @@ function ProcessConfigEditor({processConfig, setProcessConfig}:ProcessConfigMode
                         <label htmlFor="recalc" className="col-sm-3 col-form-label">Recalculate agents every step</label>
                         <div className="col-sm-6">
                             <input type="checkbox" className="form-check-input" name="recalc" id="recalc" defaultChecked={
-                                processConfig().recalculate_agent_id_every_step
+                                processConfig.recalculate_agent_id_every_step
                             }/>
                         </div>
                     </div>
@@ -135,7 +135,7 @@ function ProcessConfigEditor({processConfig, setProcessConfig}:ProcessConfigMode
                         <label htmlFor="render" className="col-sm-3 col-form-label">Render</label>
                         <div className="col-sm-6">
                             <input type="checkbox" className="form-check-input" name="render" id="render" defaultChecked={
-                                processConfig().render
+                                processConfig.render
                             }/>
                         </div>
                     </div>
@@ -143,7 +143,7 @@ function ProcessConfigEditor({processConfig, setProcessConfig}:ProcessConfigMode
                         <label htmlFor="render_delay" className="col-sm-3 col-form-label">Render delay</label>
                         <div className="col-sm-6">
                             <input type="text" className="form-control" name="render_delay" id="render_delay" defaultValue={
-                                processConfig().render_delay
+                                processConfig.render_delay
                             }/>
                             <small className="text-danger">{renderDelayError}</small>
                         </div>
@@ -152,7 +152,7 @@ function ProcessConfigEditor({processConfig, setProcessConfig}:ProcessConfigMode
                         <label htmlFor="delay_launch" className="col-sm-3 col-form-label">Instance delay between launches</label>
                         <div className="col-sm-6">
                             <input type="text" className="form-control" name="delay_launch" id="delay_launch" defaultValue={
-                                (processConfig().instance_launch_delay === undefined ? 0 : processConfig().instance_launch_delay)?.toString()
+                                (processConfig.instance_launch_delay === undefined ? 0 : processConfig.instance_launch_delay)?.toString()
                             }/>
                         </div>
                     </div>
@@ -170,7 +170,7 @@ function ProcessConfigEditor({processConfig, setProcessConfig}:ProcessConfigMode
         </div>
             
 
-            <p>{JSON.stringify(processConfig())}</p>
+            <p>{JSON.stringify(processConfig)}</p>
         </>
     )
 }

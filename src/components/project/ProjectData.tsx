@@ -7,7 +7,7 @@ import { DEFAULT_LEARNING_COORDINATOR_CONFIG } from "./rlgym-learn/default_confi
 
 const MAX_LINES: number = 15;
 
-function ProjectData({projectData, projectType, loggerActive, setLoggerActive, updatePythonInterpreter}) {
+function ProjectData({projectData, setProjectData, projectType, loggerActive, setLoggerActive, updatePythonInterpreter}) {
     const [lines, setLines] = useState([]);
 
     useEffect(() => {
@@ -88,18 +88,14 @@ function ProjectData({projectData, projectType, loggerActive, setLoggerActive, u
             )
         }
     }
-
-    const learningCoordinatorConfig = () => {
-        return projectData.learningCoordinatorConfigModel;
-    } 
     
     const updateLearningCoordinatorConfigModel = (config: LearningCoordinatorConfigModel) => {
         console.log(config);
-        
-        projectData = {
+              
+        setProjectData({
             ...projectData,
             learningCoordinatorConfigModel: config
-        }
+        })
     }
 
     if(projectData === undefined){
@@ -110,7 +106,7 @@ function ProjectData({projectData, projectType, loggerActive, setLoggerActive, u
     else if(projectType == "rlgym-learn")
     {
         return (
-                <LearningCoordinatorConfigEditor learningCoordinatorConfig={learningCoordinatorConfig} setLearningCoordinatorConfig={updateLearningCoordinatorConfigModel}/>
+                <LearningCoordinatorConfigEditor learningCoordinatorConfig={projectData.learningCoordinatorConfigModel} setLearningCoordinatorConfig={updateLearningCoordinatorConfigModel}/>
         )
     }
     else{

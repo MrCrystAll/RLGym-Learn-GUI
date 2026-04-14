@@ -3,59 +3,23 @@ import type { PPOAgentControllerConfigModel, PPOLearnerConfigModel } from "../..
 import PPOLearnerConfigEditor from "./PPOLearnerConfigEditor";
 
 interface PPOConfigEditorArgs{
-    ppoConfig: () => PPOAgentControllerConfigModel
+    ppoConfig: PPOAgentControllerConfigModel
     setPPOConfig: (model: PPOAgentControllerConfigModel) => void
     agentKey: string
+    deleteAgent: (agent: string) => void
 }
 
-function PPOConfigEditor({ppoConfig, setPPOConfig, agentKey}: PPOConfigEditorArgs){
+function PPOConfigEditor({ppoConfig, setPPOConfig, agentKey, deleteAgent}: PPOConfigEditorArgs){
 
     const [editMode, setEditMode] = useState(false);
     
     const onSubmit = (formData: FormData) => {
-        const modifiedPPOConfig: PPOAgentControllerConfigModel = {
-            add_unix_timestamp: true,
-            experience_buffer_config: {
-                device: "auto",
-                max_size: 100_000,
-                save_experience_buffer_in_checkpoint: true,
-                trajectory_processor_config: {}
-            },
-            learner_config: {
-                actor_lr: 3e-4,
-                advantage_normalization: true,
-                batch_size: 50_000,
-                clip_range: 0.2,
-                critic_lr: 3e-4,
-                cudnn_benchmark_mode: true,
-                device: "auto",
-                dtype: "float32",
-                ent_coef: 0.005,
-                n_epochs: 1,
-                n_minibatches: 1
-            },
-            metrics_logger_config: {},
-            n_checkpoints_to_keep: 5,
-            random_seed: 123,
-            run_name: "rlgym-learn-run",
-            save_every_ts: 1_000_000,
-            save_mid_iteration_data_in_checkpoint: true,
-            timesteps_per_iteration: 50_000,
-            type: "ppo",
-            checkpoint_load_folder: undefined
-        }
-
-        setPPOConfig(modifiedPPOConfig)
         setEditMode(false);
-    }
-
-    const ppoLearnerConfig = () => {
-        return ppoConfig().learner_config;
     }
 
     const setPPOLearnerConfig = (model: PPOLearnerConfigModel) => {
         setPPOConfig({
-            ...ppoConfig(),
+            ...ppoConfig,
             learner_config: model
         })
     }
@@ -86,10 +50,11 @@ function PPOConfigEditor({ppoConfig, setPPOConfig, agentKey}: PPOConfigEditorArg
                 <div className="d-flex">
                     <p className="fw-bold border-bottom w-25">{agentKey}</p>
                     <button className="btn btn-dark" onClick={() => setEditMode(true)}><i className="bi bi-pencil-fill"></i></button>
+                    <button className="btn btn-danger" onClick={() => deleteAgent(agentKey)}><i className="bi bi-x"></i></button>
                 </div>
 
                 
-                <p className="text-break">{JSON.stringify(ppoConfig())}</p>
+                <p className="text-break">{JSON.stringify(ppoConfig)}</p>
             </div>
             
         )
@@ -98,7 +63,7 @@ function PPOConfigEditor({ppoConfig, setPPOConfig, agentKey}: PPOConfigEditorArg
     return (
         <>
             {configFields()}
-            <PPOLearnerConfigEditor ppoLearnerConfig={ppoLearnerConfig} setPPOLearnerConfig={setPPOLearnerConfig}></PPOLearnerConfigEditor>
+            <PPOLearnerConfigEditor ppoLearnerConfig={ppoConfig.learner_config} setPPOLearnerConfig={setPPOLearnerConfig}></PPOLearnerConfigEditor>
         </>
     )
 }
