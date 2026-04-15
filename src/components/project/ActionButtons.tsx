@@ -1,4 +1,13 @@
-function ActionButtons({setCurrentProject, fetchProjectData, removeProject, startEntrypoint}) {
+import type { ProjectMetadata } from "../../models/project"
+
+interface ActionButtonsArgs{
+  setCurrentProject: (metadata: ProjectMetadata | undefined) => void,
+  fetchProjectData: () => void,
+  removeProject: () => void,
+  startEntrypoint: () => void
+}
+
+function ActionButtons({setCurrentProject, fetchProjectData, removeProject, startEntrypoint}: ActionButtonsArgs) {
   return (
     <div className="d-flex btn-group">
         <button className="btn btn-secondary" onClick={() => setCurrentProject(undefined)}>Go back to home screen</button>

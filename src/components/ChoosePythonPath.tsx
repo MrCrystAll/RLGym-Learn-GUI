@@ -1,4 +1,8 @@
-function ChoosePythonPath({setPythonPath}) {
+interface ChoosePythonPathArgs{
+    setPythonPath: (path: string) => void
+}
+
+function ChoosePythonPath({setPythonPath}: ChoosePythonPathArgs) {
     const openDialog = () => {
         const result: Promise<string[] | undefined> = window.api.openPythonPathDialog();
         result.then(

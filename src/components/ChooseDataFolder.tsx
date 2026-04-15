@@ -1,4 +1,9 @@
-function ChooseDataFolder({setFolderPath, getAllProjects}) {
+interface ChooseDataFolderArgs{
+    setFolderPath: (path: string | undefined) => void
+    getAllProject: () => void
+}
+
+function ChooseDataFolder({setFolderPath, getAllProjects}: ChooseDataFolderArgs) {
     const openDialog = () => {
         const result: Promise<string[] | undefined> = window.api.openFolderPathDialog();
         result.then(

@@ -1,4 +1,9 @@
-function IdleAPI({checkAPIConnection, refresingApiStatus}){
+interface IdleAPIArgs{
+  checkAPIConnection: () => void,
+  refreshingAPIStatus: boolean
+}
+
+function IdleAPI({checkAPIConnection, refreshingAPIStatus}: IdleAPIArgs){
     return (
       <div className="d-flex justify-content-center align-items-center vh-100 flex-column bg-dark">
 
@@ -14,9 +19,9 @@ function IdleAPI({checkAPIConnection, refresingApiStatus}){
         </div>
       </div>
         <h4 className="fw-medium text-white">Waiting for API</h4>
-        <button className="btn btn-dark mt-3" onClick={checkAPIConnection} disabled={refresingApiStatus}>
-          {refresingApiStatus ? "Refreshing" : "Refresh"}
-          <i className="ms-2 bi bi-arrow-clockwise" hidden={refresingApiStatus}></i>
+        <button className="btn btn-dark mt-3" onClick={checkAPIConnection} disabled={refreshingAPIStatus}>
+          {refreshingAPIStatus ? "Refreshing" : "Refresh"}
+          <i className="ms-2 bi bi-arrow-clockwise" hidden={refreshingAPIStatus}></i>
         </button>
       </div>
     )

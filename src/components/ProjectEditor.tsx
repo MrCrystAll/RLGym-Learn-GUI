@@ -1,12 +1,24 @@
 import { useEffect, useState } from "react"
 import ActionButtons from "./project/ActionButtons"
-import ProjectMetadata from "./project/ProjectMetadata"
+import ProjectMetadataEditor from "./project/ProjectMetadataEditor"
 import axios, { type AxiosResponse } from "axios";
-import ProjectData from "./project/ProjectData";
+import ProjectDataEditor from "./project/ProjectDataEditor";
 import { BASE_URL } from "../api";
-function Project({checkAPIStatus, projectMetadata, updateProject, setCurrentProject, removeProject, startProjectEntrypoint}) {
+import { type ProjectData, type Project, type ProjectMetadata } from "../models/project";
+import type { LearningCoordinatorConfigModel } from "../models/rlgym-learn/api";
 
-    const [projectData, setProjectData] = useState();
+interface ProjectEditorArgs{
+    checkAPIStatus: () => void
+    projectMetadata: ProjectMetadata,
+    updateProjectMetadata: (metadata: ProjectMetadata) => void,
+    setCurrentProject: (project: Project | undefined) => void,
+    removeProject: (metadata: ProjectMetadata) => void,
+    startProjectEntrypoint: (metadata: ProjectMetadata, callback: () => void) => void;
+}
+
+function Project({checkAPIStatus, projectMetadata, updateProjectMetadata, setCurrentProject, removeProject, startProjectEntrypoint}: ProjectEditorArgs) {
+
+    const [projectData, setProjectData] = useState<ProjectData>();
     const [loggerActive, setLoggerActive] = useState(false);
 
     const fetchProjectData = async () => {
@@ -44,7 +56,7 @@ function Project({checkAPIStatus, projectMetadata, updateProject, setCurrentProj
             }
         }).then(
             () => {
-                updateProject({
+                updateProjectMetadata({
                     ...projectMetadata,
                     name: name
                 })
@@ -52,7 +64,7 @@ function Project({checkAPIStatus, projectMetadata, updateProject, setCurrentProj
         )
     }
 
-    const updateProjectConfig = async(config) => {
+    const updateProjectConfig = async(config: LearningCoordinatorConfigModel) => {
         setProjectData({
             ...projectData,
             learningCoordinatorConfigModel: config
@@ -85,7 +97,7 @@ function Project({checkAPIStatus, projectMetadata, updateProject, setCurrentProj
             () => {
                 setProjectData({
                     ...projectData,
-                    interpreter: path
+                    interpreter: path,
                 })
             }
         )
@@ -106,14 +118,14 @@ function Project({checkAPIStatus, projectMetadata, updateProject, setCurrentProj
     <div className="bg-dark text-light">
         <header>
             <div className="pt-2">
-                <ProjectMetadata updateProjectName={updateProjectName} projectMetadata={projectMetadata}></ProjectMetadata>
+                <ProjectMetadataEditor updateProjectName={updateProjectName} projectMetadata={projectMetadata}></ProjectMetadataEditor>
             </div>
         </header>
 
         <hr className="border border-light mx-5"/>
 
         <div className="p-2 mp-5">
-            <ProjectData updateProjectConfig={updateProjectConfig} projectType={projectMetadata.type} setProjectData={setProjectData} updatePythonInterpreter={updatePythonInterpreter} loggerActive={loggerActive} setLoggerActive={setLoggerActive} projectData={projectData}></ProjectData>
+            <ProjectDataEditor updateProjectConfig={updateProjectConfig} projectType={projectMetadata.type} setProjectData={setProjectData} updatePythonInterpreter={updatePythonInterpreter} loggerActive={loggerActive} setLoggerActive={setLoggerActive} projectData={projectData}></ProjectDataEditor>
         </div>
         
         <footer className="border border-dark bg-dark">

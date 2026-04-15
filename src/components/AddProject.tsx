@@ -1,20 +1,24 @@
 import { useState } from "react"
 import type { ProjectType } from "../models/project";
 
-function AddProject({addProject}) {
+interface AddProjectArgs{
+  addProject: (name: string) => void
+}
+
+function AddProject({addProject}: AddProjectArgs) {
   const [creating, setCreating] = useState(false);
 
   const [nameError, setNameError] = useState("");
 
-  const createProject = (name: string, type: ProjectType) => {
+  const createProject = (name: string) => {
     setCreating(false);
-    addProject(name, type);
+    addProject(name);
   }
 
-  const create = (formData) => {
+  const create = (formData: FormData) => {
     
     // Name validation
-    const name: string | undefined = formData.get("projectName");
+    const name: string | undefined = formData.get("projectName")?.toString();
 
     if(name === undefined || name.trim().length == 0 || name.trim().length > 25){
       setNameError("Name needs to have a value or be shorter than 25 characters");
@@ -23,9 +27,7 @@ function AddProject({addProject}) {
 
     setNameError("");
 
-    const type: ProjectType = formData.get("projectType")
-
-    createProject(name.trim(), type)
+    createProject(name.trim())
   }
 
   if(creating){
@@ -37,21 +39,6 @@ function AddProject({addProject}) {
             <input type="text" name="projectName" className="form-control" id="pName" aria-describedby="pName-help" placeholder="My best project"/>
             <small id="pName-help" className="form-text text-muted">The name for your project</small>
             <p className="form-text text-danger">{nameError}</p>
-          </div>
-
-          <p>Type of project</p>
-          <div className="d-flex justify-content-around form-group text-light">
-            
-            <div>
-              <label htmlFor="rlgymLearnChoice" className="me-2">rlgym-learn</label>
-              <input type="radio" name="projectType" id="rlgymLearnChoice" value={"rlgym-learn"}/>
-            </div>
-            <div>
-              <label htmlFor="defaultChoice" className="me-2">default</label>
-              <input type="radio" name="projectType" id="defaultChoice" value={"unknown"} defaultChecked={true}/>
-            </div>
-            
-           
           </div>
 
 

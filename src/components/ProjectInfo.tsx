@@ -1,4 +1,11 @@
-function ProjectInfo({project, setCurrentProject}) {
+import type { ProjectMetadata } from "../models/project"
+
+interface ProjectInfoArgs {
+  project: ProjectMetadata,
+  setCurrentProject: (metadata: ProjectMetadata) => void
+}
+
+function ProjectInfo({project, setCurrentProject}: ProjectInfoArgs) {
   return (
     <div className="card w-25" onClick={() => setCurrentProject(project)}>
         <div className="card-header" style={{cursor: "pointer"}}>

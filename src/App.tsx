@@ -4,7 +4,7 @@ import AddProject from "./components/AddProject"
 import axios, { AxiosError, type AxiosResponse } from "axios";
 import type { ProjectMetadata, ProjectType } from "./models/project";
 import ProjectInfo from "./components/ProjectInfo";
-import Project from "./components/Project";
+import Project from "./components/ProjectEditor";
 import { BASE_URL } from "./api";
 import IdleAPI from "./components/IdleAPI";
 import IdleFolderPath from "./components/IdleFolderPath";
@@ -66,11 +66,7 @@ function App() {
   }
 
   useEffect(() => {
-    checkAPIConnection()
-    // setInterval(
-    //   checkAPIConnection,
-    //   10000
-    // )
+    checkAPIConnection();
   }, [])
 
   const getAllProjects = async (path: string) => {
@@ -181,7 +177,7 @@ function App() {
   }
   else{
     return (
-      <Project checkAPIStatus={checkAPIConnection} startProjectEntrypoint={startProjectEntrypoint} setCurrentProject={setCurrentProject} updateProject={updateProject} removeProject={removeProject} projectMetadata={currentProject}></Project>
+      <Project checkAPIStatus={checkAPIConnection} startProjectEntrypoint={startProjectEntrypoint} setCurrentProject={setCurrentProject} updateProjectMetadata={updateProject} removeProject={removeProject} projectMetadata={currentProject}></Project>
   )}
 
   

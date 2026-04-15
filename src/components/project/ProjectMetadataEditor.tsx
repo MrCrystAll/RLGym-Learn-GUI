@@ -6,7 +6,7 @@ interface ProjectMetadataArgs {
   updateProjectName: (name: string) => void
 }
 
-function ProjectMetadata({projectMetadata, updateProjectName}: ProjectMetadataArgs) {
+function ProjectMetadataEditor({projectMetadata, updateProjectName}: ProjectMetadataArgs) {
 
   const [editingName, setEditingName] = useState(false);
   const [nameEditionError, setNameEditionError] = useState("");
@@ -74,4 +74,4 @@ function ProjectMetadata({projectMetadata, updateProjectName}: ProjectMetadataAr
   )
 }
 
-export default ProjectMetadata
+export default ProjectMetadataEditor

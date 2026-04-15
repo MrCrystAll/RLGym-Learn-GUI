@@ -125,13 +125,12 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
         }
         else{
             return <>
-            {addController()}
 
             <div>
                 <BaseConfigEditor baseConfig={learningCoordinatorConfig.base_config} setBaseConfig={setBaseConfigModel}/>
                 <ProcessConfigEditor processConfig={learningCoordinatorConfig.process_config} setProcessConfig={setProcessConfigModel}/>
                 <AgentControllersEditor deleteAgent={deleteController} agentControllersConfigModel={learningCoordinatorConfig.agent_controllers_config} updateControllerConfigModel={setAgentControllerConfigModel}/>
-                <button className="btn btn-success w-100" type="submit">Submit</button>
+                {addController()}
             </div>
             </>
         }

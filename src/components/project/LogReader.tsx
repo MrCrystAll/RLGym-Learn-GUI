@@ -1,7 +1,15 @@
 import { useEffect } from "react";
+import type { LineEntry } from "../../api";
 
+interface LogReaderArgs{
+  active: boolean,
+  logPath: string,
+  lines: LineEntry[],
+  setLines: (lines: LineEntry[]) => void,
+  maxLines: number
+}
 
-function LogReader({active, logPath, lines, setLines, maxLines}) {
+function LogReader({active, logPath, lines, setLines, maxLines}: LogReaderArgs) {
     useEffect(() => {
       
       window.api.removeAllListeners();

@@ -4,10 +4,20 @@ import ChoosePythonPath from "../ChoosePythonPath";
 import LearningCoordinatorConfigEditor from "./rlgym-learn/LearningCoordinatorConfigEditor";
 import type { LearningCoordinatorConfigModel } from "../../models/rlgym-learn/api";
 import { DEFAULT_LEARNING_COORDINATOR_CONFIG } from "./rlgym-learn/default_config";
+import type { ProjectData } from "../../models/project";
 
 const MAX_LINES: number = 15;
 
-function ProjectData({projectData, setProjectData, projectType, loggerActive, setLoggerActive, updatePythonInterpreter, updateProjectConfig}) {
+interface ProjectDataEditorArgs{
+    projectData: ProjectData | undefined,
+    setProjectData: (data: ProjectData) => void,
+    loggerActive: boolean,
+    setLoggerActive: (active: boolean) => void,
+    updatePythonInterpreter: (path: string) => void,
+    updateProjectConfig: (config: LearningCoordinatorConfigModel) => void
+}
+
+function ProjectDataEditor({projectData, setProjectData, loggerActive, setLoggerActive, updatePythonInterpreter, updateProjectConfig}: ProjectDataEditorArgs) {
     const [lines, setLines] = useState([]);
 
     useEffect(() => {
@@ -18,8 +28,10 @@ function ProjectData({projectData, setProjectData, projectType, loggerActive, se
             )
 
             if(projectData.learningCoordinatorConfigModel === undefined){
-                projectData.learningCoordinatorConfigModel = DEFAULT_LEARNING_COORDINATOR_CONFIG;
-                console.log("Object is undefined, redefining to default");
+                setProjectData({
+                    ...projectData,
+                    learningCoordinatorConfigModel: DEFAULT_LEARNING_COORDINATOR_CONFIG
+                })
                 
             }
         }
@@ -33,11 +45,11 @@ function ProjectData({projectData, setProjectData, projectType, loggerActive, se
     }, [])
 
     const rewardFiles = () => {
-        if(projectData.rewards_files.length > 0){
+        if(projectData?.rewards_files.length > 0){
             return (
                 <>
                     <p>Reward files:</p>
-                    {projectData.rewards_files.map((file: string, index: number) => <p key={index}>{file}</p>)}
+                    {projectData?.rewards_files.map((file: string, index: number) => <p key={index}>{file}</p>)}
                 </>
             )
         }
@@ -49,7 +61,7 @@ function ProjectData({projectData, setProjectData, projectType, loggerActive, se
     }
     
     const entrypoint = () => {
-        if(projectData.entrypoint !== undefined)
+        if(projectData?.entrypoint !== undefined)
         {
             return (
                 <p><b>Entrypoint:</b> {projectData.entrypoint}</p>
@@ -67,7 +79,7 @@ function ProjectData({projectData, setProjectData, projectType, loggerActive, se
     }
 
     const stdoutLog = () => {
-        if(projectData.log_config.stdout_log !== undefined)
+        if(projectData?.log_config.stdout_log !== undefined)
         {
             if(lines.length > 0 || loggerActive){
                 return (
@@ -102,12 +114,6 @@ function ProjectData({projectData, setProjectData, projectType, loggerActive, se
             <p>No data found for this project</p>
         )
     }
-    else if(projectType == "rlgym-learn")
-    {
-        return (
-                <LearningCoordinatorConfigEditor learningCoordinatorConfig={projectData.learningCoordinatorConfigModel} setLearningCoordinatorConfig={updateConfig}/>
-        )
-    }
     else{
         return (
             <div className="bg-dark text-light">
@@ -115,8 +121,7 @@ function ProjectData({projectData, setProjectData, projectType, loggerActive, se
                     <p>Python interpreter: {projectData.interpreter}</p>
                     <ChoosePythonPath setPythonPath={updatePythonInterpreter}></ChoosePythonPath>
                 </div>
-                {rewardFiles()}
-                {entrypoint()}
+                <LearningCoordinatorConfigEditor learningCoordinatorConfig={projectData.learningCoordinatorConfigModel} setLearningCoordinatorConfig={updateConfig}/>
                 <hr className="border border-light mx-2"/>
                 {stdoutLog()}
             </div>
@@ -126,4 +131,4 @@ function ProjectData({projectData, setProjectData, projectType, loggerActive, se
   
 }
 
-export default ProjectData
+export default ProjectDataEditor
