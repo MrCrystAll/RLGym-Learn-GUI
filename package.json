@@ -1,5 +1,5 @@
 {
-  "name": "project-organizer",
+  "name": "rlgym-learn-gui",
   "private": true,
   "version": "0.0.0",
   "main": "electron/main.js",
@@ -14,8 +14,8 @@
     "dist": "npm run build && electron-builder"
   },
   "build": {
-    "appId": "com.cryystall.project_organizer",
-    "productName": "Project organizer",
+    "appId": "com.cryystall.rlgym_learn_gui",
+    "productName": "RLGym Learn GUI",
     "files": [
       "dist/**/*",
       "electron/**/*"

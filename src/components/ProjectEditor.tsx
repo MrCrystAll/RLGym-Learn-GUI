@@ -4,19 +4,19 @@ import ProjectMetadataEditor from "./project/ProjectMetadataEditor"
 import axios, { type AxiosResponse } from "axios";
 import ProjectDataEditor from "./project/ProjectDataEditor";
 import { BASE_URL } from "../api";
-import { type ProjectData, type Project, type ProjectMetadata } from "../models/project";
+import { type ProjectData, type ProjectMetadata } from "../models/project";
 import type { LearningCoordinatorConfigModel } from "../models/rlgym-learn/api";
 
 interface ProjectEditorArgs{
     checkAPIStatus: () => void
     projectMetadata: ProjectMetadata,
     updateProjectMetadata: (metadata: ProjectMetadata) => void,
-    setCurrentProject: (project: Project | undefined) => void,
+    setCurrentProject: (project: ProjectMetadata | undefined) => void,
     removeProject: (metadata: ProjectMetadata) => void,
     startProjectEntrypoint: (metadata: ProjectMetadata, callback: () => void) => void;
 }
 
-function Project({checkAPIStatus, projectMetadata, updateProjectMetadata, setCurrentProject, removeProject, startProjectEntrypoint}: ProjectEditorArgs) {
+function ProjectEditor({checkAPIStatus, projectMetadata, updateProjectMetadata, setCurrentProject, removeProject, startProjectEntrypoint}: ProjectEditorArgs) {
 
     const [projectData, setProjectData] = useState<ProjectData>();
     const [loggerActive, setLoggerActive] = useState(false);
@@ -125,7 +125,7 @@ function Project({checkAPIStatus, projectMetadata, updateProjectMetadata, setCur
         <hr className="border border-light mx-5"/>
 
         <div className="p-2 mp-5">
-            <ProjectDataEditor updateProjectConfig={updateProjectConfig} projectType={projectMetadata.type} setProjectData={setProjectData} updatePythonInterpreter={updatePythonInterpreter} loggerActive={loggerActive} setLoggerActive={setLoggerActive} projectData={projectData}></ProjectDataEditor>
+            <ProjectDataEditor updateProjectConfig={updateProjectConfig} setProjectData={setProjectData} updatePythonInterpreter={updatePythonInterpreter} loggerActive={loggerActive} setLoggerActive={setLoggerActive} projectData={projectData}></ProjectDataEditor>
         </div>
         
         <footer className="border border-dark bg-dark">
@@ -138,4 +138,4 @@ function Project({checkAPIStatus, projectMetadata, updateProjectMetadata, setCur
   )
 }
 
-export default Project
+export default ProjectEditor

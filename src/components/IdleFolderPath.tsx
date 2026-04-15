@@ -2,7 +2,7 @@ import ChooseDataFolder from "./ChooseDataFolder"
 
 interface IdleFolderPathConfig{
   getAllProjects: (path: string) => void,
-  setFolderPath: (path: string) => void
+  setFolderPath: (path: string | undefined) => void
 }
 
 function IdleFolderPath({getAllProjects, setFolderPath}: IdleFolderPathConfig){

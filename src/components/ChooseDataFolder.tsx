@@ -1,6 +1,6 @@
 interface ChooseDataFolderArgs{
     setFolderPath: (path: string | undefined) => void
-    getAllProject: () => void
+    getAllProjects: (path: string) => void
 }
 
 function ChooseDataFolder({setFolderPath, getAllProjects}: ChooseDataFolderArgs) {

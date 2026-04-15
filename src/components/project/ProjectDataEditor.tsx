@@ -5,6 +5,7 @@ import LearningCoordinatorConfigEditor from "./rlgym-learn/LearningCoordinatorCo
 import type { LearningCoordinatorConfigModel } from "../../models/rlgym-learn/api";
 import { DEFAULT_LEARNING_COORDINATOR_CONFIG } from "./rlgym-learn/default_config";
 import type { ProjectData } from "../../models/project";
+import type { LineEntry } from "../../api";
 
 const MAX_LINES: number = 15;
 
@@ -18,7 +19,7 @@ interface ProjectDataEditorArgs{
 }
 
 function ProjectDataEditor({projectData, setProjectData, loggerActive, setLoggerActive, updatePythonInterpreter, updateProjectConfig}: ProjectDataEditorArgs) {
-    const [lines, setLines] = useState([]);
+    const [lines, setLines] = useState<LineEntry[]>([]);
 
     useEffect(() => {
         // Only update logs if there aren't any already
@@ -43,22 +44,6 @@ function ProjectDataEditor({projectData, setProjectData, loggerActive, setLogger
             window.api.removeAllListeners();
         }
     }, [])
-
-    const rewardFiles = () => {
-        if(projectData?.rewards_files.length > 0){
-            return (
-                <>
-                    <p>Reward files:</p>
-                    {projectData?.rewards_files.map((file: string, index: number) => <p key={index}>{file}</p>)}
-                </>
-            )
-        }
-        else{
-            return (
-                <p>No reward files found</p>
-            )
-        }
-    }
     
     const entrypoint = () => {
         if(projectData?.entrypoint !== undefined)
@@ -121,6 +106,7 @@ function ProjectDataEditor({projectData, setProjectData, loggerActive, setLogger
                     <p>Python interpreter: {projectData.interpreter}</p>
                     <ChoosePythonPath setPythonPath={updatePythonInterpreter}></ChoosePythonPath>
                 </div>
+                {entrypoint()}
                 <LearningCoordinatorConfigEditor learningCoordinatorConfig={projectData.learningCoordinatorConfigModel} setLearningCoordinatorConfig={updateConfig}/>
                 <hr className="border border-light mx-2"/>
                 {stdoutLog()}

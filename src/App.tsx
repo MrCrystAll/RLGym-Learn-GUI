@@ -2,25 +2,25 @@
 import { useEffect, useState } from "react";
 import AddProject from "./components/AddProject"
 import axios, { AxiosError, type AxiosResponse } from "axios";
-import type { ProjectMetadata, ProjectType } from "./models/project";
+import type { ProjectMetadata } from "./models/project";
 import ProjectInfo from "./components/ProjectInfo";
-import Project from "./components/ProjectEditor";
 import { BASE_URL } from "./api";
 import IdleAPI from "./components/IdleAPI";
 import IdleFolderPath from "./components/IdleFolderPath";
+import ProjectEditor from "./components/ProjectEditor";
 
 function App() {
-  const [folderPath, setFolderPath] = useState();
-  const [projectList, setProjectList] = useState([]);
+  const [folderPath, setFolderPath] = useState<string | undefined>();
+  const [projectList, setProjectList] = useState<ProjectMetadata[]>([]);
   const [error, setError] = useState("");
-  const [currentProject, setCurrentProject] = useState();
+  const [currentProject, setCurrentProject] = useState<ProjectMetadata>();
 
   // API
   const [apiStatus, setApiStatus] = useState(false);
   const [refresingApiStatus, setRefreshingApiStatus] = useState(false);
 
 
-  const addProject = async (name: string, type: ProjectType) => {
+  const addProject = async (name: string) => {
     if(folderPath === undefined) {
       setError("You need to specify a folder path to add a project")
       return
@@ -29,8 +29,7 @@ function App() {
     const project: ProjectMetadata = {
       id: crypto.randomUUID(),
       name: name,
-      path: undefined,
-      type: type
+      path: undefined
     }
 
     axios({
@@ -113,7 +112,7 @@ function App() {
     
     setProjectList([...filteredList, project])
 
-    if(project.id == currentProject.id)
+    if(project.id == currentProject?.id)
     {
       setCurrentProject(project);
     }
@@ -151,7 +150,7 @@ function App() {
   if(!apiStatus)
   {
     return (
-      <IdleAPI checkAPIConnection={checkAPIConnection} refresingApiStatus={refresingApiStatus}></IdleAPI>
+      <IdleAPI checkAPIConnection={checkAPIConnection} refreshingAPIStatus={refresingApiStatus}></IdleAPI>
       )
   }
   else if(folderPath === undefined){
@@ -177,7 +176,7 @@ function App() {
   }
   else{
     return (
-      <Project checkAPIStatus={checkAPIConnection} startProjectEntrypoint={startProjectEntrypoint} setCurrentProject={setCurrentProject} updateProjectMetadata={updateProject} removeProject={removeProject} projectMetadata={currentProject}></Project>
+      <ProjectEditor checkAPIStatus={checkAPIConnection} startProjectEntrypoint={startProjectEntrypoint} setCurrentProject={setCurrentProject} updateProjectMetadata={updateProject} removeProject={removeProject} projectMetadata={currentProject}/>
   )}
 
   
