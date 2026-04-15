@@ -40,6 +40,11 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
 
     const [addingController, setAddingController] = useState(false);
 
+    const onAgentCancel = () => {
+        setAgentKeyError("");
+        setAddingController(false)
+    }
+
     const onAgentAddSubmit = (formData: FormData) => {
 
         const name: string | undefined = formData.get("agentKey")?.toString();
@@ -84,8 +89,7 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
     const addController = () => {
         if (addingController){
             return (
-                <>
-                    <hr/>
+                <div className="mt-3 border p-3">
                     
                     <p className="display-6">Creating agent controller</p>
                     <form action={onAgentAddSubmit}>
@@ -107,15 +111,18 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
                                 <input type="radio" name="type" value={"dqn"} className="form-check-input ms-2" id="dqn"></input>
                             </div>
                         </div>
-                        <button className="btn btn-secondary" type="submit">Add controller</button>
+                        <div className="btn-group">
+                            <button className="btn btn-secondary" type="submit">Add controller</button>
+                            <button className="btn btn-danger" type="button" onClick={onAgentCancel}>Cancel</button>
+                        </div>
                     </form>
                     
                     <hr/>
-                </>
+                </div>
             )
         }
         else{
-            return <button className="btn btn-primary" onClick={() => setAddingController(true)}>Add a controller</button>
+            return <button className="btn btn-primary mt-3" onClick={() => setAddingController(true)}>Add a controller</button>
         }
     }
 

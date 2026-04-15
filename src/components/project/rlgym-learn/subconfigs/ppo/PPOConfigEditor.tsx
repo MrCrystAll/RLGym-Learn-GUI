@@ -145,8 +145,8 @@ function PPOConfigEditor({ppoConfig, setPPOConfig, agentKey, deleteAgent}: PPOCo
     const configFields = () => {
         if(editMode){
             return (
-                <div className="border p-3">
-                    <p className="display-5">PPO config options</p>
+                <div className="p-3">
+                    <p className="display-5">"{agentKey}" (PPO) config options</p>
                     <hr/>
                     <form action={onSubmit} className="d-flex justify-content-between">
                         <div className="col-5">
@@ -228,7 +228,7 @@ function PPOConfigEditor({ppoConfig, setPPOConfig, agentKey, deleteAgent}: PPOCo
             )
         }
         return (
-            <div className="border p-2">
+            <div className="p-2">
 
                 <div className="d-flex">
                     <p className="fw-bold border-bottom w-25">{agentKey}</p>
@@ -244,10 +244,10 @@ function PPOConfigEditor({ppoConfig, setPPOConfig, agentKey, deleteAgent}: PPOCo
     }
     
     return (
-        <>
+        <div className="border">
             {configFields()}
-            <PPOLearnerConfigEditor ppoLearnerConfig={ppoConfig.learner_config} setPPOLearnerConfig={setPPOLearnerConfig}></PPOLearnerConfigEditor>
-        </>
+            <PPOLearnerConfigEditor agentKey={agentKey} ppoLearnerConfig={ppoConfig.learner_config} setPPOLearnerConfig={setPPOLearnerConfig}></PPOLearnerConfigEditor>
+        </div>
     )
 }
 
