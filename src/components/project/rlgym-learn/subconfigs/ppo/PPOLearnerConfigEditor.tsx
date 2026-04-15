@@ -11,7 +11,7 @@ function PPOLearnerConfigEditor({ppoLearnerConfig, setPPOLearnerConfig}: PPOLear
 
 
     const onSubmit = (formData: FormData) => {
-        
+        setEditMode(false);
     }
 
     if(editMode){
@@ -33,6 +33,7 @@ function PPOLearnerConfigEditor({ppoLearnerConfig, setPPOLearnerConfig}: PPOLear
     }
     return (
         <div className="border p-2">
+            <h3>Learner</h3>
             <p className="text-break">{JSON.stringify(ppoLearnerConfig)}</p>
         </div>
         

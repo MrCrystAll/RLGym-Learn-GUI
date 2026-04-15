@@ -7,12 +7,12 @@ import { DEFAULT_LEARNING_COORDINATOR_CONFIG } from "./rlgym-learn/default_confi
 
 const MAX_LINES: number = 15;
 
-function ProjectData({projectData, setProjectData, projectType, loggerActive, setLoggerActive, updatePythonInterpreter}) {
+function ProjectData({projectData, setProjectData, projectType, loggerActive, setLoggerActive, updatePythonInterpreter, updateProjectConfig}) {
     const [lines, setLines] = useState([]);
 
     useEffect(() => {
         // Only update logs if there aren't any already
-        if(projectData !== undefined){            
+        if(projectData !== undefined){
             window.api.readLogs(projectData.log_config.stdout_log).then(
                 (value) => setLines(value.slice(-MAX_LINES))
             )
@@ -89,13 +89,12 @@ function ProjectData({projectData, setProjectData, projectType, loggerActive, se
         }
     }
     
-    const updateLearningCoordinatorConfigModel = (config: LearningCoordinatorConfigModel) => {
-        console.log(config);
-              
+    const updateConfig = (config: LearningCoordinatorConfigModel) => {
         setProjectData({
             ...projectData,
             learningCoordinatorConfigModel: config
-        })
+        });
+        updateProjectConfig(config);
     }
 
     if(projectData === undefined){
@@ -106,7 +105,7 @@ function ProjectData({projectData, setProjectData, projectType, loggerActive, se
     else if(projectType == "rlgym-learn")
     {
         return (
-                <LearningCoordinatorConfigEditor learningCoordinatorConfig={projectData.learningCoordinatorConfigModel} setLearningCoordinatorConfig={updateLearningCoordinatorConfigModel}/>
+                <LearningCoordinatorConfigEditor learningCoordinatorConfig={projectData.learningCoordinatorConfigModel} setLearningCoordinatorConfig={updateConfig}/>
         )
     }
     else{

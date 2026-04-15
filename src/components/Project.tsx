@@ -52,6 +52,24 @@ function Project({checkAPIStatus, projectMetadata, updateProject, setCurrentProj
         )
     }
 
+    const updateProjectConfig = async(config) => {
+        setProjectData({
+            ...projectData,
+            learningCoordinatorConfigModel: config
+        })
+        checkAPIStatus();
+
+        axios({
+            method: "PUT",
+            baseURL: `${BASE_URL}/project/config`,
+            headers: {},
+            data: {
+                metadata: projectMetadata,
+                config: config
+            }
+        })
+    }
+
     const updatePythonInterpreter = async (path: string) => {
         checkAPIStatus();
 
@@ -95,7 +113,7 @@ function Project({checkAPIStatus, projectMetadata, updateProject, setCurrentProj
         <hr className="border border-light mx-5"/>
 
         <div className="p-2 mp-5">
-            <ProjectData projectType={projectMetadata.type} setProjectData={setProjectData} updatePythonInterpreter={updatePythonInterpreter} loggerActive={loggerActive} setLoggerActive={setLoggerActive} projectData={projectData}></ProjectData>
+            <ProjectData updateProjectConfig={updateProjectConfig} projectType={projectMetadata.type} setProjectData={setProjectData} updatePythonInterpreter={updatePythonInterpreter} loggerActive={loggerActive} setLoggerActive={setLoggerActive} projectData={projectData}></ProjectData>
         </div>
         
         <footer className="border border-dark bg-dark">

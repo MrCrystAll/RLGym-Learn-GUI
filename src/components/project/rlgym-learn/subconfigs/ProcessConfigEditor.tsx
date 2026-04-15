@@ -170,7 +170,7 @@ function ProcessConfigEditor({processConfig, setProcessConfig}:ProcessConfigMode
         </div>
             
 
-            <p>{JSON.stringify(processConfig)}</p>
+            <p className="text-break">{JSON.stringify(processConfig)}</p>
         </>
     )
 }
