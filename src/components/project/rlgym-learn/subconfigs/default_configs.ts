@@ -6,7 +6,7 @@ export const DEFAULT_PROCESS_CONFIG: ProcessConfigModel = {
             recalculate_agent_id_every_step: true,
             render: false,
             render_delay: 0,
-            instance_launch_delay: 0
+            instance_launch_delay: null
         }
 
 export const DEFAULT_BASE_MODEL: BaseConfigModel = {

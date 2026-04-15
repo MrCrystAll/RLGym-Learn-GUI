@@ -1,5 +1,7 @@
 import { useState } from "react";
 import type { PPOLearnerConfigModel } from "../../../../../models/rlgym-learn/api";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { createRules } from "../../../../../models/validators";
 
 interface PPOLearnerConfigEditorArgs{
     ppoLearnerConfig: PPOLearnerConfigModel
@@ -10,8 +12,12 @@ interface PPOLearnerConfigEditorArgs{
 function PPOLearnerConfigEditor({ppoLearnerConfig, setPPOLearnerConfig, agentKey}: PPOLearnerConfigEditorArgs) {
     const [editMode, setEditMode] = useState(false);
 
+    const { register, handleSubmit, reset, formState: {errors} } = useForm<PPOLearnerConfigModel>({
+        defaultValues: ppoLearnerConfig
+    });
 
-    const onSubmit = (formData: FormData) => {
+    const onSubmit: SubmitHandler<PPOLearnerConfigModel> = (data) => {
+        setPPOLearnerConfig(data);
         setEditMode(false);
     }
 
@@ -20,101 +26,90 @@ function PPOLearnerConfigEditor({ppoLearnerConfig, setPPOLearnerConfig, agentKey
             <div className="border m-3 p-3">
                 <p className="display-5">"{agentKey}" (PPO) Learner options</p>
                 <hr/>
-                <form action={onSubmit} className="d-flex justify-content-between">
+                <form onSubmit={handleSubmit(onSubmit)} className="d-flex justify-content-between">
                 <div className="col-5">
                     <div className="form-group mb-3 row">
-                        <label htmlFor="actorLR" className="col-sm-3 col-form-label">Actor LR</label>
+                        <label className="col-sm-3 col-form-label">Actor LR</label>
                         <div className="col-sm-9">
-                            <input type="number" step={0.0000001} name="actorLR" className="form-control" id="actorLR" defaultValue={
-                                ppoLearnerConfig.actor_lr
-                            }/>
+                            <input {...register("actor_lr", {...createRules({required: true, min: 0}), valueAsNumber: true})} type="number" step={0.0000001} className="form-control"/>
+                            <small className="text-danger">{errors.actor_lr?.message}</small>
                         </div>
                     </div>
                     <div className="form-group mb-3 row">
-                        <label htmlFor="criticLR" className="col-sm-3 col-form-label">Critic LR</label>
+                        <label className="col-sm-3 col-form-label">Critic LR</label>
                         <div className="col-sm-9">
-                            <input type="number" step={1E-9} name="criticLR" className="form-control" id="criticLR" defaultValue={
-                                ppoLearnerConfig.critic_lr
-                            }/>
+                            <input type="number" {...register("critic_lr", {...createRules({required: true, min: 0}), valueAsNumber: true})} step={1E-9} className="form-control"/>
+                            <small className="text-danger">{errors.critic_lr?.message}</small>
                         </div>
                     </div>
                     <div className="form-group mb-3 row">
-                        <label htmlFor="advantageNorm" className="col-sm-3 col-form-label">Normalize advantages?</label>
+                        <label className="col-sm-3 col-form-label">Normalize advantages?</label>
                         <div className="col-sm-9">
-                            <input type="checkbox" name="advantageNorm" className="form-check-input" id="advantageNorm" defaultChecked={
-                                ppoLearnerConfig.advantage_normalization
-                            }/>
+                            <input type="checkbox" {...register("advantage_normalization")} className="form-check-input"/>
+                            <small className="text-danger">{errors.advantage_normalization?.message}</small>
                         </div>
                     </div>
                     <div className="form-group mb-3 row">
-                        <label htmlFor="batchSize" className="col-sm-3 col-form-label">Batch size</label>
+                        <label className="col-sm-3 col-form-label">Batch size</label>
                         <div className="col-sm-9">
-                            <input type="number" name="batchSize" className="form-control" id="batchSize" defaultValue={
-                                ppoLearnerConfig.batch_size
-                            }/>
+                            <input type="number" {...register("batch_size", {...createRules({required: true, min: 1}), valueAsNumber: true})} className="form-control"/>
+                            <small className="text-danger">{errors.batch_size?.message}</small>
                         </div>
                     </div>
                     <div className="form-group mb-3 row">
-                        <label htmlFor="clipRange" className="col-sm-3 col-form-label">Clip range</label>
+                        <label className="col-sm-3 col-form-label">Clip range</label>
                         <div className="col-sm-9">
-                            <input type="number" name="clipRange" step={1E-10} className="form-control" id="clipRange" defaultValue={
-                                ppoLearnerConfig.clip_range
-                            }/>
+                            <input type="number" {...register("clip_range", {...createRules({required: true, min: 0}), valueAsNumber: true})} step={1E-10} className="form-control"/>
                         </div>
                     </div>
-                    <button className="btn btn-primary" type="submit">Submit learner config</button>
+                    <div className="btn-group">
+                        <button className="btn btn-primary" type="submit">Submit learner config</button>
+                        <button className="btn btn-danger" type="button" onClick={() => {reset(ppoLearnerConfig); setEditMode(false)}}>Cancel</button>
+                    </div>
                     </div>
                     <div className="col-5">
                         <div className="form-group mb-3 row">
-                            <label htmlFor="cudnn" className="col-sm-3 col-form-label">CUDNN Benchmark mode</label>
+                            <label className="col-sm-3 col-form-label">CUDNN Benchmark mode</label>
                             <div className="col-sm-9">
-                                <input type="checkbox" name="cudnn" className="form-check-input" id="cudnn" defaultChecked={
-                                ppoLearnerConfig.cudnn_benchmark_mode
-                            }/>
+                                <input type="checkbox" {...register("cudnn_benchmark_mode", createRules({required: true}))} className="form-check-input"/>
                             </div>
                         </div>
                         <div className="form-group mb-3 row">
-                            <label htmlFor="device" className="col-sm-3 col-form-label">Device</label>
+                            <label className="col-sm-3 col-form-label">Device</label>
                             <div className="col-sm-9">
-                                <select className="form-select" name="device" id="device">
+                                <select className="form-select" {...register("device", createRules({required: true}))}>
                                     <option value="cpu">CPU</option>
                                     <option value="cuda">CUDA</option>
-                                    <option value="auto" selected>Auto</option>
+                                    <option value="auto">Auto</option>
                                 </select>
                             </div>
                         </div>
 
                         <div className="form-group mb-3 row">
-                            <label htmlFor="dtype" className="col-sm-3 col-form-label">Data type</label>
+                            <label className="col-sm-3 col-form-label">Data type</label>
                             <div className="col-sm-9">
-                                <select className="form-select" name="dtype" id="dtype">
-                                    <option value="float32" selected>Float (32-bit)</option>
+                                <select className="form-select" {...register("dtype", createRules({required: true}))}>
+                                    <option value="float32">Float (32-bit)</option>
                                     <option value="float64">Float (64-bit)</option>
                                 </select>
                             </div>
                         </div>
                         <div className="form-group mb-3 row">
-                            <label htmlFor="entCoef" className="col-sm-3 col-form-label">Entropy coefficient</label>
+                            <label className="col-sm-3 col-form-label">Entropy coefficient</label>
                             <div className="col-sm-9">
-                                <input type="number" name="entCoef" step={1E-10} className="form-control" id="entCoef" defaultValue={
-                                    ppoLearnerConfig.ent_coef
-                                }/>
+                                <input type="number" {...register("ent_coef", {...createRules({required: true, min: 0}), valueAsNumber: true})} step={1E-10} className="form-control"/>
                             </div>
                         </div>
                         <div className="form-group mb-3 row">
-                            <label htmlFor="nEpochs" className="col-sm-3 col-form-label">Number of epochs</label>
+                            <label className="col-sm-3 col-form-label">Number of epochs</label>
                             <div className="col-sm-9">
-                                <input type="number" name="nEpochs" className="form-control" id="nEpochs" defaultValue={
-                                    ppoLearnerConfig.n_epochs   
-                                }/>
+                                <input type="number" {...register("n_epochs", {...createRules({required: true, min: 1}), valueAsNumber: true})} className="form-control"/>
                             </div>
                         </div>
                         <div className="form-group mb-3 row">
-                            <label htmlFor="nMinibatches" className="col-sm-3 col-form-label">Number of mini batches</label>
+                            <label className="col-sm-3 col-form-label">Number of mini batches</label>
                             <div className="col-sm-9">
-                                <input type="number" name="nMinibatches" className="form-control" id="nMinibatches" defaultValue={
-                                    ppoLearnerConfig.n_minibatches   
-                                }/>
+                                <input type="number" {...register("n_minibatches", {...createRules({required: true, min: 1}), valueAsNumber: true})} className="form-control"/>
                             </div>
                         </div>
                     </div>

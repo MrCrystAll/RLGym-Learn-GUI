@@ -1,6 +1,8 @@
 import { useState } from "react";
 import type { PPOAgentControllerConfigModel, PPOLearnerConfigModel } from "../../../../../models/rlgym-learn/api"
 import PPOLearnerConfigEditor from "./PPOLearnerConfigEditor";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { createRules } from "../../../../../models/validators";
 
 interface PPOConfigEditorArgs{
     ppoConfig: PPOAgentControllerConfigModel
@@ -14,115 +16,26 @@ function PPOConfigEditor({ppoConfig, setPPOConfig, agentKey, deleteAgent}: PPOCo
     const [editMode, setEditMode] = useState(false);
     const [checkpointLoadFolder, setCheckpointLoadFolder] = useState<string>();
 
-    const [tsPerIterError, setTsPerIterError] = useState("");
-    const [saveEveryError, setSaveEveryError] = useState("");
-    const [nCheckToKeepError, setNCheckToKeepError] = useState("");
-    const [seedError, setSeedError] = useState("");
-    const [runNameError, setRunNameError] = useState("");
+    const {register, handleSubmit, reset, formState: {errors}} = useForm<PPOAgentControllerConfigModel>({
+        defaultValues: ppoConfig
+    })
 
-    const tsPerIterValidator = (tsPerIter: number) => {
-        if(Number.isNaN(tsPerIter)){
-            setTsPerIterError("The value must be a valid number");
-            return false;
-        }
-        if(tsPerIter <= 0){
-            setTsPerIterError("The value must be superior to 0");
-            return false;
-        }
-        return true;
-    }
+    const onSubmit: SubmitHandler<PPOAgentControllerConfigModel> = (data) => {
 
-    const saveEveryValidator = (saveEvery: number) => {
-        if(Number.isNaN(saveEvery)){
-            setSaveEveryError("The value must be a valid number");
-            return false;
-        }
-        if(saveEvery <= 0){
-            setSaveEveryError("The value must be superior to 0");
-            return false;
-        }
-        return true;
-    }
-
-    const nCheckValidator = (nCheck: number) => {
-        if(Number.isNaN(nCheck)){
-            setNCheckToKeepError("The value must be a valid number");
-            return false;
-        }
-        if(nCheck <= 0){
-            setNCheckToKeepError("The value must be superior to 0");
-            return false;
-        }
-        return true;
-    }
-
-    const seedValidator = (seed: number) => {
-        if(Number.isNaN(seed)){
-            setSeedError("The value must be a valid number");
-            return false;
-        }
-        if(seed <= 0){
-            setSeedError("The value must be superior to 0");
-            return false;
-        }
-        return true;
-    }
-
-    const runNameValidator = (runName: string | undefined) => {
-        if(runName === undefined || runName.trim().length === 0){
-            setRunNameError("This value must be at least 1 character long");
-            return false;
-        }
-        return true;
-    }
-    
-    const onSubmit = (formData: FormData) => {
-        let nErrors = 0;
-
-        const tsPerIter: number  = Number.parseInt(formData.get("tsPerIter")!.toString());
-        const saveEvery: number  = Number.parseInt(formData.get("saveEvery")!.toString());
-
-        // This value has no validators because it can't be undefined or any non boolean value
-        const unixTs: boolean = formData.get("unixTs") === "on";
-
-        const nCheckToKeep: number = Number.parseInt(formData.get("nCheckToKeep")!.toString());
-        const seed: number = Number.parseInt(formData.get("seed")!.toString());
-
-        const saveMidIterationData: boolean = formData.get("saveMidIterationData") === "on";
-
-        const runName: string | undefined = formData.get("runName")?.toString();
-
-        nErrors += tsPerIterValidator(tsPerIter) ? 0 : 1;
-        nErrors += saveEveryValidator(saveEvery) ? 0 : 1;
-        nErrors += nCheckValidator(nCheckToKeep) ? 0 : 1;
-        nErrors += seedValidator(seed) ? 0 : 1;
-        nErrors += runNameValidator(runName) ? 0 : 1;
-
-        if(nErrors > 0) return;
-
-        setTsPerIterError("");
-        setSaveEveryError("");
-        setNCheckToKeepError("");
-        setSeedError("");
-        setRunNameError("");
-        
-
-        const modifiedConfig: PPOAgentControllerConfigModel = {
-            learner_config: ppoConfig.learner_config,
-            experience_buffer_config: ppoConfig.experience_buffer_config,
-            timesteps_per_iteration: tsPerIter,
-            save_every_ts: saveEvery,
-            add_unix_timestamp: unixTs,
+        const finalData: PPOAgentControllerConfigModel = {
+            ...data,
             checkpoint_load_folder: checkpointLoadFolder,
-            n_checkpoints_to_keep: nCheckToKeep,
-            save_mid_iteration_data_in_checkpoint: saveMidIterationData,
-            random_seed: seed,
-            run_name: runName!, // Doing "!" because the validator ensured that this value is not undefined
-            type: "ppo",
-            metrics_logger_config: {} // TODO: Do the metric logger
+            learner_config: ppoConfig.learner_config,
+            experience_buffer_config: ppoConfig.experience_buffer_config
         }
 
-        setPPOConfig(modifiedConfig);
+        setPPOConfig(finalData);
+        setEditMode(false);
+    }
+
+    const onCancel = () => {
+        reset(ppoConfig);
+        setCheckpointLoadFolder(undefined);
         setEditMode(false);
     }
 
@@ -148,77 +61,75 @@ function PPOConfigEditor({ppoConfig, setPPOConfig, agentKey, deleteAgent}: PPOCo
                 <div className="p-3">
                     <p className="display-5">"{agentKey}" (PPO) config options</p>
                     <hr/>
-                    <form action={onSubmit} className="d-flex justify-content-between">
+                    <form onSubmit={handleSubmit(onSubmit)} className="d-flex justify-content-between">
                         <div className="col-5">
                             <div className="form-group mb-3 row">
-                                <label htmlFor="tsPerIter" className="col-sm-3 col-form-label">Timesteps per iteration</label>
+                                <label className="col-sm-3 col-form-label">Timesteps per iteration</label>
                                 <div className="col-sm-9">
-                                    <input type="number" name="tsPerIter" className="form-control" id="tsPerIter" defaultValue={
-                                        ppoConfig.timesteps_per_iteration
-                                    }/>
-                                    <small className="text-danger">{tsPerIterError}</small>
+                                    <input type="number" {...register("timesteps_per_iteration", {...createRules({required: true, min: 1}), valueAsNumber: true})} className="form-control"/>
+                                    <small className="text-danger">{errors.timesteps_per_iteration?.message}</small>
                                 </div>
                             </div>
                             <div className="form-group mb-3 row">
-                                <label htmlFor="saveEvery" className="col-sm-3 col-form-label">Save every</label>
+                                <label className="col-sm-3 col-form-label">Save every</label>
                                 <div className="col-sm-9">
-                                    <input type="number" name="saveEvery" className="form-control" id="saveEvery" defaultValue={
-                                        ppoConfig.save_every_ts
-                                    }/>
-                                    <small className="text-danger">{saveEveryError}</small>
+                                    <input type="number" className="form-control" {...register("save_every_ts", {...createRules({required: true, min: 0}), valueAsNumber: true})}/>
+                                    <small className="text-danger">{errors.save_every_ts?.message}</small>
                                 </div>
                             </div>
                             <div className="form-group mb-3 row">
-                                <label htmlFor="unixTs" className="col-sm-3 col-form-label">Unix timestamp</label>
+                                <label className="col-sm-3 col-form-label">Unix timestamp</label>
                                 <div className="col-sm-9">
-                                    <input type="checkbox" name="unixTs" className="form-check-input" id="unixTs" defaultChecked={
-                                        ppoConfig.add_unix_timestamp
-                                    }/>
+                                    <input type="checkbox" className="form-check-input" {...register("add_unix_timestamp")}/>
                                 </div>
                             </div>
-                            <button className="btn btn-primary" type="submit">Submit PPO config</button>
+                            <div className="btn-group">
+                                <button className="btn btn-primary" type="submit">Submit PPO config</button>
+                                <button className="btn btn-danger" type="button" onClick={onCancel}>Cancel</button>
+                            </div>
                         </div>
                         <div className="col-5">
                             <div className="form-group mb-3 row">
-                                <label htmlFor="loadFolder" className="col-sm-3 col-form-label">Checkpoint load folder</label>
+                                <label className="col-sm-3 col-form-label">Checkpoint load folder</label>
                                 <div className="col-sm-9 d-flex">
                                     <button className="btn btn-dark" onClick={getCheckpointFolder} type="button"><i className="bi bi-folder"></i></button>
                                     <p className="align-content-center text-break">{checkpointLoadFolder === undefined ? "(Optional)" : checkpointLoadFolder}</p>
                                 </div>
                             </div>
                             <div className="form-group mb-3 row">
-                                <label htmlFor="nCheckToKeep" className="col-sm-3 col-form-label">Checkpoints to keep</label>
+                                <label className="col-sm-3 col-form-label">Checkpoints to keep</label>
                                 <div className="col-sm-9">
-                                    <input type="number" name="nCheckToKeep" className="form-control" id="nCheckToKeep" defaultValue={
-                                        ppoConfig.n_checkpoints_to_keep
-                                    }/>
-                                    <small className="text-danger">{nCheckToKeepError}</small>
+                                    <input type="number" className="form-control" {...register(
+                                        "n_checkpoints_to_keep",
+                                        {...createRules({required: true, min: 0}), valueAsNumber: true}
+                                    )}/>
+                                    <small className="text-danger">{errors.n_checkpoints_to_keep?.message}</small>
                                 </div>
                             </div>
                             <div className="form-group mb-3 row">
-                                <label htmlFor="seed" className="col-sm-3 col-form-label">Random seed</label>
+                                <label className="col-sm-3 col-form-label">Random seed</label>
                                 <div className="col-sm-9">
-                                    <input type="number" name="seed" className="form-control" id="seed" defaultValue={
-                                        ppoConfig.random_seed
-                                    }/>
-                                    <small className="text-danger">{seedError}</small>
+                                    <input type="number" className="form-control" {...register(
+                                        "random_seed",
+                                        {...createRules({required: true}), valueAsNumber: true}
+                                    )}/>
+                                    <small className="text-danger">{errors.random_seed?.message}</small>
                                 </div>
                             </div>
                             <div className="form-group mb-3 row">
-                                <label htmlFor="saveMidIterationData" className="col-sm-3 col-form-label">Save mid iteration data in checkpoint</label>
+                                <label className="col-sm-3 col-form-label">Save mid iteration data in checkpoint</label>
                                 <div className="col-sm-9">
-                                    <input type="checkbox" name="saveMidIterationData" className="form-check-input" id="saveMidIterationData" defaultChecked={
-                                        ppoConfig.save_mid_iteration_data_in_checkpoint
-                                    }/>
+                                    <input type="checkbox" className="form-check-input"/>
                                 </div>
                             </div>
                             <div className="form-group mb-3 row">
-                                <label htmlFor="runName" className="col-sm-3 col-form-label">Run name</label>
+                                <label className="col-sm-3 col-form-label">Run name</label>
                                 <div className="col-sm-9">
-                                    <input type="text" name="runName" className="form-control" id="runName" defaultValue={
-                                        ppoConfig.run_name
-                                    }/>
-                                    <small className="text-danger">{runNameError}</small>
+                                    <input type="text" className="form-control" {...register(
+                                        "run_name",
+                                        createRules({required: true})
+                                    )}/>
+                                    <small className="text-danger">{errors.run_name?.message}</small>
                                 </div>
                             </div>
                             

@@ -89,7 +89,6 @@ export interface ExperienceBufferConfigModel {
 }
 
 export interface AgentControllerConfig{
-  type: string
 } 
 
 // -----------------------------

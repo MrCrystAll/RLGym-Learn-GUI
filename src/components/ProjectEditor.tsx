@@ -19,6 +19,7 @@ interface ProjectEditorArgs{
 function ProjectEditor({checkAPIStatus, projectMetadata, updateProjectMetadata, setCurrentProject, removeProject, startProjectEntrypoint}: ProjectEditorArgs) {
 
     const [projectData, setProjectData] = useState<ProjectData>();
+    const [projectConfig, setProjectConfig] = useState<LearningCoordinatorConfigModel>();
     const [loggerActive, setLoggerActive] = useState(false);
 
     const fetchProjectData = async () => {
@@ -33,7 +34,7 @@ function ProjectEditor({checkAPIStatus, projectMetadata, updateProjectMetadata, 
                 metadata: projectMetadata
             }
         }).then(
-            (response: AxiosResponse) => {setProjectData(response.data.project_data);}
+            (response: AxiosResponse) => {setProjectData(response.data.project_data); setProjectConfig(response.data.config)}
         )
     }
 
@@ -65,10 +66,7 @@ function ProjectEditor({checkAPIStatus, projectMetadata, updateProjectMetadata, 
     }
 
     const updateProjectConfig = async(config: LearningCoordinatorConfigModel) => {
-        setProjectData({
-            ...projectData,
-            learningCoordinatorConfigModel: config
-        })
+        setProjectConfig(config)
         checkAPIStatus();
 
         axios({
@@ -114,6 +112,17 @@ function ProjectEditor({checkAPIStatus, projectMetadata, updateProjectMetadata, 
         startProjectEntrypoint(projectMetadata, () => setLoggerActive(false));
     }
 
+    const dataRender = () => {
+        if(projectData !== undefined && projectConfig !== undefined){
+            return <div className="p-2 mp-5">
+            <ProjectDataEditor projectConfig={projectConfig} updateProjectConfig={updateProjectConfig} setProjectData={setProjectData} updatePythonInterpreter={updatePythonInterpreter} loggerActive={loggerActive} setLoggerActive={setLoggerActive} projectData={projectData}></ProjectDataEditor>
+        </div>
+        }
+        else{
+            return <p className="text-secondary">Waiting for project data...</p>
+        }
+    }
+
   return (
     <div className="bg-dark text-light">
         <header>
@@ -124,9 +133,7 @@ function ProjectEditor({checkAPIStatus, projectMetadata, updateProjectMetadata, 
 
         <hr className="border border-light mx-5"/>
 
-        <div className="p-2 mp-5">
-            <ProjectDataEditor updateProjectConfig={updateProjectConfig} setProjectData={setProjectData} updatePythonInterpreter={updatePythonInterpreter} loggerActive={loggerActive} setLoggerActive={setLoggerActive} projectData={projectData}></ProjectDataEditor>
-        </div>
+        {dataRender()}
         
         <footer className="border border-dark bg-dark">
             <div className="m-2">

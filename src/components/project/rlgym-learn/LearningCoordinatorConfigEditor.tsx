@@ -6,7 +6,7 @@ import AgentControllersEditor from "./subconfigs/AgentControllersEditor"
 import { PPO_DEFAULT_CONFIG } from "./subconfigs/ppo/default_config"
 
 export interface LearningCoordinatorConfigEditorArgs{
-    learningCoordinatorConfig: LearningCoordinatorConfigModel | undefined
+    learningCoordinatorConfig: LearningCoordinatorConfigModel
     setLearningCoordinatorConfig: (arg0: LearningCoordinatorConfigModel) => void
 }
 
@@ -56,22 +56,21 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
             return;
         }
 
-        const model = type === "ppo" ? PPO_DEFAULT_CONFIG : {
-            type: "unknown"
-        }
+        const model = type === "ppo" ? PPO_DEFAULT_CONFIG : {}
+        const finalName = type.toUpperCase().concat("-", name);
 
         if(learningCoordinatorConfig?.agent_controllers_config === undefined){
-            setAgentControllersConfigModel({[name]: model})
+            setAgentControllersConfigModel({[finalName]: model})
         }
         else{
-            if(learningCoordinatorConfig?.agent_controllers_config[name] !== undefined){
+            if(learningCoordinatorConfig?.agent_controllers_config[finalName] !== undefined){
                 setAgentKeyError("Agent key already exists, please choose another one.");
                 return;
             }
             else{
                 setAgentControllersConfigModel({
                     ...learningCoordinatorConfig?.agent_controllers_config,
-                    [name]: model
+                    [finalName]: model
                 })
             }
         }

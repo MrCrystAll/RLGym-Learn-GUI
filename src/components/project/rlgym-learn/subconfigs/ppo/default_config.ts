@@ -32,6 +32,5 @@ export const PPO_DEFAULT_CONFIG: PPOAgentControllerConfigModel = {
     save_every_ts: 1_000_000,
     save_mid_iteration_data_in_checkpoint: true,
     timesteps_per_iteration: 50_000,
-    type: "ppo",
     checkpoint_load_folder: null
 }

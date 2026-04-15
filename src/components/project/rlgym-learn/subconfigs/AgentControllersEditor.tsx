@@ -17,11 +17,11 @@ function AgentControllersEditor({agentControllersConfigModel, updateControllerCo
         if(agentControllersConfigModel !== undefined){
             return Object.entries(agentControllersConfigModel).map(
                 (value: [string, AgentControllerConfig]) => {
-                    if(value[1].type == "ppo"){                        
+                    if(value[0].startsWith("PPO")){                        
                         return <PPOConfigEditor key={value[0]} deleteAgent={deleteAgent} agentKey={value[0]} ppoConfig={value[1] as PPOAgentControllerConfigModel} setPPOConfig={(model: AgentControllerConfig) => updateAgentConfig(value[0], model)}/>
                     }
                     else{
-                        return <p key={value[0]}>Unknown type "{value[1].type}" for agent "{value[0]}"</p>
+                        return <p key={value[0]}>Unknown type for agent "{value[0]}"</p>
                     }
                 }
             )

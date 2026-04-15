@@ -3,39 +3,31 @@ import LogReader from "./LogReader"
 import ChoosePythonPath from "../ChoosePythonPath";
 import LearningCoordinatorConfigEditor from "./rlgym-learn/LearningCoordinatorConfigEditor";
 import type { LearningCoordinatorConfigModel } from "../../models/rlgym-learn/api";
-import { DEFAULT_LEARNING_COORDINATOR_CONFIG } from "./rlgym-learn/default_config";
 import type { ProjectData } from "../../models/project";
 import type { LineEntry } from "../../api";
 
 const MAX_LINES: number = 15;
 
 interface ProjectDataEditorArgs{
-    projectData: ProjectData | undefined,
+    projectData: ProjectData,
     setProjectData: (data: ProjectData) => void,
+
     loggerActive: boolean,
     setLoggerActive: (active: boolean) => void,
+
     updatePythonInterpreter: (path: string) => void,
+
     updateProjectConfig: (config: LearningCoordinatorConfigModel) => void
+    projectConfig: LearningCoordinatorConfigModel
 }
 
-function ProjectDataEditor({projectData, setProjectData, loggerActive, setLoggerActive, updatePythonInterpreter, updateProjectConfig}: ProjectDataEditorArgs) {
+function ProjectDataEditor({projectData, setProjectData, loggerActive, setLoggerActive, updatePythonInterpreter, updateProjectConfig, projectConfig}: ProjectDataEditorArgs) {
     const [lines, setLines] = useState<LineEntry[]>([]);
 
     useEffect(() => {
-        // Only update logs if there aren't any already
-        if(projectData !== undefined){
-            window.api.readLogs(projectData.log_config.stdout_log).then(
-                (value) => setLines(value.slice(-MAX_LINES))
-            )
-
-            if(projectData.learningCoordinatorConfigModel === undefined){
-                setProjectData({
-                    ...projectData,
-                    learningCoordinatorConfigModel: DEFAULT_LEARNING_COORDINATOR_CONFIG
-                })
-                
-            }
-        }
+        window.api.readLogs(projectData.log_config.stdout_log).then(
+            (value: LineEntry[]) => setLines(value.slice(-MAX_LINES))
+        )
         
     }, [projectData])
 
@@ -46,7 +38,7 @@ function ProjectDataEditor({projectData, setProjectData, loggerActive, setLogger
     }, [])
     
     const entrypoint = () => {
-        if(projectData?.entrypoint !== undefined)
+        if(projectData.entrypoint !== undefined)
         {
             return (
                 <p><b>Entrypoint:</b> {projectData.entrypoint}</p>
@@ -63,8 +55,8 @@ function ProjectDataEditor({projectData, setProjectData, loggerActive, setLogger
         setLines([]);
     }
 
-    const stdoutLog = () => {
-        if(projectData?.log_config.stdout_log !== undefined)
+    const stdoutLog = () => {        
+        if(projectData.log_config.stdout_log !== undefined)
         {
             if(lines.length > 0 || loggerActive){
                 return (
@@ -107,7 +99,7 @@ function ProjectDataEditor({projectData, setProjectData, loggerActive, setLogger
                     <ChoosePythonPath setPythonPath={updatePythonInterpreter}></ChoosePythonPath>
                 </div>
                 {entrypoint()}
-                <LearningCoordinatorConfigEditor learningCoordinatorConfig={projectData.learningCoordinatorConfigModel} setLearningCoordinatorConfig={updateConfig}/>
+                <LearningCoordinatorConfigEditor learningCoordinatorConfig={projectConfig} setLearningCoordinatorConfig={updateConfig}/>
                 <hr className="border border-light mx-2"/>
                 {stdoutLog()}
             </div>
