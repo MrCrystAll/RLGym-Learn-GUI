@@ -31,7 +31,7 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-hook-form": "^7.72.1",
-    "rlgym-learn-client": "file:../../Void_API/client/rlgym-learn-client-0.1.0.tgz"
+    "rlgym-learn-client": "file:../RLGym-Learn-API/client/rlgym-learn-client-0.1.0.tgz"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

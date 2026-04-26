@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import projectService from "../services/project.service";
 import apiService from "../services/api.service";
-import type { ProjectProcessData } from "../api";
-import processService from "../services/process.service";
 import type { ProjectCreationArgs, ProjectMetadata } from "rlgym-learn-client";
 
 interface UseProjectsReturn{
@@ -10,8 +8,6 @@ interface UseProjectsReturn{
     currentProject: string | null
     projectFetchError: Error | null
     folderPath: string | null
-
-    processStates: Record<number, ProjectProcessData>
 
     addProject: (args: ProjectCreationArgs) => Promise<void>
     updateProject: (metadata: ProjectMetadata) => void
@@ -22,16 +18,12 @@ interface UseProjectsReturn{
 
     setCurrentProject: (path: string | null) => void;
     setFolder: (path: string) => Promise<void>;
-
-    startProjectEntrypoint: (metadata: ProjectMetadata) => Promise<number>;
-    stopProjectEntrypoint: (data: ProjectProcessData) => Promise<void>;
 }
 
 export function useProjects(): UseProjectsReturn {
     const [projects, setProjects] = useState<Record<string, ProjectMetadata>>({});
     const [currentProject, setCurrentProject] = useState<string | null>(null);
     const [folderPath, setFolderPath] = useState<string | null>(null);
-    const [processStates, setProcessStates] = useState<Record<number, ProjectProcessData>>({});
 
     const [projectFetchError, setProjectFetchError] = useState<Error | null>(null);
 
@@ -96,29 +88,5 @@ export function useProjects(): UseProjectsReturn {
         );
     }
 
-    const startProjectEntrypoint = async (metadata: ProjectMetadata): Promise<number> => {
-        return await processService.startProjectEntrypoint(metadata).then(
-            (processData) => {
-                setProcessStates({
-                    ...processStates,
-                    [processData.pid]: processData
-                });
-
-                return processData.pid;
-            }
-        )
-    }
-
-    const stopProjectEntrypoint = async (processData: ProjectProcessData): Promise<void> => {
-        processService.stopProjectEntrypoint(processData).then(
-            (processData) => {
-                setProcessStates({
-                    ...processStates,
-                    [processData.pid]: processData
-                });
-            }
-        )
-    }
-
-    return {folderPath, projects, currentProject, projectFetchError, processStates, addProject, updateProjectMetadata, updateProject, deleteProject, setCurrentProject, fetchProjects, setFolder, startProjectEntrypoint, stopProjectEntrypoint}
+    return {folderPath, projects, currentProject, projectFetchError, addProject, updateProjectMetadata, updateProject, deleteProject, setCurrentProject, fetchProjects, setFolder}
 }

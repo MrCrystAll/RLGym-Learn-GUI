@@ -1,3 +1,4 @@
+import type { Run } from "rlgym-learn-client"
 import type { LogConfig } from "./models/project"
 
 export interface LineEntry{
@@ -7,7 +8,9 @@ export interface LineEntry{
 
 export enum PageType{
     CONFIGURATION,
-    PROCESS
+    PROCESS,
+    MAIN,
+    RUN
 }
 
 export interface Page{
@@ -31,4 +34,9 @@ export interface ProjectProcessData{
 export interface ProcessPageModel extends Page
 {
     projectProcessData: ProjectProcessData,
+}
+
+export interface RunPageModel extends Page
+{
+    run: Run
 }

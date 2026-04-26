@@ -9,11 +9,13 @@ interface ProjectDataEditorArgs{
     projectMetadata: ProjectMetadata
     updatePythonInterpreter: (path: string) => void,
 
+    backToHome: () => void,
+
     updateProjectConfig: (config: LearningCoordinatorConfigModel) => void
     projectConfig: LearningCoordinatorConfigModel
 }
 
-function ProjectDataEditor({projectMetadata, updatePythonInterpreter, updateProjectConfig, projectConfig}: ProjectDataEditorArgs) 
+function ProjectDataEditor({projectMetadata, updatePythonInterpreter, backToHome, updateProjectConfig, projectConfig}: ProjectDataEditorArgs) 
 {
     useEffect(() => {
         return () => {                
@@ -28,6 +30,7 @@ function ProjectDataEditor({projectMetadata, updatePythonInterpreter, updateProj
     
     return (
         <div className="bg-dark text-light">
+            <button className="btn btn-success" onClick={backToHome}>Back to project home</button>
             <div className="d-flex align-items-center">
                 <p>Python interpreter: {projectMetadata.interpreter}</p>
                 <ChoosePythonPath setPythonPath={updatePythonInterpreter}></ChoosePythonPath>
