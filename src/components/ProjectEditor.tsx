@@ -1,121 +1,80 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import ActionButtons from "./project/ActionButtons"
 import ProjectMetadataEditor from "./project/ProjectMetadataEditor"
-import axios, { type AxiosResponse } from "axios";
 import ProjectDataEditor from "./project/ProjectDataEditor";
-import { BASE_URL } from "../api";
-import { type ProjectData, type ProjectMetadata } from "../models/project";
-import type { LearningCoordinatorConfigModel } from "../models/rlgym-learn/api";
+import { PageType, type Page, type ProcessPageModel, type ProjectProcessData } from "../api";
+import ProcessPage from "./project/rlgym-learn/process-handling/ProcessPage";
+import projectService from "../services/project.service";
+import { useProjectData } from "../hooks/useProjectData";
+import type { ProjectMetadata } from "rlgym-learn-client";
 
 interface ProjectEditorArgs{
-    checkAPIStatus: () => void
     projectMetadata: ProjectMetadata,
     updateProjectMetadata: (metadata: ProjectMetadata) => void,
-    setCurrentProject: (project: ProjectMetadata | undefined) => void,
-    removeProject: (metadata: ProjectMetadata) => void,
-    startProjectEntrypoint: (metadata: ProjectMetadata, callback: () => void) => void;
+
+    fetchProjectMetadata: () => void
+
+    setCurrentProject: (project: string | null) => void,
+    removeProject: (projectId: string) => void,
+    startProjectEntrypoint: (metadata: ProjectMetadata) => Promise<number>;
+    stopProjectEntrypoint: (data: ProjectProcessData) => Promise<void>;
+    processStates: Record<number, ProjectProcessData>
 }
 
-function ProjectEditor({checkAPIStatus, projectMetadata, updateProjectMetadata, setCurrentProject, removeProject, startProjectEntrypoint}: ProjectEditorArgs) {
+function ProjectEditor({projectMetadata, updateProjectMetadata, setCurrentProject, removeProject, fetchProjectMetadata, startProjectEntrypoint, stopProjectEntrypoint, processStates}: ProjectEditorArgs) {
+    const {projectConfig, updateProjectConfig, updatePythonInterpreter} = useProjectData({projectMetadata, fetchProjectMetadata})
 
-    const [projectData, setProjectData] = useState<ProjectData>();
-    const [projectConfig, setProjectConfig] = useState<LearningCoordinatorConfigModel>();
-    const [loggerActive, setLoggerActive] = useState(false);
+    const [pages, setPages] = useState<Page[]>([{
+        type: PageType.CONFIGURATION,
+        name: "Configuration"
+    }])
 
-    const fetchProjectData = async () => {
+    const [activePage, setActivePage] = useState<Page>(pages[0]);
+    
+    const removePage = (page: Page) => {
+        const index = pages.indexOf(page);
+        
+        const pagesArr = [...pages]
+        pagesArr.splice(index, 1);
 
-        checkAPIStatus();
-
-        axios({
-            method: "POST",
-            baseURL: "http://localhost:8000/project/getDetails",
-            headers: {},
-            data: {
-                metadata: projectMetadata
-            }
-        }).then(
-            (response: AxiosResponse) => {setProjectData(response.data.project_data); setProjectConfig(response.data.config)}
-        )
+        setActivePage(pages[0]);
+        setPages(pagesArr);
     }
-
-    useEffect(() => {
-        fetchProjectData()
-    }, [])
 
     const updateProjectName = async (name: string) => {
-        checkAPIStatus();
-
-        axios({
-            method: "PUT",
-            baseURL: `${BASE_URL}/project`,
-            headers: {},
-            data: {
-                metadata: {
-                    ...projectMetadata,
-                    name: name
-                }
-            }
-        }).then(
-            () => {
-                updateProjectMetadata({
-                    ...projectMetadata,
-                    name: name
-                })
-            }
-        )
-    }
-
-    const updateProjectConfig = async(config: LearningCoordinatorConfigModel) => {
-        setProjectConfig(config)
-        checkAPIStatus();
-
-        axios({
-            method: "PUT",
-            baseURL: `${BASE_URL}/project/config`,
-            headers: {},
-            data: {
-                metadata: projectMetadata,
-                config: config
-            }
-        })
-    }
-
-    const updatePythonInterpreter = async (path: string) => {
-        checkAPIStatus();
-
-        axios({
-            method: "PUT",
-            baseURL: `${BASE_URL}/project/interpreter`,
-            headers: {},
-            data: {
-                metadata: projectMetadata,
-                python_path: path
-            }
-        }).then(
-            () => {
-                setProjectData({
-                    ...projectData,
-                    interpreter: path,
-                })
-            }
+        projectService.updateProjectName(projectMetadata.id, name).then(
+            () => {updateProjectMetadata({
+                ...projectMetadata,
+                name: name
+            })}
         )
     }
 
     const removeProjectNoArgs = () => {
-        setCurrentProject(undefined);
-        setProjectData(undefined)
-        removeProject(projectMetadata);
+        setCurrentProject(null);
+        removeProject(projectMetadata.id);
     }
 
-    const startRun = () => {
-        setLoggerActive(true);
-        startProjectEntrypoint(projectMetadata, () => setLoggerActive(false));
+    const startRun = () => {        
+        startProjectEntrypoint(projectMetadata).then(
+            (pid) => {                
+                const page: ProcessPageModel = {
+                    name: `Process ${pid}`,
+                    projectProcessData: processStates[pid],
+                    type: PageType.PROCESS
+                }
+
+                setPages([
+                    ...pages, page
+                ])
+            }
+        )
     }
 
     const dataRender = () => {
-        if(projectData !== undefined && projectConfig !== undefined){
+        if(projectConfig !== null){
             return <div className="p-2 mp-5">
-            <ProjectDataEditor projectConfig={projectConfig} updateProjectConfig={updateProjectConfig} setProjectData={setProjectData} updatePythonInterpreter={updatePythonInterpreter} loggerActive={loggerActive} setLoggerActive={setLoggerActive} projectData={projectData}></ProjectDataEditor>
+            <ProjectDataEditor projectMetadata={projectMetadata} projectConfig={projectConfig} updateProjectConfig={updateProjectConfig} updatePythonInterpreter={updatePythonInterpreter}></ProjectDataEditor>
         </div>
         }
         else{
@@ -123,26 +82,44 @@ function ProjectEditor({checkAPIStatus, projectMetadata, updateProjectMetadata, 
         }
     }
 
-  return (
-    <div className="bg-dark text-light">
-        <header>
-            <div className="pt-2">
-                <ProjectMetadataEditor updateProjectName={updateProjectName} projectMetadata={projectMetadata}></ProjectMetadataEditor>
-            </div>
-        </header>
+    const content = () => {
+        if(activePage.type === PageType.CONFIGURATION){
+            return (
+                <div>
+                    {dataRender()}
+                    
+                    <footer className="border border-dark bg-dark">
+                        <div className="m-2">
+                            <ActionButtons startEntrypoint={startRun} setCurrentProject={setCurrentProject} removeProject={removeProjectNoArgs}></ActionButtons>
+                        </div>
+                    </footer>
+                </div>
+                
+            )
+        }
+        else if(activePage.type === PageType.PROCESS){
+            return <ProcessPage removePage={() => removePage(activePage)}  processState={(activePage as ProcessPageModel).projectProcessData} stopProcess={() => stopProjectEntrypoint((activePage as ProcessPageModel).projectProcessData)}></ProcessPage>
+        }
+    }
 
-        <hr className="border border-light mx-5"/>
-
-        {dataRender()}
-        
-        <footer className="border border-dark bg-dark">
-            <div className="m-2">
-                <ActionButtons startEntrypoint={startRun} fetchProjectData={fetchProjectData} setCurrentProject={setCurrentProject} removeProject={removeProjectNoArgs}></ActionButtons>
+    return (
+        <div className="bg-dark text-light">
+            <header>
+                <div className="pt-2">
+                    <ProjectMetadataEditor updateProjectName={updateProjectName} projectMetadata={projectMetadata}></ProjectMetadataEditor>
+                </div>
+            </header>
+            <hr className="border border-light mx-5"/>
+            <div className="d-flex">
+                {pages.map((value: Page, index: number) => {
+                    return <div style={{cursor: "pointer"}} className="d-flex justify-content-center border w-100" onClick={() => setActivePage(value)} key={index}>
+                        <p className="display-6">{value.name}</p>
+                    </div>
+                })}
             </div>
-        </footer>
-    </div>
-    
-  )
+            {content()}
+        </div>
+    )
 }
 
 export default ProjectEditor

@@ -1,8 +1,8 @@
 import { useState } from "react"
-import type { ProjectMetadata as ProjectMetadataModel } from "../../models/project";
+import type { ProjectMetadata } from "../../models/project";
 
 interface ProjectMetadataArgs {
-  projectMetadata: ProjectMetadataModel
+  projectMetadata: ProjectMetadata
   updateProjectName: (name: string) => void
 }
 

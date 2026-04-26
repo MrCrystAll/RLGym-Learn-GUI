@@ -14,7 +14,7 @@ interface PPOConfigEditorArgs{
 function PPOConfigEditor({ppoConfig, setPPOConfig, agentKey, deleteAgent}: PPOConfigEditorArgs){
 
     const [editMode, setEditMode] = useState(false);
-    const [checkpointLoadFolder, setCheckpointLoadFolder] = useState<string>();
+    const [checkpointLoadFolder, setCheckpointLoadFolder] = useState<string | null | undefined>(ppoConfig.checkpoint_load_folder);
 
     const {register, handleSubmit, reset, formState: {errors}} = useForm<PPOAgentControllerConfigModel>({
         defaultValues: ppoConfig
@@ -35,7 +35,7 @@ function PPOConfigEditor({ppoConfig, setPPOConfig, agentKey, deleteAgent}: PPOCo
 
     const onCancel = () => {
         reset(ppoConfig);
-        setCheckpointLoadFolder(undefined);
+        setCheckpointLoadFolder(checkpointLoadFolder);
         setEditMode(false);
     }
 

@@ -40,10 +40,10 @@ ipcMain.handle("read-logs", (event, logPath) => {
   return fs.readFileSync(logPath).toString("utf8").split("\n").filter((value) => value.trim().length > 0).map((value) => JSON.parse(value))
 })
 
-ipcMain.on("watch-log", (event, logPath) => {  // <-- receives path
+ipcMain.on("watch-log", (event, logPath, receiver) => {  // <-- receives path
     let fileSize = 0;
 
-  const waitForFile = setInterval(() => {
+  const waitForFile = setInterval(() => {    
     if (!fs.existsSync(logPath)) return;
     clearInterval(waitForFile);
 
@@ -59,13 +59,13 @@ ipcMain.on("watch-log", (event, logPath) => {  // <-- receives path
 
         fileSize = stat.size;
 
-        event.sender.send("log-lines", buffer.toString("utf8").split("\n").filter((value) => value.trim().length > 0).map((value) => JSON.parse(value)))
+        event.sender.send("log-lines-" + receiver, buffer.toString("utf8").split("\n").filter((value) => value.trim().length > 0).map((value) => JSON.parse(value)))
       } catch (err) {}
     };
 
     const tailer = setInterval(readNewBytes, 200);
 
-    ipcMain.once("stop-watch", () => {
+    ipcMain.once("stop-watch-" + receiver, () => {
       clearInterval(tailer);
       readNewBytes(); // <-- flush whatever was written since last poll
     });

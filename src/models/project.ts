@@ -2,6 +2,7 @@ import type { LearningCoordinatorConfigModel } from "./rlgym-learn/api"
 
 export interface LogConfig{
     stdout_log: string
+    stderr_log: string
 }
 
 export interface ProjectMetadata{
@@ -13,13 +14,12 @@ export interface ProjectMetadata{
 export interface ProjectData{
     rewards_files: string[],
     learningCoordinatorConfigModel: LearningCoordinatorConfigModel,
-    log_config: LogConfig
     interpreter: string,
-    entrypoint: string
+    entrypoint: string,
+    logs_folder: string
 }
 
 export interface Project{
     metadata: ProjectMetadata
     data: ProjectData
-    
 }
