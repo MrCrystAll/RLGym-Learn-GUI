@@ -32,10 +32,7 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
 
     const setAgentControllerConfigModel = (agent: string, model: AgentControllerConfig) => setAgentControllersConfigModel({
         ...learningCoordinatorConfig?.agent_controllers_config,
-        [agent]: {
-            ...learningCoordinatorConfig.agent_controllers_config[agent],
-            inner_agent_controller_config: model
-        }
+        [agent]:  model
     })
 
     // Agent controllers
