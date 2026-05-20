@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Run } from "rlgym-learn-client";
 import runsService from "../services/runs.service";
 
@@ -8,22 +8,39 @@ interface UseRunsReturn{
 
     createRun: (projectId: string, runName: string) => void
     deleteRun: (projectId: string, runName: string) => void
+    
 }
 
 export function useRuns(projectId: string): UseRunsReturn {
     const [runs, setRuns] = useState<Run[]>([]);
     const [fetchingRuns, setFetchingRuns] = useState(false);
-
-    useEffect(() => {
-        getAllRuns();
-    }, [projectId]);
+    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
     const getAllRuns = () => {
-        setFetchingRuns(true);
-        runsService.getAllRuns(projectId).then(
-            (data) => {setRuns(data); setFetchingRuns(false);}
-        )
-    }
+            let ignore = false;
+            if(runs.length == 0) setFetchingRuns(true);
+            runsService.getAllRuns(projectId).then(
+                (data) => {
+                    if(ignore) return;
+                    setRuns(data); setFetchingRuns(false);
+                }
+            );
+            return () => {
+                ignore = true;
+            };
+        }
+    
+    useEffect(() => {
+        const cleanup = getAllRuns();
+
+        if (intervalRef.current) clearInterval(intervalRef.current);
+        intervalRef.current = setInterval(getAllRuns, 5000);
+
+        return () => {
+            cleanup();
+            if (intervalRef.current) clearInterval(intervalRef.current);
+        };
+    }, [projectId]);
 
     const createRun = async (projectId: string, runName: string): Promise<void> => {
         runsService.createRun(projectId, runName).then(() => getAllRuns());

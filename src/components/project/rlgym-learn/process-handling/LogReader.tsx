@@ -4,10 +4,10 @@ import type { LineEntry } from "../../../../api";
 interface LogReaderArgs{
   logPath: string,
   streamName: string
-  pid: number // To refresh when changing processes
+  sessionId: string // To refresh when changing processes
 }
 
-function LogReader({logPath, streamName, pid}: LogReaderArgs) {
+function LogReader({logPath, streamName, sessionId}: LogReaderArgs) {
     const [hidden, setHidden] = useState(false);
     const [lines, setLines] = useState<LineEntry[]>([]);
 
@@ -18,7 +18,7 @@ function LogReader({logPath, streamName, pid}: LogReaderArgs) {
       window.api.stopWatch(streamName);
       window.api.watchLog(logPath, streamName);
       window.api.listenLines(setLines, streamName);
-    }, [pid]);
+    }, [sessionId]);
 
     useEffect(() => {
       return () => {

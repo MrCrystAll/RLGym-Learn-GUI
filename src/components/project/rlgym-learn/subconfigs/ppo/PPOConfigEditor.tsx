@@ -14,7 +14,7 @@ interface PPOConfigEditorArgs{
 function PPOConfigEditor({ppoConfig, setPPOConfig, agentKey, deleteAgent}: PPOConfigEditorArgs){
 
     const [editMode, setEditMode] = useState(false);
-    const [checkpointLoadFolder, setCheckpointLoadFolder] = useState<string | null | undefined>(ppoConfig.checkpoint_load_folder);
+    const [checkpointLoadFolder, setCheckpointLoadFolder] = useState<string | null>(ppoConfig?.checkpoint_load_folder === undefined ? null : ppoConfig.checkpoint_load_folder);
 
     const {register, handleSubmit, reset, formState: {errors}} = useForm<PPOAgentControllerConfigModel>({
         defaultValues: ppoConfig
@@ -78,9 +78,9 @@ function PPOConfigEditor({ppoConfig, setPPOConfig, agentKey, deleteAgent}: PPOCo
                                 </div>
                             </div>
                             <div className="form-group mb-3 row">
-                                <label className="col-sm-3 col-form-label">Unix timestamp</label>
+                                <label className="col-sm-3 col-form-label">Run suffix</label>
                                 <div className="col-sm-9">
-                                    <input type="checkbox" className="form-check-input" {...register("add_unix_timestamp")}/>
+                                    <input type="text" className="form-control" {...register("run_suffix", {...createRules({required: true})})}/>
                                 </div>
                             </div>
                             <div className="btn-group">

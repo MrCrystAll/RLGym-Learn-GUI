@@ -32,7 +32,10 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
 
     const setAgentControllerConfigModel = (agent: string, model: AgentControllerConfig) => setAgentControllersConfigModel({
         ...learningCoordinatorConfig?.agent_controllers_config,
-        [agent]: model
+        [agent]: {
+            ...learningCoordinatorConfig.agent_controllers_config[agent],
+            inner_agent_controller_config: model
+        }
     })
 
     // Agent controllers
@@ -60,7 +63,7 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
         const finalName = type.toUpperCase().concat("-", name);
 
         if(learningCoordinatorConfig?.agent_controllers_config === undefined){
-            setAgentControllersConfigModel({[finalName]: model})
+            setAgentControllersConfigModel({[finalName]:  model})
         }
         else{
             if(learningCoordinatorConfig?.agent_controllers_config[finalName] !== undefined){
@@ -70,7 +73,7 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
             else{
                 setAgentControllersConfigModel({
                     ...learningCoordinatorConfig?.agent_controllers_config,
-                    [finalName]: model
+                    [finalName]:  model
                 })
             }
         }

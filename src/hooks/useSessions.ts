@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Run, Session } from "rlgym-learn-client";
 import sessionService from "../services/session.service";
 
@@ -13,17 +13,33 @@ interface UseSessionsReturn{
 export function useSessions(run: Run): UseSessionsReturn {
     const [sessions, setSessions] = useState<Session[]>([]);
     const [fetchingSession, setFetchingSessions] = useState(false);
+    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+    const getAllSessions = () => {
+        let ignore = false;
+        if(sessions.length == 0) setFetchingSessions(true);
+        sessionService.getAllSessions(run.project_id, run.name).then(
+            (data) => {
+                if(ignore) return;
+                setSessions(data); setFetchingSessions(false);
+            }
+        );
+        return () => {
+            ignore = true;
+        };
+    }
 
     useEffect(() => {
-        getAllSessions();
-    }, [run]);
+        const cleanup = getAllSessions();
 
-    const getAllSessions = (): void => {
-        setFetchingSessions(true);
-        sessionService.getAllSessions(run.project_id, run.name).then(
-            (data) => {setSessions(data); setFetchingSessions(false);}
-        );
-    }
+        if (intervalRef.current) clearInterval(intervalRef.current);
+        intervalRef.current = setInterval(getAllSessions, 5000);
+
+        return () => {
+            cleanup();
+            if (intervalRef.current) clearInterval(intervalRef.current);
+        };
+    }, [run]);
 
     const startSession = async (): Promise<Session> => {
         return sessionService.startSession(run.project_id, run.name).then(

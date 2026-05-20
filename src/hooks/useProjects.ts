@@ -41,7 +41,7 @@ export function useProjects(): UseProjectsReturn {
                 })
             )
         }
-    } 
+    }
 
     const fetchProjects = async (): Promise<void> => {
         apiService.getAllProjects().then(

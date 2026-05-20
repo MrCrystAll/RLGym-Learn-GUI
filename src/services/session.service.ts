@@ -19,6 +19,13 @@ class SessionService {
             run_name: runName
         }).then((r) => r.data)
     }
+
+    async getSessionHealth(session: Session): Promise<string>{
+        return apiService.sessionApi.getSessionHealth(session.session_id, {
+            project_id: session.project_id,
+            run_name: session.run_name
+        }).then((r) => r.data)
+    }
 }
 
 export default new SessionService();

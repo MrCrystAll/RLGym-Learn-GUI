@@ -13,7 +13,7 @@ function App() {
   const {isAPIReady, refreshingAPI, checkAPIConnection} = useApp();
 
   // Projects
-  const {currentProject, projectFetchError, projects, folderPath, addProject, updateProjectMetadata, updateProject, setCurrentProject, fetchProjects, deleteProject, setFolder, startProjectEntrypoint, stopProjectEntrypoint, processStates} = useProjects();
+  const {currentProject, projectFetchError, projects, folderPath, addProject, updateProjectMetadata, updateProject, setCurrentProject, fetchProjects, deleteProject, setFolder} = useProjects();
 
   const addProjectFromName = async (name: string) => {
 
@@ -83,7 +83,7 @@ function App() {
   }
   else{
     return (
-      <ProjectEditor fetchProjectMetadata={updateProjectMetadata} startProjectEntrypoint={startProjectEntrypoint} stopProjectEntrypoint={stopProjectEntrypoint} processStates={processStates} setCurrentProject={setCurrentProject} updateProjectMetadata={updateProject} removeProject={removeProject} projectMetadata={projects[currentProject]}/>
+      <ProjectEditor fetchProjectMetadata={updateProjectMetadata} setCurrentProject={setCurrentProject} updateProjectMetadata={updateProject} removeProject={removeProject} projectMetadata={projects[currentProject]}/>
   )}
 
   

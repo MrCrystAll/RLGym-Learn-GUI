@@ -1,14 +1,11 @@
-import { useState } from "react"
 import ActionButtons from "./project/ActionButtons"
 import ProjectMetadataEditor from "./project/ProjectMetadataEditor"
-import ProjectDataEditor from "./project/ProjectDataEditor";
-import { PageType, type Page, type ProcessPageModel, type ProjectProcessData, type RunPageModel } from "../api";
-import ProcessPage from "./project/rlgym-learn/process-handling/ProcessPage";
 import projectService from "../services/project.service";
-import { useProjectData } from "../hooks/useProjectData";
-import type { ProjectMetadata } from "rlgym-learn-client";
-import { useRuns } from "../hooks/useRuns";
+import type { ProjectMetadata, Run } from "rlgym-learn-client";
+import { useState } from "react";
 import RunPage from "./project/rlgym-learn/run-handling/RunPage";
+import ChoosePythonPath from "./ChoosePythonPath";
+import RunList from "./project/rlgym-learn/run-handling/RunList";
 
 interface ProjectEditorArgs{
     projectMetadata: ProjectMetadata,
@@ -17,35 +14,11 @@ interface ProjectEditorArgs{
     fetchProjectMetadata: () => void
 
     setCurrentProject: (project: string | null) => void,
-    removeProject: (projectId: string) => void,
-    startProjectEntrypoint: (metadata: ProjectMetadata) => Promise<number>;
-    stopProjectEntrypoint: (data: ProjectProcessData) => Promise<void>;
-    processStates: Record<number, ProjectProcessData>
+    removeProject: (projectId: string) => void
 }
 
-function ProjectEditor({projectMetadata, updateProjectMetadata, setCurrentProject, removeProject, fetchProjectMetadata, startProjectEntrypoint, stopProjectEntrypoint, processStates}: ProjectEditorArgs) {
-    const {projectConfig, updateProjectConfig, updatePythonInterpreter} = useProjectData({projectMetadata, fetchProjectMetadata})
-    const {runs, fetchingRuns, createRun} = useRuns(projectMetadata.id);
-
-    const [pages, setPages] = useState<Page[]>([{
-        type: PageType.MAIN,
-        name: "Home"
-    }, {
-        type: PageType.CONFIGURATION,
-        name: "Configuration"
-    }])
-
-    const [activePage, setActivePage] = useState<Page>(pages[0]);
-    
-    const removePage = (page: Page) => {
-        const index = pages.indexOf(page);
-        
-        const pagesArr = [...pages]
-        pagesArr.splice(index, 1);
-
-        setActivePage(pages[0]);
-        setPages(pagesArr);
-    }
+function ProjectEditor({projectMetadata, updateProjectMetadata, setCurrentProject, removeProject}: ProjectEditorArgs) {
+    const [selectedRun, setSelectedRun] = useState<Run | null>(null);
 
     const updateProjectName = async (name: string) => {
         projectService.updateProjectName(projectMetadata.id, name).then(
@@ -56,54 +29,26 @@ function ProjectEditor({projectMetadata, updateProjectMetadata, setCurrentProjec
         )
     }
 
+    const updateProjectInterpreter = async (path: string) => {
+        projectService.updateProjectInterpreter(projectMetadata.id, path).then(
+            () => {updateProjectMetadata({
+                ...projectMetadata,
+                interpreter: path
+            })}
+        )
+    }
+
     const removeProjectNoArgs = () => {
         setCurrentProject(null);
         removeProject(projectMetadata.id);
     }
 
-    const dataRender = () => {
-        if(projectConfig !== null){
-            return <div className="p-2 mp-5">
-            <ProjectDataEditor backToHome={() => setActivePage(pages[0])} projectMetadata={projectMetadata} projectConfig={projectConfig} updateProjectConfig={updateProjectConfig} updatePythonInterpreter={updatePythonInterpreter}></ProjectDataEditor>
-        </div>
+    const runDisplay = () => {
+        if(selectedRun === null){
+            return <RunList onSelectRun={setSelectedRun} projectId={projectMetadata.id}></RunList>
         }
         else{
-            return <p className="text-secondary">Waiting for project data...</p>
-        }
-    }
-
-    const content = () => {
-        if(activePage.type === PageType.CONFIGURATION){
-            return (
-                <div>
-                    {dataRender()}
-                </div>
-                
-            )
-        }
-        else if(activePage.type === PageType.PROCESS){
-            return <ProcessPage removePage={() => removePage(activePage)}  processState={(activePage as ProcessPageModel).projectProcessData} stopProcess={() => stopProjectEntrypoint((activePage as ProcessPageModel).projectProcessData)}></ProcessPage>
-        }
-        else if(activePage.type === PageType.MAIN){
-            return <div>
-                <p>See configuration: <button className="btn btn-primary" onClick={() => setActivePage(pages[1])}>Configuration</button> </p>
-
-                <p>Available runs</p>
-
-                <button className="mb-3 btn btn-success">TODO: Add a run</button>
-
-                <p className="text-secondary" hidden={!fetchingRuns}>Fetching runs...</p>
-                <ul hidden={fetchingRuns}>
-                    {runs.map(
-                        (value, index) => <li key={index}>{value.name} <button className="ms-3 btn btn-outline-light" onClick={() => setActivePage({
-                            type: PageType.RUN, name: value.name, run: value
-                        })}>Go to run details</button></li>
-                    )}
-                </ul>
-            </div>
-        }
-        else if(activePage.type === PageType.RUN){
-            return <RunPage backToHome={() => setActivePage(pages[0])} run={(activePage as RunPageModel).run}></RunPage>
+            return <RunPage run={selectedRun} backToHome={() => setSelectedRun(null)}></RunPage>
         }
     }
 
@@ -117,17 +62,23 @@ function ProjectEditor({projectMetadata, updateProjectMetadata, setCurrentProjec
             <hr className="border border-light mx-5"/>
 
             <div className="p-3">
-                {content()}
+                <div>
 
-                <footer className="border border-dark bg-dark">
-                    <div className="m-2">
-                        <ActionButtons setCurrentProject={setCurrentProject} removeProject={removeProjectNoArgs}></ActionButtons>
+                    <div className="d-flex">
+                        <p className="me-2">Current python interpreter: "{projectMetadata.interpreter}"</p>
+                        <ChoosePythonPath setPythonPath={(path) => updateProjectInterpreter(path)}></ChoosePythonPath>
                     </div>
-                </footer>
-            </div>
 
-            
-            
+                    {runDisplay()}
+
+                    <footer className="border border-dark bg-dark">
+                        <div className="m-2">
+                            <ActionButtons setCurrentProject={setCurrentProject} removeProject={removeProjectNoArgs}></ActionButtons>
+                        </div>
+                    </footer>
+                    
+                </div>
+            </div>            
         </div>
     )
 }

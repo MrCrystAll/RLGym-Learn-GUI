@@ -13,11 +13,13 @@ function AgentControllersEditor({agentControllersConfigModel, updateControllerCo
         updateControllerConfigModel(name, model)
     }
     
-    const agentControllerEditors = () => {        
+    const agentControllerEditors = () => {  
+        console.log(agentControllersConfigModel);
+              
         if(agentControllersConfigModel !== undefined){
             return Object.entries(agentControllersConfigModel).map(
                 (value: [string, AgentControllerConfig]) => {
-                    if(value[0].startsWith("PPO")){                        
+                    if(value[0].startsWith("PPO")){        
                         return <PPOConfigEditor key={value[0]} deleteAgent={deleteAgent} agentKey={value[0]} ppoConfig={value[1] as PPOAgentControllerConfigModel} setPPOConfig={(model: AgentControllerConfig) => updateAgentConfig(value[0], model)}/>
                     }
                     else{

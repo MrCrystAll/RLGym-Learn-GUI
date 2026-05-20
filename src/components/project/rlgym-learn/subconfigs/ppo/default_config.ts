@@ -22,7 +22,7 @@ export const PPO_LEARNER_DEFAULT_CONFIG: PPOLearnerConfigModel = {
 }
 
 export const PPO_DEFAULT_CONFIG: PPOAgentControllerConfigModel = {
-    add_unix_timestamp: true,
+    run_suffix: Date.now().toString(),
     experience_buffer_config: PPO_EXPERIENCE_BUFFER_DEFAULT_CONFIG,
     learner_config: PPO_LEARNER_DEFAULT_CONFIG,
     metrics_logger_config: {},

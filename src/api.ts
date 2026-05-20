@@ -1,4 +1,4 @@
-import type { Run } from "rlgym-learn-client"
+import type { Run, Session } from "rlgym-learn-client"
 import type { LogConfig } from "./models/project"
 
 export interface LineEntry{
@@ -18,22 +18,14 @@ export interface Page{
     name: string
 }
 
-export enum ProcessState{
-    SPAWNED,
-    READY,
-    ENDED
+export interface RunPageState {
+    pages: Page[];
+    activePage: Page;
 }
 
-export interface ProjectProcessData{
-    pid: number
-    log_config: LogConfig
-    state: ProcessState
-}
-
-
-export interface ProcessPageModel extends Page
+export interface SessionPageModel extends Page
 {
-    projectProcessData: ProjectProcessData,
+    session: Session
 }
 
 export interface RunPageModel extends Page

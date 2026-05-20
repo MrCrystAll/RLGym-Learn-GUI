@@ -1,67 +1,37 @@
+import type { Session } from "rlgym-learn-client";
 import LogReader from "./LogReader";
-import { ProcessState, type ProjectProcessData } from "../../../../api";
+import sessionService from "../../../../services/session.service";
+import { useSessionHealth } from "../../../../hooks/useSessionHealth";
 
 interface ProcessPageArgs{
-    processState: ProjectProcessData
-    removePage: () => void
-
-    stopProcess: () => void
+    session: Session
+    backToRunPage: () => void
 }
 
-function ProcessPage({processState, removePage}: ProcessPageArgs) {
+function ProcessPage({session, backToRunPage}: ProcessPageArgs) {
+    const {sessionHealth} = useSessionHealth(session)
 
     const stdoutLog = () => {
         return (
             <>
                 <div>
-                    <LogReader streamName="STDOUT" logPath={processState.log_config.stdout_log} pid={processState.pid}></LogReader>
-                    <LogReader streamName="STDERR" logPath={processState.log_config.stderr_log} pid={processState.pid}></LogReader>
+                    <LogReader streamName="STDOUT" logPath={session.logs.stdout} sessionId={session.session_id}></LogReader>
+                    <LogReader streamName="STDERR" logPath={session.logs.stderr} sessionId={session.session_id}></LogReader>
                 </div>
             </>
         )
     }
 
-    const icon = () => {
-        switch (+processState.state) {
-            case ProcessState.SPAWNED:
-                return <i className="bi bi-circle"></i>
-            case ProcessState.READY:
-                return <i className="bi bi-arrow-repeat"></i>
-            case ProcessState.ENDED:
-                return <i className="bi bi-check-circle-fill"></i>
-            default:
-                break;
-        }
-    }
-
-    const spanState = () => {
-        switch (+processState.state) {
-            case ProcessState.SPAWNED:
-                return <span className="badge text-bg-warning rounded-pill">IDLE</span>
-            case ProcessState.READY:
-                return <span className="badge text-bg-primary rounded-pill">Running</span>
-            case ProcessState.ENDED:
-                return <span className="badge text-bg-success rounded-pill">Finished</span>
-            default:
-                break;
-        }
+    const stopSession = () => {
+        sessionService.stopSession(session.session_id)
     }
 
     return (
         <div className="mt-3">
-            <div className="d-flex float-end">
-                <div className="me-3">
-                    {icon()}
-                </div>
-                {spanState()}
-            </div>
-            <p>Process {processState.pid}</p>
-
-            <div className="btn-group">
-                <button className="btn btn-danger" hidden={processState.state === ProcessState.ENDED} onClick={stop} disabled={stopping}>{stopping ? "Stopping..." : "Stop"}</button>
-            </div>
+            <button className="btn btn-success" onClick={backToRunPage}>Back to run page</button>
+            <p>Session {session.session_id}</p>
             {stdoutLog()}
-            <button className="btn btn-danger" onClick={removePage}>Remove page</button>
+            <button className="btn btn-danger" hidden={sessionHealth === "crashed" || sessionHealth === "finished"} onClick={stopSession}>Stop session</button>
         </div>
     )
 }
