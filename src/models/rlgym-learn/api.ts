@@ -211,7 +211,7 @@ export interface ProcessConfigModel {
   min_process_steps_per_inference: number; // default: -1
   render: boolean; // default: false
   render_delay: number; // default: 0
-  instance_launch_delay?: number | null; // default: None
+  instance_launch_delay: number | null; // default: None
   recalculate_agent_id_every_step: boolean; // default: false
 }
 
