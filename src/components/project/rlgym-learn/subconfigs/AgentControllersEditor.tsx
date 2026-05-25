@@ -13,9 +13,7 @@ function AgentControllersEditor({agentControllersConfigModel, updateControllerCo
         updateControllerConfigModel(name, model)
     }
     
-    const agentControllerEditors = () => {  
-        console.log(agentControllersConfigModel);
-              
+    const agentControllerEditors = () => {              
         if(agentControllersConfigModel !== undefined){
             return Object.entries(agentControllersConfigModel).map(
                 (value: [string, AgentControllerConfig]) => {
