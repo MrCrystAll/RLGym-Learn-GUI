@@ -103,10 +103,7 @@ function ProcessConfigEditor({processConfig, setProcessConfig}:ProcessConfigMode
 
     return (
         <div className="rounded p-2">
-        <div className="d-flex">
             <p className="display-6">Process config</p>
-            {/* <button className="btn btn-dark float-end" onClick={() => setEditMode(true)}><i className="bi bi-pencil-fill"></i></button> */}
-        </div>
             
             <div className="d-flex gap-2 justify-content-around">
                 <NumberCard intOnly={true} text="Processes" value={processConfig.n_proc} onChange={(value) => {
@@ -141,8 +138,6 @@ function ProcessConfigEditor({processConfig, setProcessConfig}:ProcessConfigMode
                     </div>
                 </div>
             </div>
-
-            {/* <p className="text-break">{JSON.stringify(processConfig)}</p> */}
         </div>
     )
 }
