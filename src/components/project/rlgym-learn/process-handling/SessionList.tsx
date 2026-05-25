@@ -44,7 +44,11 @@ function SessionList({run, onSelectSession}: SessionListArgs) {
 
     return (
         <div>
-            <button className="btn btn-primary" onClick={startSession}>Add session</button>
+            <button className="btn btn-primary" onClick={() => {
+                startSession().then(
+                    (session) => onSelectSession(session)
+                );
+            }}>Run session</button>
             {sessionCaption()}
             {sessionTable()}
             
