@@ -1,5 +1,6 @@
 import type { Run } from "rlgym-learn-client";
 import { useRuns } from "../../../../hooks/useRuns"
+import RunCreation from "../RunCreation";
 
 interface RunListArgs{
     projectId: string
@@ -24,7 +25,7 @@ function RunList({projectId, onSelectRun}: RunListArgs) {
 
     return (
         <div>
-            <button className="btn btn-primary" onClick={() => createRun(projectId, "v1.0.0")}>TODO: Add run</button>
+            <RunCreation createRun={(runName) => createRun(projectId, runName)} existingRuns={runs.map((value) => value.name)}></RunCreation>
             {runsCaption()}
             <ul>
                 {
