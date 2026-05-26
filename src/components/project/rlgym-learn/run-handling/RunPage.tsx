@@ -13,14 +13,14 @@ interface RunPageArgs{
 }
 
 function RunPage({run, backToHome}: RunPageArgs){
-    const {runConfig, updateRunConfig} = useRunData({run: run})
+    const {runConfig, updateRunConfig, getDefaultConfig} = useRunData({run: run})
     const [selectedSession, setSelectedSession] = useState<Session | null>(null);
     const [mode, setMode] = useState(PageType.MAIN);
 
     const dataRender = () => {
         if(runConfig !== undefined){
             return <div>
-                <ProjectDataEditor backToHome={() => setMode(PageType.MAIN)} projectConfig={runConfig} updateProjectConfig={updateRunConfig}></ProjectDataEditor>
+                <ProjectDataEditor getDefaultConfig={getDefaultConfig} backToHome={() => setMode(PageType.MAIN)} projectConfig={runConfig} updateProjectConfig={updateRunConfig}></ProjectDataEditor>
             </div>
         }
         else{

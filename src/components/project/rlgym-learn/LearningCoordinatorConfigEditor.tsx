@@ -3,14 +3,17 @@ import { type AgentControllerConfig, type BaseConfigModel, type LearningCoordina
 import BaseConfigEditor from "./subconfigs/BaseConfigEditor"
 import ProcessConfigEditor from "./subconfigs/ProcessConfigEditor"
 import AgentControllersEditor from "./subconfigs/AgentControllersEditor"
-import { PPO_DEFAULT_CONFIG } from "./subconfigs/ppo/default_config"
+import type { PPOAgentControllerConfigModel } from "rlgym-learn-client"
 
 export interface LearningCoordinatorConfigEditorArgs{
     learningCoordinatorConfig: LearningCoordinatorConfigModel
     setLearningCoordinatorConfig: (arg0: LearningCoordinatorConfigModel) => void
+    getDefaultConfig: (configType: string) => Promise<PPOAgentControllerConfigModel>
 }
 
-function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearningCoordinatorConfig}: LearningCoordinatorConfigEditorArgs) {
+function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearningCoordinatorConfig, getDefaultConfig}: LearningCoordinatorConfigEditorArgs) {
+    
+
     const setBaseConfigModel = (model: BaseConfigModel) => {setLearningCoordinatorConfig({
         ...learningCoordinatorConfig,
         base_config: model
@@ -56,26 +59,29 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
             return;
         }
 
-        const model = type === "ppo" ? PPO_DEFAULT_CONFIG : {}
-        const finalName = type.toUpperCase().concat("-", name);
+        getDefaultConfig(type).then(
+            (defaultConfig) => {
+                const finalName = type.toUpperCase().concat("-", name);
 
-        if(learningCoordinatorConfig?.agent_controllers_config === undefined){
-            setAgentControllersConfigModel({[finalName]:  model})
-        }
-        else{
-            if(learningCoordinatorConfig?.agent_controllers_config[finalName] !== undefined){
-                setAgentKeyError("Agent key already exists, please choose another one.");
-                return;
-            }
-            else{
-                setAgentControllersConfigModel({
-                    ...learningCoordinatorConfig?.agent_controllers_config,
-                    [finalName]:  model
-                })
-            }
-        }
+                if(learningCoordinatorConfig?.agent_controllers_config === undefined){
+                    setAgentControllersConfigModel({[finalName]:  defaultConfig})
+                }
+                else{
+                    if(learningCoordinatorConfig?.agent_controllers_config[finalName] !== undefined){
+                        setAgentKeyError("Agent key already exists, please choose another one.");
+                        return;
+                    }
+                    else{
+                        setAgentControllersConfigModel({
+                            ...learningCoordinatorConfig?.agent_controllers_config,
+                            [finalName]:  defaultConfig
+                        })
+                    }
+                }
 
-        setAddingController(false);
+                setAddingController(false);
+            }
+        )
     }
 
     const deleteController = (agent: string) => {
