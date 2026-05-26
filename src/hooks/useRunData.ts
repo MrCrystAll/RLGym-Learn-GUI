@@ -1,5 +1,5 @@
 
-import type { Run } from "rlgym-learn-client";
+import type { PPOAgentControllerConfigModel, Run } from "rlgym-learn-client";
 import type { LearningCoordinatorConfigModel } from "../models/rlgym-learn/api";
 import runsService from "../services/runs.service";
 import { useEffect, useState } from "react";
@@ -10,6 +10,7 @@ interface UseDataArgs{
 
 interface UseRunDataReturn {
     updateRunConfig: (config: LearningCoordinatorConfigModel) => void
+    getDefaultConfig: (configType: string) => Promise<PPOAgentControllerConfigModel>
     runConfig: LearningCoordinatorConfigModel | undefined
 }
 
@@ -29,5 +30,9 @@ export function useRunData({run}: UseDataArgs): UseRunDataReturn {
         setRunConfig(config);
     }
 
-    return {runConfig, updateRunConfig}
+    const getDefaultConfig = async(configType: string): Promise<PPOAgentControllerConfigModel> => {
+        return runsService.getDefaultConfig(run.project_id, run.name, configType)
+    }
+
+    return {runConfig, updateRunConfig, getDefaultConfig}
 }

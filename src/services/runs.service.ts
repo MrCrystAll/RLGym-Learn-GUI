@@ -1,4 +1,4 @@
-import type { Run } from "rlgym-learn-client";
+import type { PPOAgentControllerConfigModel, Run } from "rlgym-learn-client";
 import apiService from "./api.service";
 import type { LearningCoordinatorConfigModel } from "../models/rlgym-learn/api";
 
@@ -29,6 +29,10 @@ class RunsService {
 
     async getRunConfig(projectId: string, runName: string): Promise<LearningCoordinatorConfigModel>{
         return apiService.runsApi.getRunData(projectId, runName).then((r) => r.data)
+    }
+
+    async getDefaultConfig(projectId: string, runName: string, configType: string): Promise<PPOAgentControllerConfigModel>{
+        return apiService.runsApi.getDefaultConfig(projectId, runName, configType).then((r) => r.data)
     }
 }
 
