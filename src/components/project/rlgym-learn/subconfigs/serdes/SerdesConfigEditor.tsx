@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { type PyAnySerdeType, type SerdeTypesModel } from "../../../../../models/rlgym-learn/api";
 import SerdesSelect from "./SerdesSelect";
+import DefaultJSONDescription from "../../../DefaultJSONDescription";
 
 interface SerdesConfigEditorArgs{
     serdesTypesModel: SerdeTypesModel,
@@ -137,7 +138,8 @@ function SerdesConfigEditor({serdesTypesModel, setSerdesTypesModel}:SerdesConfig
                     <button className="btn btn-dark" onClick={() => setEditMode(true)}><i className="bi bi-pencil-fill"></i></button>
                 </div>
                     
-                <div><pre>{JSON.stringify(serdesTypesModel, null, 2) }</pre></div>
+                <DefaultJSONDescription object={serdesTypesModel} updateValue={(key, value) => setSerdesTypesModel({...serdesTypesModel, [key]: value})} title="Serdes config"></DefaultJSONDescription>
+                {/* <div><pre>{JSON.stringify(serdesTypesModel, null, 2) }</pre></div> */}
             </>
 
         )
