@@ -6,7 +6,7 @@ interface NumberFieldArgs{
     value: number | null
     text: string
     help: string
-    intOnly: boolean
+    intOnly?: boolean
 
     onChange: (value: number | null) => void
 }
@@ -35,7 +35,7 @@ function NumberCard({value, text, help, intOnly, onChange}: NumberFieldArgs) {
                 <input className="form-control" step={intOnly ? 1 : 1e-10} type="number" {...register("value", {valueAsNumber: true, required: false})}></input>
             </form>
         }
-        return <p onClick={() => setEditMode(true)} className="display-5 mt-3">{value === null ? "--" : value}</p>
+        return <p onClick={() => setEditMode(true)} className="display-5 mt-3">{value === null ? "--" : value.toLocaleString(undefined, {useGrouping: true})}</p>
     }
 
     return (

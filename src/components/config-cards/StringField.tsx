@@ -2,17 +2,17 @@ import { useEffect, useRef, useState } from "react";
 import Tooltip from 'bootstrap/js/dist/tooltip'
 import { useForm, type SubmitHandler } from "react-hook-form";
 
-interface NumberFieldArgs{
-    value: number | null
+interface StringFieldArgs{
+    value: string | null
     text: string
     icon: string
     help: string
     required?: boolean
 
-    onChange: (value: number | null) => void
+    onChange: (value: string | null) => void
 }
 
-function NumberField({value, text, icon, help, required, onChange}: NumberFieldArgs) {
+function StringField({value, text, icon, help, required, onChange}: StringFieldArgs) {
     const [editMode, setEditMode] = useState(false);
     const {register, handleSubmit} = useForm({defaultValues: {value: value}})
 
@@ -24,8 +24,8 @@ function NumberField({value, text, icon, help, required, onChange}: NumberFieldA
         return () => tooltip.dispose()
     }, [])
 
-    const onSubmit: SubmitHandler<{value: number | null}> = (data) => {
-        onChange(Number.isNaN(data.value) ? null : data.value)
+    const onSubmit: SubmitHandler<{value: string | null}> = (data) => {
+        onChange(data.value === null || data.value.trim() == "" ? null : data.value)
 
         setEditMode(false);
     }
@@ -33,10 +33,10 @@ function NumberField({value, text, icon, help, required, onChange}: NumberFieldA
     const fieldValue = () => {
         if(editMode){
             return <form onSubmit={handleSubmit(onSubmit)}>
-                <input className="form-control" step={1e-10} type="number" {...register("value", {valueAsNumber: true, required: required === undefined ? false : required})}></input>
+                <input className="form-control" type="text" {...register("value", {required: required === undefined ? false : required})}></input>
             </form>
         }
-        return <p>{value === null ? "--" : value.toLocaleString(undefined, {useGrouping: true})}</p>
+        return <p>{value === null || value.trim() === "" ? "--" : value}</p>
     }
 
     return (
@@ -54,4 +54,4 @@ function NumberField({value, text, icon, help, required, onChange}: NumberFieldA
     )
 }
 
-export default NumberField
+export default StringField
