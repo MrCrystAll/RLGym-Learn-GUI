@@ -1,8 +1,8 @@
 import { useState } from "react";
-import type { PPOAgentControllerConfigModel, PPOLearnerConfigModel } from "../../../../../models/rlgym-learn/api"
-import PPOLearnerConfigEditor from "./PPOLearnerConfigEditor";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { createRules } from "../../../../../models/validators";
+import DefaultJSONDescription from "../../../DefaultJSONDescription";
+import type { PPOAgentControllerConfigModel, PPOLearnerConfigModel } from "rlgym-learn-client";
 
 interface PPOConfigEditorArgs{
     ppoConfig: PPOAgentControllerConfigModel
@@ -154,9 +154,9 @@ function PPOConfigEditor({ppoConfig, setPPOConfig, agentKey, deleteAgent}: PPOCo
     }
     
     return (
-        <div className="border">
-            {configFields()}
-            <PPOLearnerConfigEditor agentKey={agentKey} ppoLearnerConfig={ppoConfig.learner_config} setPPOLearnerConfig={setPPOLearnerConfig}></PPOLearnerConfigEditor>
+        <div>
+            <DefaultJSONDescription title="PPO Config" object={ppoConfig} updateValue={(key, value) => setPPOConfig({...ppoConfig, [key]: value})}></DefaultJSONDescription>
+            {/* <PPOLearnerConfigEditor agentKey={agentKey} ppoLearnerConfig={ppoConfig.learner_config} setPPOLearnerConfig={setPPOLearnerConfig}></PPOLearnerConfigEditor> */}
         </div>
     )
 }
