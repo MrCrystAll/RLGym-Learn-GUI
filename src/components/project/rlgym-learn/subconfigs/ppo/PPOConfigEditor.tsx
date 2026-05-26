@@ -147,8 +147,7 @@ function PPOConfigEditor({ppoConfig, setPPOConfig, agentKey, deleteAgent}: PPOCo
                     <button className="btn btn-danger" onClick={() => deleteAgent(agentKey)}><i className="bi bi-x"></i></button>
                 </div>
 
-                
-                <p className="text-break">{JSON.stringify(ppoConfig)}</p>
+                <div><pre>{JSON.stringify(ppoConfig, null, 2) }</pre></div>
             </div>
             
         )

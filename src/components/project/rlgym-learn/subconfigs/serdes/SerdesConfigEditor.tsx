@@ -137,7 +137,7 @@ function SerdesConfigEditor({serdesTypesModel, setSerdesTypesModel}:SerdesConfig
                     <button className="btn btn-dark" onClick={() => setEditMode(true)}><i className="bi bi-pencil-fill"></i></button>
                 </div>
                     
-                <p className="text-break">{JSON.stringify(serdesTypesModel)}</p>
+                <div><pre>{JSON.stringify(serdesTypesModel, null, 2) }</pre></div>
             </>
 
         )
