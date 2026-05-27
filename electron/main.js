@@ -1,6 +1,40 @@
 const { app, BrowserWindow, ipcMain, dialog } = require("electron")
 const path = require("path")
 const fs = require("fs")
+const net = require('net')
+const http = require('http')
+const { spawn } = require('child_process')
+
+let pyProcess = null;
+
+// Find a free port
+function getFreePort() {
+  return new Promise((resolve) => {
+    const srv = net.createServer();
+    srv.listen(0, () => {
+      const port = srv.address().port;
+      srv.close(() => resolve(port));
+    });
+  });
+}
+
+// Poll until FastAPI is ready
+function waitForApi(port, retries = 20) {
+  return new Promise((resolve, reject) => {
+    const attempt = () => {
+      const req = http.get(`http://localhost:${port}/health`, (res) => {
+        if (res.statusCode === 200) resolve();
+        else if (retries-- > 0) setTimeout(attempt, 500);
+        else reject(new Error('API never ready'));
+      });
+      req.on('error', () => {
+        if (retries-- > 0) setTimeout(attempt, 500);
+        else reject(new Error('API never ready'));
+      });
+    };
+    attempt();
+  });
+}
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -72,4 +106,24 @@ ipcMain.on("watch-log", (event, logPath, receiver) => {  // <-- receives path
   }, 100);
 });
 
-app.whenReady().then(createWindow)
+app.whenReady().then(async () => {
+  if (app.isPackaged){
+    const port = await getFreePort();
+    process.env.API_PORT = port;  // preload picks this up
+
+    // Path to bundled binary (PyInstaller output)
+    const apiPath = path.join(__dirname, '../../../Void_API/dist/main.exe');
+
+    pyProcess = spawn(apiPath, ['--port', port]);
+
+    pyProcess.stderr.on('data', (d) => console.error('[API]', d.toString()));
+
+    await waitForApi(port);
+  }
+
+  createWindow();
+});
+
+app.on('will-quit', () => {
+  if (pyProcess) pyProcess.kill();
+});

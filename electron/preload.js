@@ -1,5 +1,9 @@
 const {contextBridge, ipcRenderer} = require("electron");
 
+contextBridge.exposeInMainWorld('electron', {
+  apiPort: process.env.API_PORT  // set by main.js before spawning renderer
+});
+
 contextBridge.exposeInMainWorld('api', {
   openFolderPathDialog(){
       return ipcRenderer.invoke("open-folder-path-dialog");

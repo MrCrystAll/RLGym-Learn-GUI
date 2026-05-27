@@ -2,6 +2,8 @@ import axios from "axios";
 
 import {Configuration, DefaultApi, ProjectApi, RunsApi, SessionApi, type ProjectCreationArgs, type ProjectMetadata} from "rlgym-learn-client"
 
+const port = (window as any).electron?.apiPort ?? '8000';
+
 class APIService {
   public projectApi: ProjectApi
   public sessionApi: SessionApi
@@ -10,7 +12,7 @@ class APIService {
 
   constructor() {
     const client = axios.create({
-      baseURL: "http://localhost:8000",
+      baseURL: `http://localhost:${port}`,
       timeout: 1000,
       headers: {
         "Content-Type": "application/json",
