@@ -45,7 +45,7 @@ jobs:
     
         - name: Patch package.json
           run: |
-            npm version ${{steps.convert.outputs.npm_version}}
+            npm version ${{steps.convert.outputs.npm-version}}
 
         - name: Commit and push version bump
           run: |
@@ -92,7 +92,7 @@ jobs:
           env:
             GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           run: |
-            gh release download --repo MrCrystAll/RLGym-Learn-API --pattern "${{matrix.api-name}}" --output ${{matrix.api-output}}
+            gh release download --repo MrCrystAll/RLGym-Learn-API --pattern "${{matrix.api-name}}*" --output ${{matrix.api-output}}
         
 
         - name: Build
