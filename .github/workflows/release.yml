@@ -49,7 +49,7 @@ jobs:
 
         - name: Generate output names
           run: |
-            NAME=${{matrix.output-name}}$(node -e "process.stdout.write(require('./package').version)").${{matrix.extension}}
+            NAME="${{matrix.output-name}}$(node -e "process.stdout.write(require('./package').version)").${{matrix.extension}}"
             echo "OUTPUT_NAME=$NAME" >> $GITHUB_ENV
 
         - name: Upload API binary as artifact
