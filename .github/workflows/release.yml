@@ -48,6 +48,7 @@ jobs:
             GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
         - name: Generate output names
+          shell: bash
           run: |
             NAME="${{matrix.output-name}}$(node -e "process.stdout.write(require('./package').version)").${{matrix.extension}}"
             echo "OUTPUT_NAME=$NAME" >> $GITHUB_ENV
@@ -56,7 +57,7 @@ jobs:
           uses: actions/upload-artifact@v7
           with:
             name: ${{ matrix.artifact-name }}
-            path: ./dist/${{ env.OUTPUT_NAME }}
+            path: ./dist/"${{ env.OUTPUT_NAME }}"
             retention-days: 1 # only needed during this workflow run
 
     release:
