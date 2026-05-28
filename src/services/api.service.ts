@@ -25,6 +25,10 @@ class APIService {
     this.runsApi = new RunsApi(new Configuration(), undefined, client);
   }
 
+  async startAPI(){
+    return window.api.start();
+  }
+
   async checkApiStatus(): Promise<void> {
     return await this.defaultApi.pingGet().then((r) => r.data);
   }

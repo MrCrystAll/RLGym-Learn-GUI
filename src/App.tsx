@@ -10,7 +10,7 @@ import ProjectEditor from "./components/ProjectEditor";
 
 function App() {
   // API
-  const {isAPIReady, refreshingAPI, checkAPIConnection} = useApp();
+  const {error, startingAPI, isAPIReady, refreshingAPI, startApi, checkAPIConnection} = useApp();
 
   // Projects
   const {currentProject, projectFetchError, projects, folderPath, addProject, updateProjectMetadata, updateProject, setCurrentProject, fetchProjects, deleteProject, setFolder} = useProjects();
@@ -25,7 +25,7 @@ function App() {
   }
 
   useEffect(() => {
-    checkAPIConnection();
+    startApi();
   }, [])
 
   const removeProject = async (projectId: string) => {
@@ -51,6 +51,13 @@ function App() {
         <p>No projects found.</p>
       )
     }
+  }
+
+  if(startingAPI){
+    return <div className="bg-dark text-light">
+      <p>Starting API...</p>
+      <small className="text-danger">{error?.message}</small>
+    </div>
   }
 
 
