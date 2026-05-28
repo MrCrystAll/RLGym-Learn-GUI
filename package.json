@@ -1,7 +1,7 @@
 {
   "name": "rlgym-learn-gui",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.1-alpha.1",
   "main": "electron/main.js",
   "scripts": {
     "dev": "vite",
@@ -11,7 +11,7 @@
     "electron": "electron .",
     "dev:electron": "set VITE_DEV_SERVER_URL=http://localhost:5173 & electron .",
     "pack": "npm run build && electron-builder --dir",
-    "dist": "npm run build && electron-builder"
+    "dist": "npm run build && electron-builder --publish never"
   },
   "build": {
     "appId": "com.cryystall.rlgym_learn_gui",
@@ -22,6 +22,22 @@
     ],
     "directories": {
       "buildResources": "assets"
+    },
+    "extraResources": [
+      {
+        "from": "RLGym_Learn_API.exe",
+        "to": "api.exe"
+      },
+      {
+        "from": "RLGym_Learn_API",
+        "to": "api"
+      }
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
     }
   },
   "dependencies": {
@@ -31,12 +47,12 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-hook-form": "^7.72.1",
-    "rlgym-learn-client": "file:../../Void_API/client/rlgym-learn-client-0.1.0.tgz"
+    "rlgym-learn-client": "0.1.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@types/bootstrap": "^5.2.10",
-    "@types/node": "^24.10.4",
+    "@types/node": "^24.12.4",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",

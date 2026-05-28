@@ -3,9 +3,11 @@ import apiService from "./api.service";
 
 class SessionService {
     async startSession(projectId: string, runName: string): Promise<Session>{
+        const port = (window as any).electron?.apiPort ?? '8000';
         return apiService.sessionApi.startNewSession({
             project_id: projectId,
-            run_name: runName
+            run_name: runName,
+            port: Number.parseInt(port)
         }).then((r) => r.data)
     }
 

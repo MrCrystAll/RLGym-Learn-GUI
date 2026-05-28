@@ -1,5 +1,11 @@
 const {contextBridge, ipcRenderer} = require("electron");
 
+let pyProcess = null;
+
+contextBridge.exposeInMainWorld('electron', {
+  apiPort: process.env.API_PORT  // set by main.js before spawning renderer
+});
+
 contextBridge.exposeInMainWorld('api', {
   openFolderPathDialog(){
       return ipcRenderer.invoke("open-folder-path-dialog");
@@ -24,5 +30,8 @@ contextBridge.exposeInMainWorld('api', {
   },
   readLogs(logPath){
     return ipcRenderer.invoke("read-logs", logPath);    
-  }
+  },
+  async start(){
+      return ipcRenderer.invoke("start-api");
+  },
 });
