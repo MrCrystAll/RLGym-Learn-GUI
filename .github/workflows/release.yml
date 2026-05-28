@@ -9,6 +9,7 @@ permissions:
 
 jobs:
     set-versions:
+        name: Set tag version
         runs-on: ubuntu-latest
         steps:
         - uses: actions/checkout@v6
@@ -59,12 +60,13 @@ jobs:
             echo "Pushing version bump to branch: $BRANCH"
 
             git checkout $BRANCH
-            git add package.json
+            git add package.json package-lock.json
             git commit -m "chore: bump version to ${{ github.ref_name }} [skip ci]"
             git push origin $BRANCH
 
     build:
         runs-on: ${{ matrix.os }}
+        name: Build RLGym Learn GUI
         needs: set-versions
         strategy:
             matrix:
@@ -94,8 +96,10 @@ jobs:
             GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           run: |
             gh release download --repo MrCrystAll/RLGym-Learn-API --pattern "${{matrix.api-name}}" --output ${{matrix.api-output}}
-        
 
+        - name: List CWD
+          run: ls -l
+        
         - name: Build
           run: |
             npm install
