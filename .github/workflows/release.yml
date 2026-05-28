@@ -74,12 +74,10 @@ jobs:
                 - os: windows-latest
                   artifact-name: app-windows
                   api-name: RLGym_Learn_API.exe
-                  api-output: RLGym-Learn-API.exe
                   output-name: RLGym Learn GUI Setup $(node -e "process.stdout.write(require('./package').version)").exe
                 - os: ubuntu-latest
                   artifact-name: app-linux
                   api-name: RLGym_Learn_API
-                  api-output: RLGym-Learn-API
                   output-name: RLGym Learn GUI Setup $(node -e "process.stdout.write(require('./package').version)").AppImage
 
         steps:
@@ -95,10 +93,7 @@ jobs:
           env:
             GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           run: |
-            gh release download --repo MrCrystAll/RLGym-Learn-API --pattern "${{matrix.api-name}}" --output ${{matrix.api-output}}
-
-        - name: List CWD
-          run: ls -l
+            gh release download --repo MrCrystAll/RLGym-Learn-API --pattern "${{matrix.api-name}}" --output ${{matrix.api-name}}
         
         - name: Build
           run: |
