@@ -8,66 +8,9 @@ permissions:
     contents: write
 
 jobs:
-    set-versions:
-        name: Set tag version
-        runs-on: ubuntu-latest
-        steps:
-        - uses: actions/checkout@v6
-          with:
-            token: ${{ secrets.GITHUB_TOKEN }}
-            fetch-depth: 0 # full history needed to detect the branch behind the tag
-        - uses: actions/setup-python@v6
-          with:
-            python-version: "3.12"
-
-        - name: Configure git
-          run: |
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-
-        - name: Convert tag to npm version
-          id: convert
-          run: |
-            python3 << 'EOF'
-            import re, os
-            tag = os.environ["GITHUB_REF_NAME"]
-            raw = tag.lstrip("v")
-            m = re.match(r"^(\d+\.\d+\.\d+)(?:-([a-z]+)\.(\d+))?$", raw)
-            if not m:
-                raise ValueError(f"Tag '{tag}' does not match vX.Y.Z[-pre.N] format")
-            base, pre_name, pre_num = m.groups()
-            if pre_name:
-                npm_version    = f"{base}-{pre_name}.{pre_num}"
-            else:
-                npm_version    = base
-            with open(os.environ["GITHUB_OUTPUT"], "a") as f:
-                f.write(f"npm-version={npm_version}\n")
-            EOF
-    
-        - name: Patch package.json
-          run: |
-            npm version ${{steps.convert.outputs.npm-version}} --no-git-tag-version
-
-        - name: Commit and push version bump
-          run: |
-            # find which branch this tag points to
-            BRANCH=$(git branch -r --contains ${{ github.ref_name }} \
-                | grep -v HEAD \
-                | sed 's|origin/||' \
-                | tr -d ' ' \
-                | head -1)
-
-            echo "Pushing version bump to branch: $BRANCH"
-
-            git checkout $BRANCH
-            git add package.json package-lock.json
-            git commit -m "chore: bump version to ${{ github.ref_name }} [skip ci]"
-            git push origin $BRANCH
-
     build:
         runs-on: ${{ matrix.os }}
         name: Build RLGym Learn GUI
-        needs: set-versions
         strategy:
             matrix:
                 include:
@@ -75,10 +18,12 @@ jobs:
                   artifact-name: app-windows
                   api-name: RLGym_Learn_API.exe
                   extension: exe
+                  output-name: "RLGym Learn GUI Setup "
                 - os: ubuntu-latest
                   artifact-name: app-linux
                   api-name: RLGym_Learn_API
                   extension: AppImage
+                  output-name: "RLGym Learn GUI-"
 
         steps:
         - name: Checkout code
@@ -104,7 +49,7 @@ jobs:
 
         - name: Generate output names
           run: |
-            NAME=RLGym Learn GUI $(node -e "process.stdout.write(require('./package').version)").${{matrix.extension}}
+            NAME=${{matrix.output-name}}$(node -e "process.stdout.write(require('./package').version)").${{matrix.extension}}
             echo "OUTPUT_NAME=$NAME" >> $GITHUB_ENV
 
         - name: Upload API binary as artifact
