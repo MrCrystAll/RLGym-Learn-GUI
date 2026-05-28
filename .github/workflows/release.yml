@@ -71,13 +71,13 @@ jobs:
                 include:
                 - os: windows-latest
                   artifact-name: app-windows
-                  api-name: api-windows
-                  api-output: RLGym-Learn-API.exe
+                  api-name: RLGym-Learn-API.exe
+                  api-output: RLGym_Learn_API.exe
                   output-name: RLGym Learn GUI Setup $(node -e "process.stdout.write(require('./package').version)").exe
                 - os: ubuntu-latest
                   artifact-name: app-linux
-                  api-name: api-linux
-                  api-output: RLGym-Learn-API
+                  api-name: RLGym-Learn-API
+                  api-output: RLGym_Learn_API
                   output-name: RLGym Learn GUI Setup $(node -e "process.stdout.write(require('./package').version)").AppImage
 
         steps:
