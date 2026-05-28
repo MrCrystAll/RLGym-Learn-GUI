@@ -45,7 +45,7 @@ jobs:
     
         - name: Patch package.json
           run: |
-            npm version ${{steps.convert.outputs.npm-version}}
+            npm version ${{steps.convert.outputs.npm-version}} --no-git-tag-version
 
         - name: Commit and push version bump
           run: |
@@ -65,6 +65,7 @@ jobs:
 
     build:
         runs-on: ${{ matrix.os }}
+        needs: set-versions
         strategy:
             matrix:
                 include:
