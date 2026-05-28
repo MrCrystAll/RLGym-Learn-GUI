@@ -1,0 +1,147 @@
+name: Release Application
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions: 
+    contents: write
+
+jobs:
+    set-versions:
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v6
+          with:
+            token: ${{ secrets.GITHUB_TOKEN }}
+            fetch-depth: 0 # full history needed to detect the branch behind the tag
+        - uses: actions/setup-python@v6
+          with:
+            python-version: "3.12"
+
+        - name: Configure git
+          run: |
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+
+        - name: Convert tag to npm version
+          id: convert
+          run: |
+            python3 << 'EOF'
+            import re, os
+            tag = os.environ["GITHUB_REF_NAME"]
+            raw = tag.lstrip("v")
+            m = re.match(r"^(\d+\.\d+\.\d+)(?:-([a-z]+)\.(\d+))?$", raw)
+            if not m:
+                raise ValueError(f"Tag '{tag}' does not match vX.Y.Z[-pre.N] format")
+            base, pre_name, pre_num = m.groups()
+            if pre_name:
+                npm_version    = f"{base}-{pre_name}.{pre_num}"
+            else:
+                npm_version    = base
+            with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+                f.write(f"npm-version={npm_version}\n")
+            EOF
+    
+        - name: Patch package.json
+          run: |
+            npm version ${{steps.convert.outputs.npm_version}}
+
+        - name: Commit and push version bump
+          run: |
+            # find which branch this tag points to
+            BRANCH=$(git branch -r --contains ${{ github.ref_name }} \
+                | grep -v HEAD \
+                | sed 's|origin/||' \
+                | tr -d ' ' \
+                | head -1)
+
+            echo "Pushing version bump to branch: $BRANCH"
+
+            git checkout $BRANCH
+            git add package.json
+            git commit -m "chore: bump version to ${{ github.ref_name }} [skip ci]"
+            git push origin $BRANCH
+
+    build:
+        runs-on: ${{ matrix.os }}
+        strategy:
+            matrix:
+                include:
+                - os: windows-latest
+                  artifact-name: app-windows
+                  api-name: api-windows
+                  api-output: RLGym-Learn-API.exe
+                  output-name: RLGym Learn GUI Setup $(node -e "process.stdout.write(require('./package').version)").exe
+                - os: ubuntu-latest
+                  artifact-name: app-linux
+                  api-name: api-linux
+                  api-output: RLGym-Learn-API
+                  output-name: RLGym Learn GUI Setup $(node -e "process.stdout.write(require('./package').version)").AppImage
+
+        steps:
+        - name: Checkout code
+          uses: actions/checkout@v6
+        - uses: actions/setup-node@v6
+          with:
+            node-version: 24
+            registry-url: https://registry.npmjs.org/
+            package-manager-cache: false # never use caching in release builds
+
+        - name: Download latest release assets
+          env:
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          run: |
+            gh release download --repo MrCrystAll/RLGym-Learn-API --pattern "${{matrix.api-name}}" --output ${{matrix.api-output}}
+        
+
+        - name: Build
+          run: |
+            npm install
+            npm run dist
+
+        - name: Upload API binary as artifact
+          uses: actions/upload-artifact@v7
+          with:
+            name: ${{ matrix.artifact-name }}
+            path: ./dist/${{ matrix.output-name }}
+            retention-days: 1 # only needed during this workflow run
+
+    release:
+        name: Create GitHub Release
+        runs-on: ubuntu-latest
+        needs: build
+
+        steps:
+        - name: Checkout code
+          uses: actions/checkout@v6
+
+        - name: Download Windows build
+          uses: actions/download-artifact@v8
+          with:
+            name: api-windows
+            path: ./release-files/
+
+        - name: Download Linux build
+          uses: actions/download-artifact@v8
+          with:
+            name: api-linux
+            path: ./release-files/
+
+        - name: Extract release notes from CHANGELOG.md
+          id: extract_release_notes
+          uses: ffurrer2/extract-release-notes@v3
+          with:
+            prerelease: ${{ contains(github.ref_name, '-beta') || contains(github.ref_name, '-alpha') || contains(github.ref_name, '-rc') }}
+
+        - name: Create Release
+          uses: softprops/action-gh-release@v2
+          with:
+            name: Release ${{ github.ref_name }}
+            tag_name: ${{ github.ref_name }}
+            draft: false
+            prerelease: ${{ contains(github.ref_name, '-beta') || contains(github.ref_name, '-alpha') || contains(github.ref_name, '-rc') }}
+            files: ./release-files/*
+            body: ${{ steps.extract_release_notes.outputs.release_notes }}
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

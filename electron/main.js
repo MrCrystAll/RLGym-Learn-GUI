@@ -112,7 +112,7 @@ app.whenReady().then(async () => {
     process.env.API_PORT = port;  // preload picks this up
 
     // Path to bundled binary (PyInstaller output)
-    const apiPath = path.join(__dirname, '../../../Void_API/dist/main.exe');
+    const apiPath = path.join(process.resourcesPath, process.platform === "win32" ? "api.exe" : "api");
 
     pyProcess = spawn(apiPath, ['--port', port]);
 
