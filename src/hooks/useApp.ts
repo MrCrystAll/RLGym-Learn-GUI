@@ -2,44 +2,39 @@ import { useEffect, useState } from "react";
 import apiService from "../services/api.service";
 
 interface UseAppReturn {
-    isAPIReady: boolean | null
     error: Error | null;
-    refreshingAPI: boolean
     startingAPI: boolean
+    isBugged: boolean
 
     startApi: () => Promise<void>
-    checkAPIConnection: () => Promise<void>
 }
 
 export function useApp(): UseAppReturn {
     const [error, setError] = useState<Error | null>(null);
-    const [isAPIReady, setIsAPIReady] = useState<boolean>(true);
-    const [refreshingAPI, setRefreshingAPI] = useState<boolean>(false);
     const [startingAPI, setStartingAPI] = useState<boolean>(true);
+    const [isBugged, setIsBugged] = useState<boolean>(false);
 
     const startApi = async (): Promise<void> => {
-        apiService.startAPI().then(
-            () => setStartingAPI(false)
-        ).catch((reason: Error) => {
-            if(reason.cause !== undefined && reason.cause !== "Repeat") setError(reason)
-        }
-        )
-    }
+        const result = await apiService.startAPI();
 
-    const checkAPIConnection = async (): Promise<void> => {
-        setRefreshingAPI(true);
-        apiService.checkApiStatus()
-            .then(() => {setIsAPIReady(true); setRefreshingAPI(false)})
-            .catch((error) => {
-                setError(error);
-                setIsAPIReady(false);
-                setRefreshingAPI(false);
-            })
+        if(!result.ok){
+
+            if(result.cause === undefined){
+                const err = new Error(result.message);
+                err.cause = result.cause;                
+                setError(err);
+                setIsBugged(true);
+            }
+            
+        }
+        else{
+            setStartingAPI(false)
+        }
     }
 
     useEffect(() => {
         startApi();
     }, []);
 
-    return {startingAPI, isAPIReady, error, refreshingAPI, startApi, checkAPIConnection}
+    return {startingAPI, isBugged, error, startApi}
 }

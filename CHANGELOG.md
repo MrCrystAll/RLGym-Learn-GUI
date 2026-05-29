@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- The API now starts in the app rather than before the app
+- The API now starts in the app rather than before the app, you need to quit if the API fails.
 
 ## [0.1.0] - 2026-05-28
 

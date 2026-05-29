@@ -34,4 +34,7 @@ contextBridge.exposeInMainWorld('api', {
   async start(){
       return ipcRenderer.invoke("start-api");
   },
+  quit(){
+    return ipcRenderer.send("quit")
+  }
 });
