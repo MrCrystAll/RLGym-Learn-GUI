@@ -62,11 +62,11 @@ function waitForApi(port, retries = 20){
         const req = http.get(`http://localhost:${port}/health`, (res) => {
           if (res.statusCode === 200) resolve();
           else if (retries-- > 0) setTimeout(attempt, 500);
-          else reject(new Error('API never ready'));
+          else reject(new Error("API check failed, the API likely didn't start. Please report this to the maintainer of the application."));
         });
         req.on('error', () => {
           if (retries-- > 0) setTimeout(attempt, 500);
-          else reject(new Error('API never ready'));
+          else reject(new Error("API check failed, the API likely didn't start. Please report this to the maintainer of the application."));
         });
       };
       attempt();
@@ -76,7 +76,7 @@ function waitForApi(port, retries = 20){
 
 ipcMain.handle("start-api", async () => {
   if(app.isPackaged){
-    if(pyProcess !== null) return Promise.reject(new Error("A process is already running", {cause: "Repeat"}));
+    if(pyProcess !== null) return { ok: false, message: "A proces is already running", cause: "Repeat" };
     // Path to bundled binary (PyInstaller output)
     const port = process.env.API_PORT;
     // const apiPath = path.join(process.resourcesPath, process.platform === "win32" ? "api.exe" : "api");
@@ -88,9 +88,21 @@ ipcMain.handle("start-api", async () => {
 
     pyProcess.stderr.on('data', (d) => console.error('[API]', d.toString()));
 
-    return waitForApi(port, 50);
+    try {
+        await waitForApi(port, 50);
+        return { ok: true };
+    } catch (err) {
+        return { ok: false, message: err.message, cause: err.cause };
+    }
   }
-  return waitForApi(8000, 25);
+  // Local development
+  try {
+      await waitForApi(8000, 2);
+      return { ok: true };
+  } catch (err) {
+      return { ok: false, message: err.message, cause: err.cause };
+  }
+  
 })
 
 ipcMain.on("watch-log", (event, logPath, receiver) => {  // <-- receives path
@@ -124,6 +136,10 @@ ipcMain.on("watch-log", (event, logPath, receiver) => {  // <-- receives path
     });
   }, 100);
 });
+
+ipcMain.once("quit", () => {
+  process.exit(0)
+})
 
 app.whenReady().then(async () => {
   if (app.isPackaged){

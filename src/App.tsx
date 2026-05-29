@@ -10,14 +10,12 @@ import ProjectEditor from "./components/ProjectEditor";
 
 function App() {
   // API
-  const {error, startingAPI, isAPIReady, refreshingAPI, startApi, checkAPIConnection} = useApp();
+  const {error, startingAPI, isBugged, startApi} = useApp();
 
   // Projects
   const {currentProject, projectFetchError, projects, folderPath, addProject, updateProjectMetadata, updateProject, setCurrentProject, fetchProjects, deleteProject, setFolder} = useProjects();
 
   const addProjectFromName = async (name: string) => {
-
-    checkAPIConnection();
     
     addProject({
       name: name
@@ -29,8 +27,6 @@ function App() {
   }, [])
 
   const removeProject = async (projectId: string) => {
-    checkAPIConnection();
-
     deleteProject(projectId);
   }
 
@@ -53,18 +49,10 @@ function App() {
     }
   }
 
-  if(startingAPI){
-    return <div className="bg-dark text-light">
-      <p>Starting API...</p>
-      <small className="text-danger">{error?.message}</small>
-    </div>
-  }
-
-
-  if(!isAPIReady)
+  if(startingAPI)
   {
     return (
-      <IdleAPI checkAPIConnection={checkAPIConnection} refreshingAPIStatus={refreshingAPI}></IdleAPI>
+      <IdleAPI isBugged={isBugged} error={error} startingAPI={startingAPI}></IdleAPI>
       )
   }
   else if(folderPath === null){
