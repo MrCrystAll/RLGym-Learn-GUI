@@ -1,17 +1,16 @@
 import ActionButtons from "./project/ActionButtons"
 import ProjectMetadataEditor from "./project/ProjectMetadataEditor"
 import projectService from "../services/project.service";
-import type { ProjectMetadata, Run } from "rlgym-learn-client";
+import type { ProjectMetadata, ProjectNotFoundErrorModel, Run } from "rlgym-learn-client";
 import { useState } from "react";
 import RunPage from "./project/rlgym-learn/run-handling/RunPage";
 import ChoosePythonPath from "./ChoosePythonPath";
 import RunList from "./project/rlgym-learn/run-handling/RunList";
+import { useNotifications } from "../hooks/useNotifications";
 
 interface ProjectEditorArgs{
     projectMetadata: ProjectMetadata,
     updateProjectMetadata: (metadata: ProjectMetadata) => void,
-
-    fetchProjectMetadata: () => void
 
     setCurrentProject: (project: string | null) => void,
     removeProject: (projectId: string) => void
@@ -19,22 +18,45 @@ interface ProjectEditorArgs{
 
 function ProjectEditor({projectMetadata, updateProjectMetadata, setCurrentProject, removeProject}: ProjectEditorArgs) {
     const [selectedRun, setSelectedRun] = useState<Run | null>(null);
+    const {pushNotification} = useNotifications();
 
     const updateProjectName = async (name: string) => {
-        projectService.updateProjectName(projectMetadata.id, name).then(
+        (await projectService.updateProjectName(projectMetadata.id, name)).map(
             () => {updateProjectMetadata({
                 ...projectMetadata,
                 name: name
             })}
+        ).mapErr(
+            (e) => {
+                if(e.status === 404){
+                    const err = e.response?.data as ProjectNotFoundErrorModel
+                    pushNotification({
+                        message: `${err.message} (${err.inner_message})`,
+                        severity: "error",
+                        title: "Failed to update project " + err.project_id
+                    })
+                }
+            }
         )
     }
 
     const updateProjectInterpreter = async (path: string) => {
-        projectService.updateProjectInterpreter(projectMetadata.id, path).then(
+        (await projectService.updateProjectInterpreter(projectMetadata.id, path)).map(
             () => {updateProjectMetadata({
                 ...projectMetadata,
                 interpreter: path
             })}
+        ).mapErr(
+            (e) => {
+                if(e.status === 404){
+                    const err = e.response?.data as ProjectNotFoundErrorModel
+                    pushNotification({
+                        message: `${err.message} (${err.inner_message})`,
+                        severity: "error",
+                        title: "Failed to update project " + err.project_id
+                    })
+                }
+            }
         )
     }
 

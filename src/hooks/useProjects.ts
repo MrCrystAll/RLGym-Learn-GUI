@@ -1,12 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import projectService from "../services/project.service";
 import apiService from "../services/api.service";
-import type { ProjectCreationArgs, ProjectMetadata } from "rlgym-learn-client";
+import type { ProjectCreationArgs, ProjectCreationFailedModel, ProjectMetadata, ProjectNotFoundErrorModel, ProjectRootFolderNotFoundModel, ValidationError } from "rlgym-learn-client";
+import type { AppNotification } from "./useNotifications";
+
+interface UseProjectsArgs{
+    pushError: (error: Omit<AppNotification, "id">) => void
+}
 
 interface UseProjectsReturn{
     projects: Record<string, ProjectMetadata>
     currentProject: string | null
-    projectFetchError: Error | null
     folderPath: string | null
 
     addProject: (args: ProjectCreationArgs) => Promise<void>
@@ -14,37 +18,24 @@ interface UseProjectsReturn{
     deleteProject: (projectId: string) => Promise<void>
 
     fetchProjects: () => Promise<void>
-    updateProjectMetadata: () => void
 
     setCurrentProject: (path: string | null) => void;
     setFolder: (path: string) => Promise<void>;
 }
 
-export function useProjects(): UseProjectsReturn {
+export function useProjects({pushError}: UseProjectsArgs): UseProjectsReturn {
     const [projects, setProjects] = useState<Record<string, ProjectMetadata>>({});
     const [currentProject, setCurrentProject] = useState<string | null>(null);
     const [folderPath, setFolderPath] = useState<string | null>(null);
 
-    const [projectFetchError, setProjectFetchError] = useState<Error | null>(null);
-
     const setFolder = async (folderPath: string): Promise<void> => {
         await apiService.updateRootFolder(folderPath);
         setFolderPath(folderPath);
-    }
-
-    const updateProjectMetadata = async (): Promise<void> => {
-        if(currentProject !== null){
-            projectService.getProjectMetadata(currentProject).then(
-                (value) => setProjects({
-                    ...projects,
-                    [value.id]: value
-                })
-            )
-        }
+        fetchProjects();
     }
 
     const fetchProjects = async (): Promise<void> => {
-        apiService.getAllProjects().then(
+        (await apiService.getAllProjects()).map(
             (fetchedProjects) => {
                 
                 const projectsObj: Record<string, ProjectMetadata> = {}
@@ -54,19 +45,49 @@ export function useProjects(): UseProjectsReturn {
                 )
 
                 setProjects(projectsObj);
-                setProjectFetchError(null);
             }
-        ).catch(
-            (error: Error) => setProjectFetchError(error)
+        ).mapErr(
+            (err) => {
+                if(err.status === 404) pushError(
+                    {
+                        message: (err.response?.data as ProjectRootFolderNotFoundModel).message,
+                        severity: "error",
+                        title: "Fetch all project error"
+                    }
+                )
+                else pushError(
+                    {
+                        message: (err.response?.data as ValidationError).msg,
+                        severity: "error",
+                        title: "Fetch all project error"
+                    }
+                )
+            }
         )
     }
-    useEffect(() => {
-        fetchProjects();
-    }, [folderPath])
 
     const addProject = async (args: ProjectCreationArgs): Promise<void> => {
-        apiService.createProject(args).then(
-            (_) => fetchProjects()
+        (await apiService.createProject(args)).map(
+            () => fetchProjects()
+        ).mapErr(
+            (e) => {
+                if(e.status === 404 || e.status === 417) {
+                    const err = e.response?.data as ProjectCreationFailedModel;
+                    pushError({
+                        message: err.message + " (" + err.inner_exception_message + ")",
+                        severity: "error",
+                        title: `Project "${err.name}" failed to create`
+                    })
+                }
+                else{
+                    const err = e.response?.data as ValidationError;
+                    pushError({
+                        message: err.msg,
+                        severity: "error",
+                        title: "Validation error on project creation"
+                    })
+                }
+            }
         );
     }
 
@@ -83,10 +104,30 @@ export function useProjects(): UseProjectsReturn {
     }
 
     const deleteProject = async (projectId: string): Promise<void> => {
-        projectService.deleteProject(projectId).then(
+        (await projectService.deleteProject(projectId)).map(
             () => fetchProjects()
+        ).mapErr(
+            (e) => {
+                if(e.status === 404) {
+                    const err = e.response?.data as ProjectNotFoundErrorModel
+                    pushError({
+                        message: `${err.message} (${err.inner_message})`,
+                        severity: "error",
+                        title: `Project "${err.project_id}" failed to delete`,
+                        duration: 10_000
+                    })
+                }
+                else{
+                    const err = e.response?.data as ValidationError
+                    pushError({
+                        message: err.msg,
+                        severity: "error",
+                        title: "Validation error during project deletion"
+                    })
+                }
+            }
         );
     }
 
-    return {folderPath, projects, currentProject, projectFetchError, addProject, updateProjectMetadata, updateProject, deleteProject, setCurrentProject, fetchProjects, setFolder}
+    return {folderPath, projects, currentProject, addProject, updateProject, deleteProject, setCurrentProject, fetchProjects, setFolder}
 }
