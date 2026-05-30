@@ -7,13 +7,18 @@ import IdleFolderPath from "./components/IdleFolderPath";
 import { useApp } from "./hooks/useApp";
 import { useProjects } from "./hooks/useProjects";
 import ProjectEditor from "./components/ProjectEditor";
+import { useNotifications } from "./hooks/useNotifications";
+import { NotificationContainer } from "./components/NotificationContainer";
 
 function App() {
   // API
   const {error, startingAPI, isBugged, startApi} = useApp();
 
+  // Errors
+  const {pushNotification: pushError} = useNotifications();
+
   // Projects
-  const {currentProject, projectFetchError, projects, folderPath, addProject, updateProjectMetadata, updateProject, setCurrentProject, fetchProjects, deleteProject, setFolder} = useProjects();
+  const {currentProject, projects, folderPath, addProject, updateProject, setCurrentProject, fetchProjects, deleteProject, setFolder} = useProjects({pushError});
 
   const addProjectFromName = async (name: string) => {
     
@@ -49,7 +54,8 @@ function App() {
     }
   }
 
-  if(startingAPI)
+  const appRender = () => {
+    if(startingAPI)
   {
     return (
       <IdleAPI isBugged={isBugged} error={error} startingAPI={startingAPI}></IdleAPI>
@@ -67,8 +73,6 @@ function App() {
       <div className="container-fluid pt-3">
         <AddProject addProject={addProjectFromName}></AddProject>
       </div>
-      <p className="text-danger">{projectFetchError?.message}</p>
-
       <div className="m-2">
         <p className="display-3">Projects: </p>
         {projectsRender()}
@@ -78,8 +82,16 @@ function App() {
   }
   else{
     return (
-      <ProjectEditor fetchProjectMetadata={updateProjectMetadata} setCurrentProject={setCurrentProject} updateProjectMetadata={updateProject} removeProject={removeProject} projectMetadata={projects[currentProject]}/>
+      <ProjectEditor setCurrentProject={setCurrentProject} updateProjectMetadata={updateProject} removeProject={removeProject} projectMetadata={projects[currentProject]}/>
   )}
+  }
+
+  return (
+    <>
+        {appRender()}
+        <NotificationContainer></NotificationContainer>
+    </>
+  )
 
   
 }
