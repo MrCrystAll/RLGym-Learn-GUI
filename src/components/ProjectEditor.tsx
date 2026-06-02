@@ -1,7 +1,7 @@
 import ActionButtons from "./project/ActionButtons"
 import ProjectMetadataEditor from "./project/ProjectMetadataEditor"
 import projectService from "../services/project.service";
-import type { ProjectMetadata, ProjectNotFoundErrorModel, RLGymLearnApiExceptionModel, Run } from "rlgym-learn-client";
+import type { ProjectMetadata, RLGymLearnApiExceptionModel, Run } from "rlgym-learn-client";
 import { useState } from "react";
 import RunPage from "./project/rlgym-learn/run-handling/RunPage";
 import ChoosePythonPath from "./ChoosePythonPath";
