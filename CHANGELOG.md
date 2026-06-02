@@ -7,9 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Changed
+
+- Overall better error handling, more details about what went wrong.
+
 ### Added
 
 - The API now starts in the app rather than before the app, you need to quit if the API fails.
+- A new notification system is here, using toasts to show errors rather than dedicated fields. This will also be used for warnings, info and notifications.
 
 ## [0.1.0] - 2026-05-28
 

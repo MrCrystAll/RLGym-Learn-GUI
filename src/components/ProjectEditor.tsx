@@ -1,17 +1,16 @@
 import ActionButtons from "./project/ActionButtons"
 import ProjectMetadataEditor from "./project/ProjectMetadataEditor"
 import projectService from "../services/project.service";
-import type { ProjectMetadata, Run } from "rlgym-learn-client";
+import type { ProjectMetadata, RLGymLearnApiExceptionModel, Run } from "rlgym-learn-client";
 import { useState } from "react";
 import RunPage from "./project/rlgym-learn/run-handling/RunPage";
 import ChoosePythonPath from "./ChoosePythonPath";
 import RunList from "./project/rlgym-learn/run-handling/RunList";
+import { useNotifications } from "../hooks/useNotifications";
 
 interface ProjectEditorArgs{
     projectMetadata: ProjectMetadata,
     updateProjectMetadata: (metadata: ProjectMetadata) => void,
-
-    fetchProjectMetadata: () => void
 
     setCurrentProject: (project: string | null) => void,
     removeProject: (projectId: string) => void
@@ -19,22 +18,49 @@ interface ProjectEditorArgs{
 
 function ProjectEditor({projectMetadata, updateProjectMetadata, setCurrentProject, removeProject}: ProjectEditorArgs) {
     const [selectedRun, setSelectedRun] = useState<Run | null>(null);
+    const {pushNotification} = useNotifications();
 
     const updateProjectName = async (name: string) => {
-        projectService.updateProjectName(projectMetadata.id, name).then(
+        (await projectService.updateProjectName(projectMetadata.id, name)).map(
             () => {updateProjectMetadata({
                 ...projectMetadata,
                 name: name
+            }); pushNotification({
+                message: `Project name has successfully been updated to "${name}"`,
+                severity: "success",
+                title: "Project updated successfully"
             })}
+        ).mapErr(
+            (e) => {
+                const err = e.response?.data as RLGymLearnApiExceptionModel
+                pushNotification({
+                    title: err.title,
+                    message: err.description,
+                    severity: "error"
+                })
+            }
         )
     }
 
     const updateProjectInterpreter = async (path: string) => {
-        projectService.updateProjectInterpreter(projectMetadata.id, path).then(
+        (await projectService.updateProjectInterpreter(projectMetadata.id, path)).map(
             () => {updateProjectMetadata({
                 ...projectMetadata,
                 interpreter: path
+            }); pushNotification({
+                message: `Project interpreter has successfully been updated to "${path}"`,
+                severity: "success",
+                title: "Project updated successfully"
             })}
+        ).mapErr(
+            (e) => {
+                const err = e.response?.data as RLGymLearnApiExceptionModel
+                pushNotification({
+                    title: err.title,
+                    message: err.description,
+                    severity: "error"
+                })
+            }
         )
     }
 

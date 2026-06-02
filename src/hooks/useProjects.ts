@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import projectService from "../services/project.service";
 import apiService from "../services/api.service";
-import type { ProjectCreationArgs, ProjectMetadata } from "rlgym-learn-client";
+import type { ProjectCreationArgs, ProjectMetadata, RLGymLearnApiExceptionModel, ValidationError } from "rlgym-learn-client";
+import { useNotifications } from "./useNotifications";
 
 interface UseProjectsReturn{
     projects: Record<string, ProjectMetadata>
     currentProject: string | null
-    projectFetchError: Error | null
     folderPath: string | null
 
     addProject: (args: ProjectCreationArgs) => Promise<void>
@@ -14,7 +14,6 @@ interface UseProjectsReturn{
     deleteProject: (projectId: string) => Promise<void>
 
     fetchProjects: () => Promise<void>
-    updateProjectMetadata: () => void
 
     setCurrentProject: (path: string | null) => void;
     setFolder: (path: string) => Promise<void>;
@@ -24,27 +23,16 @@ export function useProjects(): UseProjectsReturn {
     const [projects, setProjects] = useState<Record<string, ProjectMetadata>>({});
     const [currentProject, setCurrentProject] = useState<string | null>(null);
     const [folderPath, setFolderPath] = useState<string | null>(null);
-
-    const [projectFetchError, setProjectFetchError] = useState<Error | null>(null);
+    const {pushNotification} = useNotifications();
 
     const setFolder = async (folderPath: string): Promise<void> => {
         await apiService.updateRootFolder(folderPath);
         setFolderPath(folderPath);
-    }
-
-    const updateProjectMetadata = async (): Promise<void> => {
-        if(currentProject !== null){
-            projectService.getProjectMetadata(currentProject).then(
-                (value) => setProjects({
-                    ...projects,
-                    [value.id]: value
-                })
-            )
-        }
+        fetchProjects();
     }
 
     const fetchProjects = async (): Promise<void> => {
-        apiService.getAllProjects().then(
+        (await apiService.getAllProjects()).map(
             (fetchedProjects) => {
                 
                 const projectsObj: Record<string, ProjectMetadata> = {}
@@ -54,19 +42,31 @@ export function useProjects(): UseProjectsReturn {
                 )
 
                 setProjects(projectsObj);
-                setProjectFetchError(null);
             }
-        ).catch(
-            (error: Error) => setProjectFetchError(error)
+        ).mapErr(
+            (e) => {
+                const err = e.response?.data as RLGymLearnApiExceptionModel
+                pushNotification({
+                    title: err.title,
+                    message: err.description,
+                    severity: "error"
+                })
+            }
         )
     }
-    useEffect(() => {
-        fetchProjects();
-    }, [folderPath])
 
     const addProject = async (args: ProjectCreationArgs): Promise<void> => {
-        apiService.createProject(args).then(
-            (_) => fetchProjects()
+        (await apiService.createProject(args)).map(
+            () => fetchProjects()
+        ).mapErr(
+            (e) => {
+                const err = e.response?.data as RLGymLearnApiExceptionModel
+                pushNotification({
+                    title: err.title,
+                    message: err.description,
+                    severity: "error"
+                })
+            }
         );
     }
 
@@ -83,10 +83,19 @@ export function useProjects(): UseProjectsReturn {
     }
 
     const deleteProject = async (projectId: string): Promise<void> => {
-        projectService.deleteProject(projectId).then(
+        (await projectService.deleteProject(projectId)).map(
             () => fetchProjects()
+        ).mapErr(
+            (e) => {
+                const err = e.response?.data as RLGymLearnApiExceptionModel
+                pushNotification({
+                    title: err.title,
+                    message: err.description,
+                    severity: "error"
+                })
+            }
         );
     }
 
-    return {folderPath, projects, currentProject, projectFetchError, addProject, updateProjectMetadata, updateProject, deleteProject, setCurrentProject, fetchProjects, setFolder}
+    return {folderPath, projects, currentProject, addProject, updateProject, deleteProject, setCurrentProject, fetchProjects, setFolder}
 }

@@ -1,5 +1,4 @@
 import type { Run, Session } from "rlgym-learn-client"
-import type { LogConfig } from "./models/project"
 
 export interface LineEntry{
     timestamp: string,
