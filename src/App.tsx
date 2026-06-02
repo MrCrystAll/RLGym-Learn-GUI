@@ -7,18 +7,14 @@ import IdleFolderPath from "./components/IdleFolderPath";
 import { useApp } from "./hooks/useApp";
 import { useProjects } from "./hooks/useProjects";
 import ProjectEditor from "./components/ProjectEditor";
-import { useNotifications } from "./hooks/useNotifications";
 import { NotificationContainer } from "./components/NotificationContainer";
 
 function App() {
   // API
   const {error, startingAPI, isBugged, startApi} = useApp();
 
-  // Errors
-  const {pushNotification: pushError} = useNotifications();
-
   // Projects
-  const {currentProject, projects, folderPath, addProject, updateProject, setCurrentProject, fetchProjects, deleteProject, setFolder} = useProjects({pushError});
+  const {currentProject, projects, folderPath, addProject, updateProject, setCurrentProject, fetchProjects, deleteProject, setFolder} = useProjects();
 
   const addProjectFromName = async (name: string) => {
     

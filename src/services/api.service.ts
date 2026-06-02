@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 
-import {Configuration, DefaultApi, ProjectApi, RunsApi, SessionApi, type ProjectCreationArgs, type ProjectCreationFailedModel, type ProjectMetadata, type ProjectRootFolderNotFoundModel, type ValidationError} from "rlgym-learn-client"
+import {Configuration, DefaultApi, ProjectApi, RunsApi, SessionApi, type ProjectCreationArgs, type ProjectMetadata, type RLGymLearnApiExceptionModel} from "rlgym-learn-client"
 import {Result, ok, err} from "neverthrow"
 
 const port = (window as any).electron?.apiPort ?? '8000';
@@ -30,13 +30,13 @@ class APIService {
     return window.api.start();
   }
   
-  async getAllProjects(): Promise<Result<ProjectMetadata[], AxiosError<ProjectRootFolderNotFoundModel | ValidationError>>>{
+  async getAllProjects(): Promise<Result<ProjectMetadata[], AxiosError<RLGymLearnApiExceptionModel>>>{
     return this.projectApi.getAllProjects()
       .then((r) => ok(r.data))
       .catch((e) => err(e))
   }
 
-  async createProject(args: ProjectCreationArgs): Promise<Result<string, AxiosError<ProjectCreationFailedModel | ValidationError>>>{
+  async createProject(args: ProjectCreationArgs): Promise<Result<string, AxiosError<RLGymLearnApiExceptionModel>>>{
     return this.projectApi.createProject(args).then((r) => ok(r.data)).catch((e) => err(e));
   }
 

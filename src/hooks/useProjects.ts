@@ -1,12 +1,8 @@
 import { useState } from "react";
 import projectService from "../services/project.service";
 import apiService from "../services/api.service";
-import type { ProjectCreationArgs, ProjectCreationFailedModel, ProjectMetadata, ProjectNotFoundErrorModel, ProjectRootFolderNotFoundModel, ValidationError } from "rlgym-learn-client";
-import type { AppNotification } from "./useNotifications";
-
-interface UseProjectsArgs{
-    pushError: (error: Omit<AppNotification, "id">) => void
-}
+import type { ProjectCreationArgs, ProjectMetadata, RLGymLearnApiExceptionModel, ValidationError } from "rlgym-learn-client";
+import { useNotifications } from "./useNotifications";
 
 interface UseProjectsReturn{
     projects: Record<string, ProjectMetadata>
@@ -23,10 +19,11 @@ interface UseProjectsReturn{
     setFolder: (path: string) => Promise<void>;
 }
 
-export function useProjects({pushError}: UseProjectsArgs): UseProjectsReturn {
+export function useProjects(): UseProjectsReturn {
     const [projects, setProjects] = useState<Record<string, ProjectMetadata>>({});
     const [currentProject, setCurrentProject] = useState<string | null>(null);
     const [folderPath, setFolderPath] = useState<string | null>(null);
+    const {pushNotification} = useNotifications();
 
     const setFolder = async (folderPath: string): Promise<void> => {
         await apiService.updateRootFolder(folderPath);
@@ -47,21 +44,13 @@ export function useProjects({pushError}: UseProjectsArgs): UseProjectsReturn {
                 setProjects(projectsObj);
             }
         ).mapErr(
-            (err) => {
-                if(err.status === 404) pushError(
-                    {
-                        message: (err.response?.data as ProjectRootFolderNotFoundModel).message,
-                        severity: "error",
-                        title: "Fetch all project error"
-                    }
-                )
-                else pushError(
-                    {
-                        message: (err.response?.data as ValidationError).msg,
-                        severity: "error",
-                        title: "Fetch all project error"
-                    }
-                )
+            (e) => {
+                const err = e.response?.data as RLGymLearnApiExceptionModel
+                pushNotification({
+                    title: err.title,
+                    message: err.description,
+                    severity: "error"
+                })
             }
         )
     }
@@ -71,22 +60,12 @@ export function useProjects({pushError}: UseProjectsArgs): UseProjectsReturn {
             () => fetchProjects()
         ).mapErr(
             (e) => {
-                if(e.status === 404 || e.status === 417) {
-                    const err = e.response?.data as ProjectCreationFailedModel;
-                    pushError({
-                        message: err.message + " (" + err.inner_exception_message + ")",
-                        severity: "error",
-                        title: `Project "${err.name}" failed to create`
-                    })
-                }
-                else{
-                    const err = e.response?.data as ValidationError;
-                    pushError({
-                        message: err.msg,
-                        severity: "error",
-                        title: "Validation error on project creation"
-                    })
-                }
+                const err = e.response?.data as RLGymLearnApiExceptionModel
+                pushNotification({
+                    title: err.title,
+                    message: err.description,
+                    severity: "error"
+                })
             }
         );
     }
@@ -108,23 +87,12 @@ export function useProjects({pushError}: UseProjectsArgs): UseProjectsReturn {
             () => fetchProjects()
         ).mapErr(
             (e) => {
-                if(e.status === 404) {
-                    const err = e.response?.data as ProjectNotFoundErrorModel
-                    pushError({
-                        message: `${err.message} (${err.inner_message})`,
-                        severity: "error",
-                        title: `Project "${err.project_id}" failed to delete`,
-                        duration: 10_000
-                    })
-                }
-                else{
-                    const err = e.response?.data as ValidationError
-                    pushError({
-                        message: err.msg,
-                        severity: "error",
-                        title: "Validation error during project deletion"
-                    })
-                }
+                const err = e.response?.data as RLGymLearnApiExceptionModel
+                pushNotification({
+                    title: err.title,
+                    message: err.description,
+                    severity: "error"
+                })
             }
         );
     }
