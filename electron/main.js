@@ -79,8 +79,7 @@ ipcMain.handle("start-api", async () => {
     if(pyProcess !== null) return { ok: false, message: "A proces is already running", cause: "Repeat" };
     // Path to bundled binary (PyInstaller output)
     const port = process.env.API_PORT;
-    // const apiPath = path.join(process.resourcesPath, process.platform === "win32" ? "api.exe" : "api");
-    const apiPath = path.join(__dirname, '../../RLGym-Learn-API/dist/main.exe')
+    const apiPath = path.join(process.resourcesPath, process.platform === "win32" ? "api.exe" : "api");
 
     pyProcess = spawn(apiPath, ['--port', String(port)], {
       detached: process.platform !== 'win32', // creates a process group on Linux/Mac
@@ -109,7 +108,7 @@ ipcMain.on("watch-log", (event, logPath, receiver) => {  // <-- receives path
     let fileSize = 0;
 
   const waitForFile = setInterval(() => {    
-    if (!fs.existsSync(logPath)) return;
+    if (fs.existsSync(logPath)) return;
     clearInterval(waitForFile);
 
     const readNewBytes = () => {

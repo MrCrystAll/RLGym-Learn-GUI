@@ -7,7 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## Changed
+## [0.1.2] - 2026-06-02
+
+### Fixed
+
+- The GUI's path to the API was still configured for local testing
+
+## [0.1.1] - 2026-06-02
+
+### Changed
 
 - Overall better error handling, more details about what went wrong.
 
