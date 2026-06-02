@@ -1,7 +1,7 @@
 import ActionButtons from "./project/ActionButtons"
 import ProjectMetadataEditor from "./project/ProjectMetadataEditor"
 import projectService from "../services/project.service";
-import type { ProjectMetadata, ProjectNotFoundErrorModel, Run } from "rlgym-learn-client";
+import type { ProjectMetadata, ProjectNotFoundErrorModel, RLGymLearnApiExceptionModel, Run } from "rlgym-learn-client";
 import { useState } from "react";
 import RunPage from "./project/rlgym-learn/run-handling/RunPage";
 import ChoosePythonPath from "./ChoosePythonPath";
@@ -25,17 +25,19 @@ function ProjectEditor({projectMetadata, updateProjectMetadata, setCurrentProjec
             () => {updateProjectMetadata({
                 ...projectMetadata,
                 name: name
+            }); pushNotification({
+                message: `Project name has successfully been updated to "${name}"`,
+                severity: "success",
+                title: "Project updated successfully"
             })}
         ).mapErr(
             (e) => {
-                if(e.status === 404){
-                    const err = e.response?.data as ProjectNotFoundErrorModel
-                    pushNotification({
-                        message: `${err.message} (${err.inner_message})`,
-                        severity: "error",
-                        title: "Failed to update project " + err.project_id
-                    })
-                }
+                const err = e.response?.data as RLGymLearnApiExceptionModel
+                pushNotification({
+                    title: err.title,
+                    message: err.description,
+                    severity: "error"
+                })
             }
         )
     }
@@ -45,17 +47,19 @@ function ProjectEditor({projectMetadata, updateProjectMetadata, setCurrentProjec
             () => {updateProjectMetadata({
                 ...projectMetadata,
                 interpreter: path
+            }); pushNotification({
+                message: `Project interpreter has successfully been updated to "${path}"`,
+                severity: "success",
+                title: "Project updated successfully"
             })}
         ).mapErr(
             (e) => {
-                if(e.status === 404){
-                    const err = e.response?.data as ProjectNotFoundErrorModel
-                    pushNotification({
-                        message: `${err.message} (${err.inner_message})`,
-                        severity: "error",
-                        title: "Failed to update project " + err.project_id
-                    })
-                }
+                const err = e.response?.data as RLGymLearnApiExceptionModel
+                pushNotification({
+                    title: err.title,
+                    message: err.description,
+                    severity: "error"
+                })
             }
         )
     }
