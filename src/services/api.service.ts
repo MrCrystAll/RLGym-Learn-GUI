@@ -14,7 +14,7 @@ class APIService {
   constructor() {
     const client = axios.create({
       baseURL: `http://localhost:${port}`,
-      timeout: 1000,
+      timeout: 20_000,
       headers: {
         "Content-Type": "application/json",
       },

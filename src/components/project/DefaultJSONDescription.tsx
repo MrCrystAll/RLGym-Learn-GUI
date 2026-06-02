@@ -28,31 +28,29 @@ function DefaultJSONDescription({object, updateValue, title}: DefaultJSONDescrip
 
                     if(typeof value === "number") {
                         return (
-                            <>
-                                <NumberField value={value} help="No help available" icon="emoji-expressionless" onChange={(updatedValue) => updateValue(key, updatedValue)} text={key} key={key}></NumberField>
+                            <div key={key}>
+                                <NumberField value={value} help="No help available" icon="emoji-expressionless" onChange={(updatedValue) => updateValue(key, updatedValue)} text={key}></NumberField>
                                 <hr className="mx-2 my-1"></hr>
-                            </>
+                            </div>
                         )
                     }
                     else if(typeof value === "string"){
                         return (
-                            <>
-                                <StringField value={value} help="No help available" icon="emoji-expressionless" onChange={(updatedValue) => updateValue(key, updatedValue)} text={key} key={key}></StringField>
+                            <div key={key}>
+                                <StringField value={value} help="No help available" icon="emoji-expressionless" onChange={(updatedValue) => updateValue(key, updatedValue)} text={key}></StringField>
                                 <hr className="mx-2 my-1"></hr>
-                            </>
+                            </div>
                         )
                     }
                     else if(typeof value === "boolean"){
                         return (
-                            <>
-                                <ToggleField value={value} help="No help available" icon="emoji-expressionless" onToggle={() => updateValue(key, !value)} text={key} key={key}></ToggleField>
+                            <div key={key}>
+                                <ToggleField value={value} help="No help available" icon="emoji-expressionless" onToggle={() => updateValue(key, !value)} text={key}></ToggleField>
                                 <hr className="mx-2 my-1"></hr>
-                            </>
+                            </div>
                         )
                     }
                     else if(typeof value === "object"){
-                        console.log(key, value);
-                        
                         return <DefaultJSONDescription title={key} object={value} updateValue={(toUpdateKey, updatedValue) => updateInnerObject(key, toUpdateKey, updatedValue)} key={key}></DefaultJSONDescription>
                     }
                     return <p key={key}>{key} - {value}</p>
