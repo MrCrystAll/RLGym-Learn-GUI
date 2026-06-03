@@ -50,7 +50,6 @@ function TypedDictSerdeEditor({serdeConfig, setSerdeConfig}:TypedDictSerdeEditor
             ...serdeConfig,
             key_serde_type_dict: {...serdeConfig.key_serde_type_dict, [data.key]: Serde.FLOAT()}
         })
-        console.log({...serdeConfig.key_serde_type_dict, [data.key]: Serde.FLOAT()});
         
         setEditMode(false);
     }

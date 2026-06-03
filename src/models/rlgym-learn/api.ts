@@ -188,8 +188,8 @@ export interface AgentControllerConfig{
 export interface PPOAgentControllerConfigModel extends AgentControllerConfig {
   timesteps_per_iteration: number; // default: 50000
   save_every_ts: number; // default: 1_000_000
-  add_unix_timestamp: boolean; // default: true
-  checkpoint_load_folder?: string | null; // default: null
+  run_suffix: string; // default: "-${timestamp}"
+  checkpoint_load_folder?: string | null
   n_checkpoints_to_keep: number; // default: 5
   random_seed: number; // default: 123
   save_mid_iteration_data_in_checkpoint: boolean; // default: true
@@ -211,7 +211,7 @@ export interface ProcessConfigModel {
   min_process_steps_per_inference: number; // default: -1
   render: boolean; // default: false
   render_delay: number; // default: 0
-  instance_launch_delay?: number | null; // default: None
+  instance_launch_delay: number | null; // default: None
   recalculate_agent_id_every_step: boolean; // default: false
 }
 

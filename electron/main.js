@@ -1,6 +1,22 @@
 const { app, BrowserWindow, ipcMain, dialog } = require("electron")
 const path = require("path")
 const fs = require("fs")
+const net = require('net')
+const http = require('http')
+const { spawn, execSync } = require('child_process')
+
+let pyProcess = null;
+
+// Find a free port
+function getFreePort() {
+  return new Promise((resolve) => {
+    const srv = net.createServer();
+    srv.listen(0, () => {
+      const port = srv.address().port;
+      srv.close(() => resolve(port));
+    });
+  });
+}
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -40,10 +56,58 @@ ipcMain.handle("read-logs", (event, logPath) => {
   return fs.readFileSync(logPath).toString("utf8").split("\n").filter((value) => value.trim().length > 0).map((value) => JSON.parse(value))
 })
 
-ipcMain.on("watch-log", (event, logPath) => {  // <-- receives path
-    let fileSize = 0;
+function waitForApi(port, retries = 20){
+    return new Promise((resolve, reject) => {
+      const attempt = () => {
+        const req = http.get(`http://localhost:${port}/health`, (res) => {
+          if (res.statusCode === 200) resolve();
+          else if (retries-- > 0) setTimeout(attempt, 500);
+          else reject(new Error("API check failed, the API likely didn't start. Please report this to the maintainer of the application."));
+        });
+        req.on('error', () => {
+          if (retries-- > 0) setTimeout(attempt, 500);
+          else reject(new Error("API check failed, the API likely didn't start. Please report this to the maintainer of the application."));
+        });
+      };
+      attempt();
+    });
+  }
 
-  const waitForFile = setInterval(() => {
+
+ipcMain.handle("start-api", async () => {
+  if(app.isPackaged){
+    if(pyProcess !== null) return { ok: false, message: "A proces is already running", cause: "Repeat" };
+    // Path to bundled binary (PyInstaller output)
+    const port = process.env.API_PORT;
+    const apiPath = path.join(process.resourcesPath, process.platform === "win32" ? "api.exe" : "api");
+
+    pyProcess = spawn(apiPath, ['--port', String(port)], {
+      detached: process.platform !== 'win32', // creates a process group on Linux/Mac
+    });
+
+    pyProcess.stderr.on('data', (d) => console.error('[API]', d.toString()));
+
+    try {
+        await waitForApi(port, 50);
+        return { ok: true };
+    } catch (err) {
+        return { ok: false, message: err.message, cause: err.cause };
+    }
+  }
+  // Local development
+  try {
+      await waitForApi(8000, 2);
+      return { ok: true };
+  } catch (err) {
+      return { ok: false, message: err.message, cause: err.cause };
+  }
+  
+})
+
+ipcMain.on("watch-log", (event, logPath, receiver) => {  // <-- receives path
+    let fileSize = 0;    
+
+  const waitForFile = setInterval(() => {    
     if (!fs.existsSync(logPath)) return;
     clearInterval(waitForFile);
 
@@ -59,17 +123,39 @@ ipcMain.on("watch-log", (event, logPath) => {  // <-- receives path
 
         fileSize = stat.size;
 
-        event.sender.send("log-lines", buffer.toString("utf8").split("\n").filter((value) => value.trim().length > 0).map((value) => JSON.parse(value)))
+        event.sender.send("log-lines-" + receiver, buffer.toString("utf8").split("\n").filter((value) => value.trim().length > 0).map((value) => JSON.parse(value)))
       } catch (err) {}
     };
 
     const tailer = setInterval(readNewBytes, 200);
 
-    ipcMain.once("stop-watch", () => {
+    ipcMain.once("stop-watch-" + receiver, () => {
       clearInterval(tailer);
       readNewBytes(); // <-- flush whatever was written since last poll
     });
   }, 100);
 });
 
-app.whenReady().then(createWindow)
+ipcMain.once("quit", () => {
+  process.exit(0)
+})
+
+app.whenReady().then(async () => {
+  if (app.isPackaged){
+    const port = await getFreePort();
+    process.env.API_PORT = port;  // preload picks this up
+  }
+
+  createWindow();
+});
+
+app.on('before-quit', () => {
+  if (!pyProcess) return;
+  if (process.platform === 'win32') {
+    // Windows: taskkill kills the process AND all its children
+    execSync(`taskkill /pid ${pyProcess.pid} /T /F`);
+  } else {
+    // Linux/Mac: kill the process group (negative pid = whole group)
+    process.kill(-pyProcess.pid, 'SIGTERM');
+  }
+});

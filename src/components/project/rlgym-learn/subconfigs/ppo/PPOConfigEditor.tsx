@@ -1,8 +1,8 @@
 import { useState } from "react";
-import type { PPOAgentControllerConfigModel, PPOLearnerConfigModel } from "../../../../../models/rlgym-learn/api"
-import PPOLearnerConfigEditor from "./PPOLearnerConfigEditor";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { createRules } from "../../../../../models/validators";
+import DefaultJSONDescription from "../../../DefaultJSONDescription";
+import type { PPOAgentControllerConfigModel, PPOLearnerConfigModel } from "rlgym-learn-client";
 
 interface PPOConfigEditorArgs{
     ppoConfig: PPOAgentControllerConfigModel
@@ -14,7 +14,7 @@ interface PPOConfigEditorArgs{
 function PPOConfigEditor({ppoConfig, setPPOConfig, agentKey, deleteAgent}: PPOConfigEditorArgs){
 
     const [editMode, setEditMode] = useState(false);
-    const [checkpointLoadFolder, setCheckpointLoadFolder] = useState<string>();
+    const [checkpointLoadFolder, setCheckpointLoadFolder] = useState<string | null>(ppoConfig?.checkpoint_load_folder === undefined ? null : ppoConfig.checkpoint_load_folder);
 
     const {register, handleSubmit, reset, formState: {errors}} = useForm<PPOAgentControllerConfigModel>({
         defaultValues: ppoConfig
@@ -35,7 +35,7 @@ function PPOConfigEditor({ppoConfig, setPPOConfig, agentKey, deleteAgent}: PPOCo
 
     const onCancel = () => {
         reset(ppoConfig);
-        setCheckpointLoadFolder(undefined);
+        setCheckpointLoadFolder(checkpointLoadFolder);
         setEditMode(false);
     }
 
@@ -78,9 +78,9 @@ function PPOConfigEditor({ppoConfig, setPPOConfig, agentKey, deleteAgent}: PPOCo
                                 </div>
                             </div>
                             <div className="form-group mb-3 row">
-                                <label className="col-sm-3 col-form-label">Unix timestamp</label>
+                                <label className="col-sm-3 col-form-label">Run suffix</label>
                                 <div className="col-sm-9">
-                                    <input type="checkbox" className="form-check-input" {...register("add_unix_timestamp")}/>
+                                    <input type="text" className="form-control" {...register("run_suffix", {...createRules({required: true})})}/>
                                 </div>
                             </div>
                             <div className="btn-group">
@@ -147,17 +147,16 @@ function PPOConfigEditor({ppoConfig, setPPOConfig, agentKey, deleteAgent}: PPOCo
                     <button className="btn btn-danger" onClick={() => deleteAgent(agentKey)}><i className="bi bi-x"></i></button>
                 </div>
 
-                
-                <p className="text-break">{JSON.stringify(ppoConfig)}</p>
+                <div><pre>{JSON.stringify(ppoConfig, null, 2) }</pre></div>
             </div>
             
         )
     }
     
     return (
-        <div className="border">
-            {configFields()}
-            <PPOLearnerConfigEditor agentKey={agentKey} ppoLearnerConfig={ppoConfig.learner_config} setPPOLearnerConfig={setPPOLearnerConfig}></PPOLearnerConfigEditor>
+        <div>
+            <DefaultJSONDescription title="PPO Config" object={ppoConfig} updateValue={(key, value) => setPPOConfig({...ppoConfig, [key]: value})}></DefaultJSONDescription>
+            {/* <PPOLearnerConfigEditor agentKey={agentKey} ppoLearnerConfig={ppoConfig.learner_config} setPPOLearnerConfig={setPPOLearnerConfig}></PPOLearnerConfigEditor> */}
         </div>
     )
 }

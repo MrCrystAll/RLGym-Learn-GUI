@@ -1,5 +1,4 @@
 import { useState } from "react"
-import type { ProjectType } from "../models/project";
 
 interface AddProjectArgs{
   addProject: (name: string) => void

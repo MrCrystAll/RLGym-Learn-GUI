@@ -124,7 +124,7 @@ function PPOLearnerConfigEditor({ppoLearnerConfig, setPPOLearnerConfig, agentKey
                 <button className="btn btn-dark" onClick={() => setEditMode(true)}><i className="bi bi-pencil-fill"></i></button>
             </div>
             
-            <p className="text-break">{JSON.stringify(ppoLearnerConfig)}</p>
+            <div><pre>{JSON.stringify(ppoLearnerConfig, null, 2) }</pre></div>
         </div>
         
     )

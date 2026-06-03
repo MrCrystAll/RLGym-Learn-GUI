@@ -1,5 +1,11 @@
 const {contextBridge, ipcRenderer} = require("electron");
 
+let pyProcess = null;
+
+contextBridge.exposeInMainWorld('electron', {
+  apiPort: process.env.API_PORT  // set by main.js before spawning renderer
+});
+
 contextBridge.exposeInMainWorld('api', {
   openFolderPathDialog(){
       return ipcRenderer.invoke("open-folder-path-dialog");
@@ -7,26 +13,28 @@ contextBridge.exposeInMainWorld('api', {
   openPythonPathDialog(){
     return ipcRenderer.invoke("open-python-path-dialog");
   },
-  watchLog(logPath){
-    return ipcRenderer.send("watch-log", logPath);
+  watchLog(logPath, receiver){
+    return ipcRenderer.send("watch-log", logPath, receiver);
   },
   // 3. Listen for lines
-  listenLines(setLines, maxLines){
-    ipcRenderer.on("log-lines", (_, entry) => {
-      
-      setLines((prev) => {        
-        const updated = [...prev, ...entry];
-        return maxLines ? updated.slice(-maxLines) : updated;  // keep only latest n
-      });
+  listenLines(setLines, receiver){
+    ipcRenderer.on("log-lines-" + receiver, (_, entry) => {
+      setLines((prev) => [...prev, ...entry]);
     });
   },
-  stopWatch(){
-    ipcRenderer.send("stop-watch");
+  stopWatch(receiver){
+    ipcRenderer.send("stop-watch-" + receiver);
   },
-  removeAllListeners(){
-    ipcRenderer.removeAllListeners("log-lines");
+  removeAllListeners(receiver){
+    ipcRenderer.removeAllListeners("log-lines-" + receiver);
   },
   readLogs(logPath){
     return ipcRenderer.invoke("read-logs", logPath);    
+  },
+  async start(){
+      return ipcRenderer.invoke("start-api");
+  },
+  quit(){
+    return ipcRenderer.send("quit")
   }
 });

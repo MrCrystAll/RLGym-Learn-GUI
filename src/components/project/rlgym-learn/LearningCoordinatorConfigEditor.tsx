@@ -3,14 +3,18 @@ import { type AgentControllerConfig, type BaseConfigModel, type LearningCoordina
 import BaseConfigEditor from "./subconfigs/BaseConfigEditor"
 import ProcessConfigEditor from "./subconfigs/ProcessConfigEditor"
 import AgentControllersEditor from "./subconfigs/AgentControllersEditor"
-import { PPO_DEFAULT_CONFIG } from "./subconfigs/ppo/default_config"
+import type { PPOAgentControllerConfigModel } from "rlgym-learn-client"
+import type { AxiosError } from "axios"
 
 export interface LearningCoordinatorConfigEditorArgs{
     learningCoordinatorConfig: LearningCoordinatorConfigModel
     setLearningCoordinatorConfig: (arg0: LearningCoordinatorConfigModel) => void
+    getDefaultConfig: (configType: string) => Promise<PPOAgentControllerConfigModel>
 }
 
-function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearningCoordinatorConfig}: LearningCoordinatorConfigEditorArgs) {
+function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearningCoordinatorConfig, getDefaultConfig}: LearningCoordinatorConfigEditorArgs) {
+    
+
     const setBaseConfigModel = (model: BaseConfigModel) => {setLearningCoordinatorConfig({
         ...learningCoordinatorConfig,
         base_config: model
@@ -32,16 +36,16 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
 
     const setAgentControllerConfigModel = (agent: string, model: AgentControllerConfig) => setAgentControllersConfigModel({
         ...learningCoordinatorConfig?.agent_controllers_config,
-        [agent]: model
+        [agent]:  model
     })
 
     // Agent controllers
-    const [agentKeyError, setAgentKeyError] = useState("");
+    const [error, setError] = useState<string | null>(null);
 
     const [addingController, setAddingController] = useState(false);
 
     const onAgentCancel = () => {
-        setAgentKeyError("");
+        setError(null);
         setAddingController(false)
     }
 
@@ -52,30 +56,36 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
 
         if(name === undefined || name.trim().length == 0)
         {
-            setAgentKeyError("Expecting a value for agent key but got nothing.");
+            setError("Expecting a value for agent key but got nothing.");
             return;
         }
 
-        const model = type === "ppo" ? PPO_DEFAULT_CONFIG : {}
-        const finalName = type.toUpperCase().concat("-", name);
+        getDefaultConfig(type).then(
+            (defaultConfig) => {
+                const finalName = type.toUpperCase().concat("-", name);
 
-        if(learningCoordinatorConfig?.agent_controllers_config === undefined){
-            setAgentControllersConfigModel({[finalName]: model})
-        }
-        else{
-            if(learningCoordinatorConfig?.agent_controllers_config[finalName] !== undefined){
-                setAgentKeyError("Agent key already exists, please choose another one.");
-                return;
-            }
-            else{
-                setAgentControllersConfigModel({
-                    ...learningCoordinatorConfig?.agent_controllers_config,
-                    [finalName]: model
-                })
-            }
-        }
+                if(learningCoordinatorConfig?.agent_controllers_config === undefined){
+                    setAgentControllersConfigModel({[finalName]:  defaultConfig})
+                }
+                else{
+                    if(learningCoordinatorConfig?.agent_controllers_config[finalName] !== undefined){
+                        setError("Agent key already exists, please choose another one.");
+                        return;
+                    }
+                    else{
+                        setAgentControllersConfigModel({
+                            ...learningCoordinatorConfig?.agent_controllers_config,
+                            [finalName]:  defaultConfig
+                        })
+                    }
+                }
 
-        setAddingController(false);
+                setAddingController(false);
+                setError(null);
+            }
+        ).catch(
+            (reason: AxiosError) => setError(reason.response.data)
+        )
     }
 
     const deleteController = (agent: string) => {
@@ -95,7 +105,7 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
                         <div className="form-group w-25 my-2">
                             <label htmlFor="agentKey">Agent key</label>
                             <input type="text" className="form-control" name="agentKey" id="agentKey"></input>
-                            <small className="text-danger">{agentKeyError}</small>
+                            <small className="text-danger">{error}</small>
                         </div>
 
 
