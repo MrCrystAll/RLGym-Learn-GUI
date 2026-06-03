@@ -105,10 +105,10 @@ ipcMain.handle("start-api", async () => {
 })
 
 ipcMain.on("watch-log", (event, logPath, receiver) => {  // <-- receives path
-    let fileSize = 0;
+    let fileSize = 0;    
 
   const waitForFile = setInterval(() => {    
-    if (fs.existsSync(logPath)) return;
+    if (!fs.existsSync(logPath)) return;
     clearInterval(waitForFile);
 
     const readNewBytes = () => {
