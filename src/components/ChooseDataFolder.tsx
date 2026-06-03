@@ -1,9 +1,10 @@
 interface ChooseDataFolderArgs{
     setFolderPath: (path: string) => void
     getAllProjects: (path: string) => void
+    text: string
 }
 
-function ChooseDataFolder({setFolderPath, getAllProjects}: ChooseDataFolderArgs) {
+function ChooseDataFolder({setFolderPath, getAllProjects, text}: ChooseDataFolderArgs) {
     const openDialog = () => {
         const result: Promise<string[] | undefined> = window.api.openFolderPathDialog();
         result.then(
@@ -20,7 +21,7 @@ function ChooseDataFolder({setFolderPath, getAllProjects}: ChooseDataFolderArgs)
 
   return (
     <button className="btn btn-light" onClick={openDialog}>
-        Choose data folder
+        {text}
         <i className="bi bi-folder ms-2"></i>
     </button>
   )
