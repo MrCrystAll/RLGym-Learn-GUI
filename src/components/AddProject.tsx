@@ -31,7 +31,7 @@ function AddProject({addProject}: AddProjectArgs) {
 
   if(creating){
     return (
-      <div className="rounded p-3" style={{backgroundColor: "darkgray"}}>
+      <div className="bg-dark rounded p-3">
         <form action={create}>
           <div className="form-group text-light">
             <label htmlFor="pName">Project name</label>
@@ -49,13 +49,9 @@ function AddProject({addProject}: AddProjectArgs) {
   }
   else{
     return (
-
-      <div className="d-flex justify-content-center">
-        <button type="button" className="btn btn-light w-25" onClick={() => setCreating(true)}>
-          Add project
-          <i className="bi bi-file-plus ms-2"></i>
+        <button type="button" className="btn btn-dark" onClick={() => setCreating(true)}>
+          <i className="bi bi-plus"></i>
         </button>
-      </div>
     )
   }
 }

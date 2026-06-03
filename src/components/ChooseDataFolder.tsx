@@ -1,6 +1,6 @@
 interface ChooseDataFolderArgs{
     setFolderPath: (path: string) => void
-    text: string
+    text?: string
 }
 
 function ChooseDataFolder({setFolderPath, text}: ChooseDataFolderArgs) {
@@ -18,9 +18,9 @@ function ChooseDataFolder({setFolderPath, text}: ChooseDataFolderArgs) {
     }
 
   return (
-    <button className="btn btn-light" onClick={openDialog}>
+    <button className="btn btn-dark" onClick={openDialog}>
         {text}
-        <i className="bi bi-folder ms-2"></i>
+        <i className={"bi bi-folder " + (text !== undefined ? "ms-2" : "")}></i>
     </button>
   )
 }
