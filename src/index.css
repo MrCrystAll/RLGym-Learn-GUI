@@ -19,6 +19,7 @@ animation: pulse-ring 1.8s ease-out infinite;
 
 html {
     background-color: var(--bs-dark);
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .pulse-ring:nth-child(2) { animation-delay: 0.6s; }
@@ -26,4 +27,16 @@ html {
 
 .bg-configuration-card{
     background-color: rgb(50, 50, 50);
+}
+
+.project-list-card{
+    background-color: rgb(50, 50, 50);
+}
+.project-list-card:hover{
+    background-color: rgb(80, 80, 80);
+    cursor: pointer;
+}
+
+.project-list-container{
+    background-color: rgb(80, 80, 80);
 }

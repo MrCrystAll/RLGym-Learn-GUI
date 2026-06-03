@@ -1,77 +1,34 @@
 import ActionButtons from "./project/ActionButtons"
 import ProjectMetadataEditor from "./project/ProjectMetadataEditor"
-import projectService from "../services/project.service";
-import type { ProjectMetadata, RLGymLearnApiExceptionModel, Run } from "rlgym-learn-client";
+import type { ProjectMetadata, Run } from "rlgym-learn-client";
 import { useState } from "react";
 import RunPage from "./project/rlgym-learn/run-handling/RunPage";
 import ChoosePythonPath from "./ChoosePythonPath";
 import RunList from "./project/rlgym-learn/run-handling/RunList";
-import { useNotifications } from "../hooks/useNotifications";
+import { useProject } from "../hooks/useProject";
 
 interface ProjectEditorArgs{
-    projectMetadata: ProjectMetadata,
-    updateProjectMetadata: (metadata: ProjectMetadata) => void,
+    project: ProjectMetadata,
+    updateProjectList: (metadata: ProjectMetadata) => void,
 
     setCurrentProject: (project: string | null) => void,
     removeProject: (projectId: string) => void
 }
 
-function ProjectEditor({projectMetadata, updateProjectMetadata, setCurrentProject, removeProject}: ProjectEditorArgs) {
+function ProjectEditor({project, updateProjectList, setCurrentProject, removeProject}: ProjectEditorArgs) {
     const [selectedRun, setSelectedRun] = useState<Run | null>(null);
-    const {pushNotification} = useNotifications();
 
-    const updateProjectName = async (name: string) => {
-        (await projectService.updateProjectName(projectMetadata.id, name)).map(
-            () => {updateProjectMetadata({
-                ...projectMetadata,
-                name: name
-            }); pushNotification({
-                message: `Project name has successfully been updated to "${name}"`,
-                severity: "success",
-                title: "Project updated successfully"
-            })}
-        ).mapErr(
-            (e) => {
-                const err = e.response?.data as RLGymLearnApiExceptionModel
-                pushNotification({
-                    title: err.title,
-                    message: err.description,
-                    severity: "error"
-                })
-            }
-        )
-    }
-
-    const updateProjectInterpreter = async (path: string) => {
-        (await projectService.updateProjectInterpreter(projectMetadata.id, path)).map(
-            () => {updateProjectMetadata({
-                ...projectMetadata,
-                interpreter: path
-            }); pushNotification({
-                message: `Project interpreter has successfully been updated to "${path}"`,
-                severity: "success",
-                title: "Project updated successfully"
-            })}
-        ).mapErr(
-            (e) => {
-                const err = e.response?.data as RLGymLearnApiExceptionModel
-                pushNotification({
-                    title: err.title,
-                    message: err.description,
-                    severity: "error"
-                })
-            }
-        )
-    }
+    const {updateProjectInterpreter, updateProjectName} = useProject({project, updateProjectList});
+    
 
     const removeProjectNoArgs = () => {
         setCurrentProject(null);
-        removeProject(projectMetadata.id);
+        removeProject(project.id);
     }
 
     const runDisplay = () => {
         if(selectedRun === null){
-            return <RunList onSelectRun={setSelectedRun} projectId={projectMetadata.id}></RunList>
+            return <RunList onSelectRun={setSelectedRun} projectId={project.id}></RunList>
         }
         else{
             return <RunPage run={selectedRun} backToHome={() => setSelectedRun(null)}></RunPage>
@@ -82,7 +39,7 @@ function ProjectEditor({projectMetadata, updateProjectMetadata, setCurrentProjec
         <div className="bg-dark text-light">
             <header>
                 <div className="pt-2">
-                    <ProjectMetadataEditor updateProjectName={updateProjectName} projectMetadata={projectMetadata}></ProjectMetadataEditor>
+                    <ProjectMetadataEditor updateProjectName={updateProjectName} projectMetadata={project}></ProjectMetadataEditor>
                 </div>
             </header>
             <hr className="border border-light mx-5"/>
@@ -91,7 +48,7 @@ function ProjectEditor({projectMetadata, updateProjectMetadata, setCurrentProjec
                 <div>
 
                     <div className="d-flex">
-                        <p className="me-2">Current python interpreter: "{projectMetadata.interpreter}"</p>
+                        <p className="me-2">Current python interpreter: "{project.interpreter}"</p>
                         <ChoosePythonPath setPythonPath={(path) => updateProjectInterpreter(path)}></ChoosePythonPath>
                     </div>
 

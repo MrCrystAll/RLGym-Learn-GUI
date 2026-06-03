@@ -7,10 +7,8 @@ interface ProjectInfoArgs {
 
 function ProjectInfo({project, setCurrentProject}: ProjectInfoArgs) {
   return (
-    <div className="card w-25" onClick={setCurrentProject}>
-        <div className="card-header" style={{cursor: "pointer"}}>
-            <p className="display-5 text-center">{project.name}</p>
-        </div>
+    <div className="project-list-card border rounded p-2" key={project.id} onClick={setCurrentProject}>
+        <p className="display-6 text-center">{project.name}</p>
     </div>
   )
 }

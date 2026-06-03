@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- The project list has been redesigned and the version of the GUI is available at the top right of the screen when opening the project list
+
 ### Added
 
 - A button to change the data folder, making it possible to change folder during the app runtime
