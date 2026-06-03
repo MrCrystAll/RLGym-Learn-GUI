@@ -8,6 +8,7 @@ import { useApp } from "./hooks/useApp";
 import { useProjects } from "./hooks/useProjects";
 import ProjectEditor from "./components/ProjectEditor";
 import { NotificationContainer } from "./components/NotificationContainer";
+import ChooseDataFolder from "./components/ChooseDataFolder";
 
 function App() {
   // API
@@ -67,11 +68,15 @@ function App() {
       return (
     <div className="bg-dark text-light">
       <div className="container-fluid pt-3">
+        <ChooseDataFolder text="Update data folder" getAllProjects={fetchProjects} setFolderPath={setFolder}></ChooseDataFolder>
         <AddProject addProject={addProjectFromName}></AddProject>
       </div>
       <div className="m-2">
         <p className="display-3">Projects: </p>
-        {projectsRender()}
+        <small className="my-3"><i className="bi bi-folder me-3"></i>{folderPath}</small>
+        <div className="border p-3">
+          {projectsRender()}
+        </div>
       </div>
     </div>
   )
