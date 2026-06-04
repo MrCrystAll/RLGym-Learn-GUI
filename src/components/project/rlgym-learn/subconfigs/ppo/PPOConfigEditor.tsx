@@ -1,8 +1,13 @@
 import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { createRules } from "../../../../../models/validators";
-import DefaultJSONDescription from "../../../DefaultJSONDescription";
 import type { PPOAgentControllerConfigModel, PPOLearnerConfigModel } from "rlgym-learn-client";
+import NumberField from "../../../../config-cards/NumberField";
+import ToggleField from "../../../../config-cards/ToggleCard";
+import StringField from "../../../../config-cards/StringField";
+import PPOLearnerConfigEditor from "./PPOLearnerConfigEditor";
+import DefaultJSONDescription from "../../../DefaultJSONDescription";
+import PPOExperienceBufferConfigEditor from "./PPOExperienceBufferConfigEditor";
 
 interface PPOConfigEditorArgs{
     ppoConfig: PPOAgentControllerConfigModel
@@ -13,36 +18,12 @@ interface PPOConfigEditorArgs{
 
 function PPOConfigEditor({ppoConfig, setPPOConfig, agentKey, deleteAgent}: PPOConfigEditorArgs){
 
-    const [editMode, setEditMode] = useState(false);
     const [checkpointLoadFolder, setCheckpointLoadFolder] = useState<string | null>(ppoConfig?.checkpoint_load_folder === undefined ? null : ppoConfig.checkpoint_load_folder);
 
-    const {register, handleSubmit, reset, formState: {errors}} = useForm<PPOAgentControllerConfigModel>({
-        defaultValues: ppoConfig
-    })
-
-    const onSubmit: SubmitHandler<PPOAgentControllerConfigModel> = (data) => {
-
-        const finalData: PPOAgentControllerConfigModel = {
-            ...data,
-            checkpoint_load_folder: checkpointLoadFolder,
-            learner_config: ppoConfig.learner_config,
-            experience_buffer_config: ppoConfig.experience_buffer_config
-        }
-
-        setPPOConfig(finalData);
-        setEditMode(false);
-    }
-
-    const onCancel = () => {
-        reset(ppoConfig);
-        setCheckpointLoadFolder(checkpointLoadFolder);
-        setEditMode(false);
-    }
-
-    const setPPOLearnerConfig = (model: PPOLearnerConfigModel) => {
+    const setPPOLearnerConfig = (config: PPOLearnerConfigModel) => {
         setPPOConfig({
             ...ppoConfig,
-            learner_config: model
+            learner_config: config
         })
     }
 
@@ -54,109 +35,86 @@ function PPOConfigEditor({ppoConfig, setPPOConfig, agentKey, deleteAgent}: PPOCo
             }
         )
     }
-
-    const configFields = () => {
-        if(editMode){
-            return (
-                <div className="p-3">
-                    <p className="display-5">"{agentKey}" (PPO) config options</p>
-                    <hr/>
-                    <form onSubmit={handleSubmit(onSubmit)} className="d-flex justify-content-between">
-                        <div className="col-5">
-                            <div className="form-group mb-3 row">
-                                <label className="col-sm-3 col-form-label">Timesteps per iteration</label>
-                                <div className="col-sm-9">
-                                    <input type="number" {...register("timesteps_per_iteration", {...createRules({required: true, min: 1}), valueAsNumber: true})} className="form-control"/>
-                                    <small className="text-danger">{errors.timesteps_per_iteration?.message}</small>
-                                </div>
-                            </div>
-                            <div className="form-group mb-3 row">
-                                <label className="col-sm-3 col-form-label">Save every</label>
-                                <div className="col-sm-9">
-                                    <input type="number" className="form-control" {...register("save_every_ts", {...createRules({required: true, min: 0}), valueAsNumber: true})}/>
-                                    <small className="text-danger">{errors.save_every_ts?.message}</small>
-                                </div>
-                            </div>
-                            <div className="form-group mb-3 row">
-                                <label className="col-sm-3 col-form-label">Run suffix</label>
-                                <div className="col-sm-9">
-                                    <input type="text" className="form-control" {...register("run_suffix", {...createRules({required: true})})}/>
-                                </div>
-                            </div>
-                            <div className="btn-group">
-                                <button className="btn btn-primary" type="submit">Submit PPO config</button>
-                                <button className="btn btn-danger" type="button" onClick={onCancel}>Cancel</button>
-                            </div>
-                        </div>
-                        <div className="col-5">
-                            <div className="form-group mb-3 row">
-                                <label className="col-sm-3 col-form-label">Checkpoint load folder</label>
-                                <div className="col-sm-9 d-flex">
-                                    <button className="btn btn-dark" onClick={getCheckpointFolder} type="button"><i className="bi bi-folder"></i></button>
-                                    <p className="align-content-center text-break">{checkpointLoadFolder === undefined ? "(Optional)" : checkpointLoadFolder}</p>
-                                </div>
-                            </div>
-                            <div className="form-group mb-3 row">
-                                <label className="col-sm-3 col-form-label">Checkpoints to keep</label>
-                                <div className="col-sm-9">
-                                    <input type="number" className="form-control" {...register(
-                                        "n_checkpoints_to_keep",
-                                        {...createRules({required: true, min: 0}), valueAsNumber: true}
-                                    )}/>
-                                    <small className="text-danger">{errors.n_checkpoints_to_keep?.message}</small>
-                                </div>
-                            </div>
-                            <div className="form-group mb-3 row">
-                                <label className="col-sm-3 col-form-label">Random seed</label>
-                                <div className="col-sm-9">
-                                    <input type="number" className="form-control" {...register(
-                                        "random_seed",
-                                        {...createRules({required: true}), valueAsNumber: true}
-                                    )}/>
-                                    <small className="text-danger">{errors.random_seed?.message}</small>
-                                </div>
-                            </div>
-                            <div className="form-group mb-3 row">
-                                <label className="col-sm-3 col-form-label">Save mid iteration data in checkpoint</label>
-                                <div className="col-sm-9">
-                                    <input type="checkbox" className="form-check-input"/>
-                                </div>
-                            </div>
-                            <div className="form-group mb-3 row">
-                                <label className="col-sm-3 col-form-label">Run name</label>
-                                <div className="col-sm-9">
-                                    <input type="text" className="form-control" {...register(
-                                        "run_name",
-                                        createRules({required: true})
-                                    )}/>
-                                    <small className="text-danger">{errors.run_name?.message}</small>
-                                </div>
-                            </div>
-                            
-                        </div>
-                    </form>
-                </div>
-            )
-        }
-        return (
-            <div className="p-2">
-
-                <div className="d-flex">
-                    <p className="fw-bold border-bottom w-25">{agentKey}</p>
-                    <button className="btn btn-dark" onClick={() => setEditMode(true)}><i className="bi bi-pencil-fill"></i></button>
-                    <button className="btn btn-danger" onClick={() => deleteAgent(agentKey)}><i className="bi bi-x"></i></button>
-                </div>
-
-                <div><pre>{JSON.stringify(ppoConfig, null, 2) }</pre></div>
-            </div>
-            
-        )
-    }
     
     return (
-        <div>
-            <DefaultJSONDescription title="PPO Config" object={ppoConfig} updateValue={(key, value) => setPPOConfig({...ppoConfig, [key]: value})}></DefaultJSONDescription>
+        <div className="d-flex flex-column border p-3 gap-3">
+            <div>
+                <button className="btn btn-danger float-end" onClick={() => deleteAgent(agentKey)}><i className="bi bi-x"></i></button>
+                <p className="display-4">{agentKey}</p>
+                <hr></hr>
+            </div>
+            {/* <DefaultJSONDescription title="PPO Config" object={ppoConfig} updateValue={(key, value) => setPPOConfig({...ppoConfig, [key]: value})}></DefaultJSONDescription> */}
             {/* <PPOLearnerConfigEditor agentKey={agentKey} ppoLearnerConfig={ppoConfig.learner_config} setPPOLearnerConfig={setPPOLearnerConfig}></PPOLearnerConfigEditor> */}
+            
+            <div className="bg-configuration-card px-3" onClick={getCheckpointFolder} style={{cursor: "pointer"}}>
+                <p className="fs-6 fw-lighter mt-3">Checkpoint load folder</p>
+                <p className="text-break bg-dark p-2 rounded border" style={{fontFamily: "monospace"}}>{checkpointLoadFolder === null ? "Not specified, click to fetch a checkpoint" : checkpointLoadFolder}</p>
+            </div>
+            <div>
+                <PPOLearnerConfigEditor agentKey={agentKey} ppoLearnerConfig={ppoConfig.learner_config} setPPOLearnerConfig={setPPOLearnerConfig}></PPOLearnerConfigEditor>
+            </div>
+            <div>
+                {/* <DefaultJSONDescription object={ppoConfig.experience_buffer_config} title="Experience buffer" updateValue={(key, value) => setPPOConfig({
+                    ...ppoConfig,
+                    experience_buffer_config: {
+                        ...ppoConfig.experience_buffer_config,
+                        [key]: value
+                    }
+                })}></DefaultJSONDescription> */}
+                <PPOExperienceBufferConfigEditor ppoExperienceBufferConfig={ppoConfig.experience_buffer_config} setPPOExperienceBufferConfig={(config) => setPPOConfig({
+                    ...ppoConfig,
+                    experience_buffer_config: config
+                })}></PPOExperienceBufferConfigEditor>
+            </div>
+            <div>
+                <DefaultJSONDescription object={ppoConfig.metrics_logger_config} title="Metrics logger" updateValue={(key, value) => setPPOConfig({
+                    ...ppoConfig,
+                    metrics_logger_config: {
+                        ...ppoConfig.metrics_logger_config,
+                        [key]: value
+                    }
+                })}></DefaultJSONDescription>
+            </div>
+            <div className="d-flex justify-content-around gap-2 mt-3">
+                <div className="flex-fill">
+                    <p>Serialization info</p>
+                    <div className="bg-configuration-card rounded">
+                        <NumberField text="Save every" required value={ppoConfig.save_every_ts} help="Saves the checkpoints every n steps" icon="bookmark-star-fill" onChange={(value) => 
+                            setPPOConfig({
+                                ...ppoConfig, save_every_ts: value
+                            })
+                        }></NumberField>
+                        <hr className="mx-2 my-1"></hr>
+                        <NumberField text="Number of checkpoints to keep" required value={ppoConfig.n_checkpoints_to_keep} help="Number of checkpoints kept in the save folder" icon="life-preserver" onChange={(value) => 
+                            setPPOConfig({
+                                ...ppoConfig, n_checkpoints_to_keep: value
+                            })
+                        }></NumberField>
+                        <hr className="mx-2 my-1"></hr>
+                        <ToggleField text="Save mid iteration data in checkpoint" value={ppoConfig.save_mid_iteration_data_in_checkpoint} help="Whether to save stuff like shared info within the checkpoint, can lead to additional storage used" icon="save" onToggle={() => 
+                            setPPOConfig({
+                                ...ppoConfig, save_mid_iteration_data_in_checkpoint: !ppoConfig.save_mid_iteration_data_in_checkpoint
+                            })
+                        }></ToggleField>
+                    </div>
+                </div>
+                <div className="flex-fill">
+                        <p>Miscellaneous</p>
+                        <div className="bg-configuration-card rounded">
+                            <StringField text="Run suffix" required value={ppoConfig.run_suffix} help="When saving, will save within a directory called <run_name><run_suffix>" icon="align-end" onChange={(value) => 
+                                setPPOConfig({
+                                    ...ppoConfig, run_suffix: value
+                                })
+                            }></StringField>
+                            <hr className="mx-2 my-1"></hr>
+                            <NumberField text="Random seed" required value={ppoConfig.random_seed} help="The number used to seed the RNG" icon="dice-3" onChange={(value) => 
+                                setPPOConfig({
+                                    ...ppoConfig, random_seed: value
+                                })
+                            }></NumberField>
+                        </div>
+                </div>
+            </div>
         </div>
     )
 }
