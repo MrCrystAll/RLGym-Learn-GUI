@@ -20,6 +20,13 @@ enum ConfigType{
     PROCESS
 }
 
+const NAMES: Record<ConfigType, string> = {
+    [ConfigType.BASE]: "Base config",
+    [ConfigType.SERDE]: "Serdes",
+    [ConfigType.AGENTS]: "Agents",
+    [ConfigType.PROCESS]: "Process config",
+}
+
 function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearningCoordinatorConfig, getDefaultConfig}: LearningCoordinatorConfigEditorArgs) {
     const [currentConfigType, setCurrentConfigType] = useState<ConfigType>(ConfigType.BASE);
 
@@ -169,10 +176,9 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
     return (
         <div>
             <div className="d-flex w-100 gap-2 py-2">
-                <button className={"btn btn-outline-light flex-fill " + (currentConfigType === ConfigType.BASE ? "active" : "") } onClick={() => setCurrentConfigType(ConfigType.BASE)}>Base config</button>
-                <button className={"btn btn-outline-light flex-fill " + (currentConfigType === ConfigType.SERDE ? "active" : "") } onClick={() => setCurrentConfigType(ConfigType.SERDE)}>Serdes</button>
-                <button className={"btn btn-outline-light flex-fill " + (currentConfigType === ConfigType.AGENTS ? "active" : "") } onClick={() => setCurrentConfigType(ConfigType.AGENTS)}>Agents</button>
-                <button className={"btn btn-outline-light flex-fill " + (currentConfigType === ConfigType.PROCESS ? "active" : "") } onClick={() => setCurrentConfigType(ConfigType.PROCESS)}>Process config</button>
+                {
+                    Object.entries(NAMES).map(([config, value]) => <button className={"btn btn-outline-light flex-fill " + (currentConfigType === config ? "active" : "") } onClick={() => setCurrentConfigType(config)}>{value}</button>)
+                }
             </div>
 
             {render()}
