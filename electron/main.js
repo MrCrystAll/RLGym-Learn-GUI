@@ -56,6 +56,10 @@ ipcMain.handle("read-logs", (event, logPath) => {
   return fs.readFileSync(logPath).toString("utf8").split("\n").filter((value) => value.trim().length > 0).map((value) => JSON.parse(value))
 })
 
+ipcMain.handle("open-link", (event, link) => {
+  require("electron").shell.openExternal(link)
+})
+
 function waitForApi(port, retries = 20){
     return new Promise((resolve, reject) => {
       const attempt = () => {

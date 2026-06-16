@@ -36,5 +36,8 @@ contextBridge.exposeInMainWorld('api', {
   },
   quit(){
     return ipcRenderer.send("quit")
+  },
+  openLink(link){
+    return ipcRenderer.invoke("open-link", link);
   }
 });
