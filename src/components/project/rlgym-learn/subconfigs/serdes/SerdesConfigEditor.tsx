@@ -116,7 +116,7 @@ function SerdesConfigEditor({serdesTypesModel, setSerdesTypesModel}:SerdesConfig
                 </div>
                 <div>
                     <p className="display-5">Shared info setter</p>
-                    <p>TODO.</p>
+                    <p>The shared info setter allows you to send data to the environments from the agent controller. The serde represents what you add from the agent controller.</p>
                     <div className="bg-configuration-card">
                         <div className="my-auto me-3 p-3">
                             <SerdesSelect canBeNull serdeConfig={serdesTypesModel.shared_info_setter_serde_type} setSerdeConfig={
