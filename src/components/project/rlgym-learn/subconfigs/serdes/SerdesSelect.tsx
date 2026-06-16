@@ -95,7 +95,7 @@ function SerdesSelect({serdeConfig, setSerdeConfig, canBeNull}: SerdesSelectArgs
 
     const deleteButton = () => {
         if(canBeNull){
-            return <button className="btn btn-danger" onClick={
+            return <button className="btn btn-danger mb-2" onClick={
                 () => {setSerdeConfig(null); }
             }>Delete serde<i className="bi bi-x"></i></button>
         }
@@ -104,16 +104,16 @@ function SerdesSelect({serdeConfig, setSerdeConfig, canBeNull}: SerdesSelectArgs
     if(serdeConfig === null){
         return <div>
             <p>No serde given</p>
-            <button className="btn btn-primary" onClick={
+            <button className="btn btn-outline-light" onClick={
                 () => {setSerdeConfig(Serde.STRING());}
             }>Create serde</button>
         </div>
     }
     return (
 
-        <div>
+        <div className="border-start ps-2">
             {deleteButton()}
-            <select className="form-select" defaultValue={serdeConfig.type} onChange={(event) => updateSerdeType(event.target.value)}>
+            <select className="form-select" data-bs-theme="dark" defaultValue={serdeConfig.type} onChange={(event) => updateSerdeType(event.target.value)}>
                 {serdeOptions()}
             </select>
             {serdeSpecifics()}

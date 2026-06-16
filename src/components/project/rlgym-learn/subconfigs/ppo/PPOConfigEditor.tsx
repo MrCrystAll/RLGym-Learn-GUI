@@ -32,6 +32,10 @@ function PPOConfigEditor({ppoConfig, setPPOConfig, agentKey, deleteAgent}: PPOCo
             (result: string[] | undefined) => {
                 if(result === undefined) return;
                 setCheckpointLoadFolder(result[0]);
+                setPPOConfig({
+                    ...ppoConfig,
+                    checkpoint_load_folder: result[0]
+                })
             }
         )
     }
