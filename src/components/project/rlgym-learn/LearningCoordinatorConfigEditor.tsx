@@ -16,7 +16,8 @@ export interface LearningCoordinatorConfigEditorArgs{
 enum ConfigType{
     BASE,
     SERDE,
-    AGENTS
+    AGENTS,
+    PROCESS
 }
 
 function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearningCoordinatorConfig, getDefaultConfig}: LearningCoordinatorConfigEditorArgs) {
@@ -157,6 +158,8 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
                         {addController()}
                         <AgentControllersEditor deleteAgent={deleteController} agentControllersConfigModel={learningCoordinatorConfig.agent_controllers_config} updateControllerConfigModel={setAgentControllerConfigModel}/>
                     </div>
+                case ConfigType.PROCESS:
+                    return <ProcessConfigEditor processConfig={learningCoordinatorConfig.process_config} setProcessConfig={setProcessConfigModel}></ProcessConfigEditor>
                 default:
                     break;
             }
@@ -169,6 +172,7 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
                 <button className={"btn btn-outline-light flex-fill " + (currentConfigType === ConfigType.BASE ? "active" : "") } onClick={() => setCurrentConfigType(ConfigType.BASE)}>Base config</button>
                 <button className={"btn btn-outline-light flex-fill " + (currentConfigType === ConfigType.SERDE ? "active" : "") } onClick={() => setCurrentConfigType(ConfigType.SERDE)}>Serdes</button>
                 <button className={"btn btn-outline-light flex-fill " + (currentConfigType === ConfigType.AGENTS ? "active" : "") } onClick={() => setCurrentConfigType(ConfigType.AGENTS)}>Agents</button>
+                <button className={"btn btn-outline-light flex-fill " + (currentConfigType === ConfigType.PROCESS ? "active" : "") } onClick={() => setCurrentConfigType(ConfigType.PROCESS)}>Process config</button>
             </div>
 
             {render()}
