@@ -55,7 +55,7 @@ function DefaultJSONDescription({object, updateValue, title}: DefaultJSONDescrip
                         )
                     }
                     else if(typeof value === "object"){
-                        return <DefaultJSONDescription title={key} object={value} updateValue={(toUpdateKey, updatedValue) => updateInnerObject(key, toUpdateKey, updatedValue)} text={capitalizeFirstLetter(key.replaceAll("_", " "))}></DefaultJSONDescription>
+                        return <DefaultJSONDescription key={key} title={key} object={value} updateValue={(toUpdateKey, updatedValue) => updateInnerObject(key, toUpdateKey, updatedValue)} text={capitalizeFirstLetter(key.replaceAll("_", " "))}></DefaultJSONDescription>
                     }
                     return <p key={key}>{key} - {value}</p>
                 }

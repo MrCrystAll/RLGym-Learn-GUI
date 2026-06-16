@@ -2,7 +2,7 @@ import { PPOLearnerConfigModelDeviceEnum, PPOLearnerConfigModelDtypeEnum, type P
 import NumberField from "../../../../config-cards/NumberField";
 import ToggleField from "../../../../config-cards/ToggleCard";
 import NumberCard from "../../../../config-cards/NumberCard";
-import SelectCard from "../../../../config-cards/SelectField";
+import SelectField from "../../../../config-cards/SelectField";
 
 interface PPOLearnerConfigEditorArgs{
     ppoLearnerConfig: PPOLearnerConfigModel
@@ -12,12 +12,6 @@ interface PPOLearnerConfigEditorArgs{
 function PPOLearnerConfigEditor({ppoLearnerConfig, setPPOLearnerConfig}: PPOLearnerConfigEditorArgs) {   
     return (
         <div>
-            {/* <div className="d-flex">
-                <h3>Learner</h3>
-                <button className="btn btn-dark" onClick={() => setEditMode(true)}><i className="bi bi-pencil-fill"></i></button>
-            </div> */}
-            
-            {/* <div><pre>{JSON.stringify(ppoLearnerConfig, null, 2) }</pre></div> */}
 
             <div>
                 <p className="display-6">Learner settings</p>
@@ -35,15 +29,15 @@ function PPOLearnerConfigEditor({ppoLearnerConfig, setPPOLearnerConfig}: PPOLear
                 </div>
 
                 <div className="bg-configuration-card rounded">
-                    <SelectCard defaultValue={ppoLearnerConfig.device} help="Device used by the learner to compute gradients and store batches. It is recommended to use your GPU." icon="cpu" text="Device" onChange={(value) => setPPOLearnerConfig({
+                    <SelectField defaultValue={ppoLearnerConfig.device} help="Device used by the learner to compute gradients and store batches. It is recommended to use your GPU." icon="cpu" text="Device" onChange={(value) => setPPOLearnerConfig({
                         ...ppoLearnerConfig,
                         device: value as PPOLearnerConfigModelDeviceEnum
-                    })} values={Object.values(PPOLearnerConfigModelDeviceEnum)}></SelectCard>
+                    })} values={Object.values(PPOLearnerConfigModelDeviceEnum)}></SelectField>
                     <hr className="mx-2 my-1"></hr>
-                    <SelectCard defaultValue={ppoLearnerConfig.dtype} help="Data type used by the experience buffer (might change)" icon="6-square" text="Data type" onChange={(value) => setPPOLearnerConfig({
+                    <SelectField defaultValue={ppoLearnerConfig.dtype} help="Data type used by the experience buffer (might change)" icon="6-square" text="Data type" onChange={(value) => setPPOLearnerConfig({
                         ...ppoLearnerConfig,
                         dtype: value as PPOLearnerConfigModelDtypeEnum
-                    })} values={Object.values(PPOLearnerConfigModelDtypeEnum)}></SelectCard>
+                    })} values={Object.values(PPOLearnerConfigModelDtypeEnum)}></SelectField>
                     <hr className="mx-2 my-1"></hr>
                     <NumberField text="Batch size" intOnly value={ppoLearnerConfig.batch_size} required help="Size of the batch. A batch is a bunch of data from the experience buffer. Try to set as a high value" icon="collection-fill" onChange={(value) => setPPOLearnerConfig({
                         ...ppoLearnerConfig,

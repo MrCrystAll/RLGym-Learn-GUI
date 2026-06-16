@@ -11,7 +11,7 @@ interface NumberFieldArgs{
     onChange: (value: string) => void
 }
 
-function SelectCard({values, defaultValue, text, icon, help, onChange}: NumberFieldArgs) {
+function SelectField({values, defaultValue, text, icon, help, onChange}: NumberFieldArgs) {
     const tooltipHolder = useRef(null)
 
     useEffect(() => {
@@ -38,4 +38,4 @@ function SelectCard({values, defaultValue, text, icon, help, onChange}: NumberFi
     )
 }
 
-export default SelectCard
+export default SelectField

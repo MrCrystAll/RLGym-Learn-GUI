@@ -1,6 +1,6 @@
 import { ExperienceBufferConfigModelDeviceEnum, type ExperienceBufferConfigModel } from "rlgym-learn-client";
 import NumberCard from "../../../../config-cards/NumberCard";
-import SelectCard from "../../../../config-cards/SelectField";
+import SelectField from "../../../../config-cards/SelectField";
 import ToggleField from "../../../../config-cards/ToggleCard";
 import DefaultJSONDescription from "../../../DefaultJSONDescription";
 
@@ -12,13 +12,6 @@ interface PPOExperienceBufferConfigEditorArgs{
 function PPOExperienceBufferConfigEditor({ppoExperienceBufferConfig, setPPOExperienceBufferConfig}: PPOExperienceBufferConfigEditorArgs) {
     return (
         <div>
-            {/* <div className="d-flex">
-                <h3>Learner</h3>
-                <button className="btn btn-dark" onClick={() => setEditMode(true)}><i className="bi bi-pencil-fill"></i></button>
-            </div> */}
-            
-            {/* <div><pre>{JSON.stringify(ppoLearnerConfig, null, 2) }</pre></div> */}
-
             <div>
                 <p className="display-6">Experience buffer settings</p>
                 <div className="mb-3">
@@ -31,10 +24,10 @@ function PPOExperienceBufferConfigEditor({ppoExperienceBufferConfig, setPPOExper
                 </div>
 
                 <div className="bg-configuration-card rounded mb-3">
-                    <SelectCard defaultValue={ppoExperienceBufferConfig.device} help="The device used by the experience buffer to store its data" icon="cpu" text="Device" values={Object.values(ExperienceBufferConfigModelDeviceEnum)} onChange={(value) => setPPOExperienceBufferConfig({
+                    <SelectField defaultValue={ppoExperienceBufferConfig.device} help="The device used by the experience buffer to store its data" icon="cpu" text="Device" values={Object.values(ExperienceBufferConfigModelDeviceEnum)} onChange={(value) => setPPOExperienceBufferConfig({
                         ...ppoExperienceBufferConfig,
                         device: value as ExperienceBufferConfigModelDeviceEnum
-                    })}></SelectCard>
+                    })}></SelectField>
                     <hr className="mx-2 my-1"></hr>
                     <ToggleField text="Save buffer data in checkpoint" value={ppoExperienceBufferConfig.save_experience_buffer_in_checkpoint} help="Saves the whole experience buffer in the checkpoint. This option makes the checkpoints VERY HEAVY, use at your own risk." icon="save" onToggle={() => setPPOExperienceBufferConfig({
                         ...ppoExperienceBufferConfig,
