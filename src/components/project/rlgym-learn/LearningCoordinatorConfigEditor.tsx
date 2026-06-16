@@ -14,17 +14,10 @@ export interface LearningCoordinatorConfigEditorArgs{
 }
 
 enum ConfigType{
-    BASE,
-    SERDE,
-    AGENTS,
-    PROCESS
-}
-
-const NAMES: Record<ConfigType, string> = {
-    [ConfigType.BASE]: "Base config",
-    [ConfigType.SERDE]: "Serdes",
-    [ConfigType.AGENTS]: "Agents",
-    [ConfigType.PROCESS]: "Process config",
+    BASE = "Base config",
+    SERDE = "Serdes",
+    AGENTS = "Agents",
+    PROCESS = "Process config"
 }
 
 function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearningCoordinatorConfig, getDefaultConfig}: LearningCoordinatorConfigEditorArgs) {
@@ -155,7 +148,7 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
             return <p>No config</p>
         }
         else{
-            switch (+currentConfigType) {
+            switch (currentConfigType) {
                 case ConfigType.BASE:
                     return <BaseConfigEditor baseConfig={learningCoordinatorConfig.base_config} setBaseConfig={setBaseConfigModel}/>
                 case ConfigType.SERDE:
@@ -177,7 +170,7 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
         <div>
             <div className="d-flex w-100 gap-2 py-2">
                 {
-                    Object.entries(NAMES).map(([config, value]) => <button className={"btn btn-outline-light flex-fill " + (currentConfigType === config ? "active" : "") } onClick={() => setCurrentConfigType(config)}>{value}</button>)
+                    Object.values(ConfigType).map((config) => <button key={config} className={"btn btn-outline-light flex-fill " + (currentConfigType === config ? "active" : "") } onClick={() => setCurrentConfigType(config)}>{config.toString()}</button>)
                 }
             </div>
 

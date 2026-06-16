@@ -50,7 +50,7 @@ function AgentControllersEditor({agentControllersConfigModel, updateControllerCo
 
             <div className="d-flex gap-2 mb-2">
                 {Object.keys(agentControllersConfigModel).map(
-                    (key) => <button className={"btn btn-outline-light " + (currentAgent === key ? "active" : "")} onClick={() => setCurrentAgent(key)}>{key}</button>
+                    (key) => <button key={key} className={"btn btn-outline-light " + (currentAgent === key ? "active" : "")} onClick={() => setCurrentAgent(key)}>{key}</button>
                 )}
             </div>
 
