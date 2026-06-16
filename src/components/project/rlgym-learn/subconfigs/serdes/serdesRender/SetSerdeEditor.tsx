@@ -7,10 +7,10 @@ interface SetSerdeEditorArgs{
 }
 
 function SetSerdeEditor({serdeConfig, setSerdeConfig}:SetSerdeEditorArgs) {
-    return <div className="border p-2">
-                <div>
-                    <label>Value serde</label>
-                    <div>
+    return <div className="mt-2">
+                <div className="d-flex">
+                    <p className="me-1 my-auto">Item type</p>
+                    <div className="flex-fill">
                         <SerdesSelect serdeConfig={serdeConfig.items_serde_type} setSerdeConfig={
                             (serde: PyAnySerdeType) => setSerdeConfig({
                                 ...serdeConfig,

@@ -8,8 +8,9 @@ interface OptionSerdeEditorArgs{
 
 function OptionSerdeEditor({serdeConfig, setSerdeConfig}:OptionSerdeEditorArgs) {
     return <div>
-                <div className="mt-2">
-                    <div>
+                <div className="d-flex mt-2">
+                    <p className="me-1 my-auto">Value type</p>
+                    <div className="flex-fill">
                         <SerdesSelect serdeConfig={serdeConfig.value_serde_type} setSerdeConfig={
                             (serde: PyAnySerdeType) => setSerdeConfig({
                                 ...serdeConfig,
