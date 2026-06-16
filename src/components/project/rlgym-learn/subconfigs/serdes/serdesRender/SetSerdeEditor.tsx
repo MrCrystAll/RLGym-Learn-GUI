@@ -8,9 +8,9 @@ interface SetSerdeEditorArgs{
 
 function SetSerdeEditor({serdeConfig, setSerdeConfig}:SetSerdeEditorArgs) {
     return <div className="border p-2">
-                <div className="form-group mb-3 mt-3 row">
-                    <label className="col-sm-1 col-form-label">Value serde</label>
-                    <div className="col-sm-11">
+                <div>
+                    <label>Value serde</label>
+                    <div>
                         <SerdesSelect serdeConfig={serdeConfig.items_serde_type} setSerdeConfig={
                             (serde: PyAnySerdeType) => setSerdeConfig({
                                 ...serdeConfig,

@@ -7,10 +7,10 @@ interface DictSerdeEditorArgs{
 }
 
 function DictSerdeEditor({serdeConfig, setSerdeConfig}:DictSerdeEditorArgs) {
-    return <div className="border p-2">
-                <div className="form-group mb-3 mt-3 row">
-                    <label className="col-sm-1 col-form-label">Keys serde</label>
-                    <div className="col-sm-11">
+    return <div className="p-2">
+                <div>
+                    <label>Keys serde</label>
+                    <div>
                         <SerdesSelect serdeConfig={serdeConfig.keys_serde_type} setSerdeConfig={
                             (serde: PyAnySerdeType) => setSerdeConfig({
                                 ...serdeConfig,
@@ -19,9 +19,9 @@ function DictSerdeEditor({serdeConfig, setSerdeConfig}:DictSerdeEditorArgs) {
                         }/>
                     </div>
                 </div>
-                <div className="form-group mb-3 row">
-                    <label className="col-sm-1 col-form-label">Values serde</label>
-                    <div className="col-sm-11">
+                <div>
+                    <label>Values serde</label>
+                    <div >
                         <SerdesSelect serdeConfig={serdeConfig.values_serde_type} setSerdeConfig={
                             (serde: PyAnySerdeType) => setSerdeConfig({
                                 ...serdeConfig,

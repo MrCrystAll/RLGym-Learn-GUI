@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { type PyAnySerdeType, type SerdeTypesModel } from "../../../../../models/rlgym-learn/api";
 import SerdesSelect from "./SerdesSelect";
-import DefaultJSONDescription from "../../../DefaultJSONDescription";
 
 interface SerdesConfigEditorArgs{
     serdesTypesModel: SerdeTypesModel,
@@ -9,141 +8,144 @@ interface SerdesConfigEditorArgs{
 }
 
 function SerdesConfigEditor({serdesTypesModel, setSerdesTypesModel}:SerdesConfigEditorArgs) {
-    const [editMode, setEditMode] = useState(false);
 
-    if(editMode){
-        return <div>
-            <p className="display-5">Serdes config options</p>
-            <hr className="w-75"/>
+    return (
+        <>
+            <div className="d-flex mt-2">
+                <p className="display-6">Serdes config</p>
+            </div>
 
+            <div className="d-grid gap-3" style={{gridTemplateColumns: "1fr 1fr"}}>
                 <div>
-                    <div className="form-group mb-3 row">
-                        <label className="col-sm-2 col-form-label">Action serde</label>
-                        <div className="col-sm-10">
-                            <SerdesSelect serdeConfig={serdesTypesModel.action_serde_type} setSerdeConfig={
-                                (serde: PyAnySerdeType) => setSerdesTypesModel({
-                                    ...serdesTypesModel,
-                                    action_serde_type: serde
-                                })
-                            }/>
-                            
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 row">
-                        <label className="col-sm-2 col-form-label">Action space serde</label>
-                        <div className="col-sm-10">
-                            <SerdesSelect serdeConfig={serdesTypesModel.action_space_serde_type} setSerdeConfig={
-                                (serde: PyAnySerdeType) => setSerdesTypesModel({
-                                    ...serdesTypesModel,
-                                    action_space_serde_type: serde
-                                })
-                            }/>
-                        </div>
-                    </div>
-                    <div className="form-group mb-3 row">
-                        <label className="col-sm-2 col-form-label">Observation serde</label>
-                        <div className="col-sm-10">
-                            <SerdesSelect serdeConfig={serdesTypesModel.obs_serde_type} setSerdeConfig={
-                                (serde: PyAnySerdeType) => setSerdesTypesModel({
-                                    ...serdesTypesModel,
-                                    obs_serde_type: serde
-                                })
-                            }/>
-                        </div>
-                    </div>
-
-                    <div className="form-group mb-3 row">
-                        <label className="col-sm-2 col-form-label">Observation space serde</label>
-                        <div className="col-sm-10">
-                            <SerdesSelect serdeConfig={serdesTypesModel.obs_space_serde_type} setSerdeConfig={
-                                (serde: PyAnySerdeType) => setSerdesTypesModel({
-                                    ...serdesTypesModel,
-                                    obs_space_serde_type: serde
-                                })
-                            }/>
-                        </div>
-                    </div>
-
-                    <div className="form-group mb-3 row">
-                        <label className="col-sm-2 col-form-label">Reward serde</label>
-                        <div className="col-sm-10">
-                            <SerdesSelect serdeConfig={serdesTypesModel.reward_serde_type} setSerdeConfig={
-                                (serde: PyAnySerdeType) => setSerdesTypesModel({
-                                    ...serdesTypesModel,
-                                    reward_serde_type: serde
-                                })
-                            }/>
-                        </div>
-                    </div>
-
-                    <div className="form-group mb-3 row">
-                        <label className="col-sm-2 col-form-label">Agent ID serde</label>
-                        <div className="col-sm-10">
+                    <p className="display-5">Agent ID</p>
+                    <p>Set this field as the type you expect the Agent ID to be. (This is usually set by the transition engine, but can be altered by the state mutator)</p>
+                    <div className="bg-configuration-card">
+                        <div className="my-auto me-3 p-3">
                             <SerdesSelect serdeConfig={serdesTypesModel.agent_id_serde_type} setSerdeConfig={
-                                (serde: PyAnySerdeType) => setSerdesTypesModel({
-                                    ...serdesTypesModel,
-                                    agent_id_serde_type: serde
-                                })
-                            }/>
+                                    (serde: PyAnySerdeType) => setSerdesTypesModel({
+                                        ...serdesTypesModel,
+                                        agent_id_serde_type: serde
+                                    })
+                                }/>
                         </div>
-                    </div>
-
-                    <div className="form-group mb-3 row">
-                        <label className="col-sm-2 col-form-label">Shared info serde</label>
-                        <div className="col-sm-10">
-                            <SerdesSelect canBeNull={true} serdeConfig={serdesTypesModel.shared_info_serde_type} setSerdeConfig={
-                                (serde: PyAnySerdeType | null) => setSerdesTypesModel({
-                                    ...serdesTypesModel,
-                                    shared_info_serde_type: serde
-                                })
-                            }/>
-                        </div>
-                    </div>
-
-                    <div className="form-group mb-3 row">
-                        <label className="col-sm-2 col-form-label">Shared info setter serde</label>
-                        <div className="col-sm-10">
-                            <SerdesSelect canBeNull={true} serdeConfig={serdesTypesModel.shared_info_setter_serde_type} setSerdeConfig={
-                                (serde: PyAnySerdeType | null) => setSerdesTypesModel({
-                                    ...serdesTypesModel,
-                                    shared_info_setter_serde_type: serde
-                                })
-                            }/>
-                        </div>
-                    </div>
-
-                    <div className="form-group mb-3 row">
-                        <label className="col-sm-2 col-form-label">Game state serde</label>
-                        <div className="col-sm-10">
-                            <SerdesSelect canBeNull={true} serdeConfig={serdesTypesModel.state_serde_type} setSerdeConfig={
-                                (serde: PyAnySerdeType | null) => setSerdesTypesModel({
-                                    ...serdesTypesModel,
-                                    state_serde_type: serde
-                                })
-                            }/>
-                        </div>
-                    </div>
-
-                    <div className="btn-group">
-                        <button className="btn btn-success" type="button" onClick={() => setEditMode(false)}>OK</button>
                     </div>
                 </div>
-        </div>
-    }
-    else{
-        return (
-            <>
-                <div className="d-flex">
-                    <p className="display-6">Serdes config config</p>
-                    <button className="btn btn-dark" onClick={() => setEditMode(true)}><i className="bi bi-pencil-fill"></i></button>
+                <div>
+                    <p className="display-5">Action</p>
+                    <p>Set this field as the type you expect the action to be. (Check the "ActionType" in your action parser)</p>
+                    <div className="bg-configuration-card">
+                        <div className="my-auto me-3 p-3">
+                            <SerdesSelect serdeConfig={serdesTypesModel.action_serde_type} setSerdeConfig={
+                                    (serde: PyAnySerdeType) => setSerdesTypesModel({
+                                        ...serdesTypesModel,
+                                        action_serde_type: serde
+                                    })
+                                }/>
+                        </div>
+                    </div>
                 </div>
-                    
-                <DefaultJSONDescription object={serdesTypesModel} updateValue={(key, value) => setSerdesTypesModel({...serdesTypesModel, [key]: value})} title="Serdes config"></DefaultJSONDescription>
-                {/* <div><pre>{JSON.stringify(serdesTypesModel, null, 2) }</pre></div> */}
-            </>
+                <div>
+                    <p className="display-5">Observation</p>
+                    <p>Set this field as the type you expect the observation to be. (Check the "ObsType" in your observation builder)</p>
+                    <div className="bg-configuration-card">
+                        <div className="my-auto me-3 p-3">
+                            <SerdesSelect serdeConfig={serdesTypesModel.obs_serde_type} setSerdeConfig={
+                                    (serde: PyAnySerdeType) => setSerdesTypesModel({
+                                        ...serdesTypesModel,
+                                        obs_serde_type: serde
+                                    })
+                                }/>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <p className="display-5">Reward</p>
+                    <p>Set this field as the type you expect the reward to be. (See the "RewardType") in your reward.</p>
+                    <div className="bg-configuration-card">
+                        <div className="my-auto me-3 p-3">
+                            <SerdesSelect serdeConfig={serdesTypesModel.reward_serde_type} setSerdeConfig={
+                                    (serde: PyAnySerdeType) => setSerdesTypesModel({
+                                        ...serdesTypesModel,
+                                        reward_serde_type: serde
+                                    })
+                                }/>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <p className="display-5">Observation space</p>
+                    <p>Set this field as the type you expect the observation space to be. (See the get_obs_space of your observation builder)</p>
+                    <div className="bg-configuration-card">
+                        <div className="my-auto me-3 p-3">
+                            <SerdesSelect serdeConfig={serdesTypesModel.obs_space_serde_type} setSerdeConfig={
+                                    (serde: PyAnySerdeType) => setSerdesTypesModel({
+                                        ...serdesTypesModel,
+                                        obs_space_serde_type: serde
+                                    })
+                                }/>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <p className="display-5">Action space</p>
+                    <p>Set this field as the type you expect the action space to be. (See the get_action_space of your action parser)</p>
+                    <div className="bg-configuration-card">
+                        <div className="my-auto me-3 p-3">
+                            <SerdesSelect serdeConfig={serdesTypesModel.action_space_serde_type} setSerdeConfig={
+                                    (serde: PyAnySerdeType) => setSerdesTypesModel({
+                                        ...serdesTypesModel,
+                                        action_space_serde_type: serde
+                                    })
+                                }/>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <p className="display-5">Shared info</p>
+                    <p>Set this field as the type you expect the shared info to be. Usually it's a dictionnary, if not given, shared info will be None in the agent controllers.</p>
+                    <div className="bg-configuration-card">
+                        <div className="my-auto me-3 p-3">
+                            <SerdesSelect canBeNull serdeConfig={serdesTypesModel.shared_info_serde_type} setSerdeConfig={
+                                    (serde: PyAnySerdeType) => setSerdesTypesModel({
+                                        ...serdesTypesModel,
+                                        shared_info_serde_type: serde
+                                    })
+                                }/>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <p className="display-5">Shared info setter</p>
+                    <p>TODO.</p>
+                    <div className="bg-configuration-card">
+                        <div className="my-auto me-3 p-3">
+                            <SerdesSelect canBeNull serdeConfig={serdesTypesModel.shared_info_setter_serde_type} setSerdeConfig={
+                                    (serde: PyAnySerdeType) => setSerdesTypesModel({
+                                        ...serdesTypesModel,
+                                        shared_info_setter_serde_type: serde
+                                    })
+                                }/>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <p className="display-5">State</p>
+                    <p>Set this field as the type you expect the state to be. If not given, upon activating the state serialization in the agent controllers, the state will be None.</p>
+                    <div className="bg-configuration-card">
+                        <div className="my-auto me-3 p-3">
+                            <SerdesSelect canBeNull serdeConfig={serdesTypesModel.state_serde_type} setSerdeConfig={
+                                    (serde: PyAnySerdeType) => setSerdesTypesModel({
+                                        ...serdesTypesModel,
+                                        state_serde_type: serde
+                                    })
+                                }/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
 
-        )
-    }
+    )
 }
 
 
