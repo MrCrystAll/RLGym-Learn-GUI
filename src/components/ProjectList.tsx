@@ -41,8 +41,8 @@ export function ProjectList({folderPath, projects, addProject, setCurrentProject
   return (
     <div className="project-list-container border rounded p-2">
         <div className="d-flex gap-2 mb-2">
-          <small className="bg-dark p-2 rounded border" style={{fontFamily: "monospace"}}>{folderPath}</small>
-          <div className="btn-group border my-auto ">
+          <small className="bg-dark p-2 rounded border text-break" style={{fontFamily: "monospace"}}>{folderPath}</small>
+          <div className="btn-group border">
             <ChooseDataFolder setFolderPath={setFolderPath}></ChooseDataFolder>
             <AddProject addProject={addProjectFromName}></AddProject>
           </div>
