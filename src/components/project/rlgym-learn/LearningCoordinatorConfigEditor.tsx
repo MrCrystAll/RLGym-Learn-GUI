@@ -5,6 +5,7 @@ import ProcessConfigEditor from "./subconfigs/ProcessConfigEditor"
 import AgentControllersEditor from "./subconfigs/AgentControllersEditor"
 import type { PPOAgentControllerConfigModel } from "rlgym-learn-client"
 import type { AxiosError } from "axios"
+import SerdesConfigEditor from "./subconfigs/serdes/SerdesConfigEditor"
 
 export interface LearningCoordinatorConfigEditorArgs{
     learningCoordinatorConfig: LearningCoordinatorConfigModel
@@ -12,8 +13,14 @@ export interface LearningCoordinatorConfigEditorArgs{
     getDefaultConfig: (configType: string) => Promise<PPOAgentControllerConfigModel>
 }
 
+enum ConfigType{
+    BASE,
+    SERDE,
+    AGENTS
+}
+
 function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearningCoordinatorConfig, getDefaultConfig}: LearningCoordinatorConfigEditorArgs) {
-    
+    const [currentConfigType, setCurrentConfigType] = useState<ConfigType>(ConfigType.BASE);
 
     const setBaseConfigModel = (model: BaseConfigModel) => {setLearningCoordinatorConfig({
         ...learningCoordinatorConfig,
@@ -140,22 +147,32 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
             return <p>No config</p>
         }
         else{
-            return <>
-
-            <div>
-                <BaseConfigEditor baseConfig={learningCoordinatorConfig.base_config} setBaseConfig={setBaseConfigModel}/>
-                <ProcessConfigEditor processConfig={learningCoordinatorConfig.process_config} setProcessConfig={setProcessConfigModel}/>
-                <AgentControllersEditor deleteAgent={deleteController} agentControllersConfigModel={learningCoordinatorConfig.agent_controllers_config} updateControllerConfigModel={setAgentControllerConfigModel}/>
-                {addController()}
-            </div>
-            </>
+            switch (+currentConfigType) {
+                case ConfigType.BASE:
+                    return <BaseConfigEditor baseConfig={learningCoordinatorConfig.base_config} setBaseConfig={setBaseConfigModel}/>
+                case ConfigType.SERDE:
+                    return <SerdesConfigEditor serdesTypesModel={learningCoordinatorConfig.base_config.serde_types} setSerdesTypesModel={(model) => setBaseConfigModel({...learningCoordinatorConfig.base_config, serde_types: model})}></SerdesConfigEditor>
+                case ConfigType.AGENTS:
+                    return <div>
+                        {addController()}
+                        <AgentControllersEditor deleteAgent={deleteController} agentControllersConfigModel={learningCoordinatorConfig.agent_controllers_config} updateControllerConfigModel={setAgentControllerConfigModel}/>
+                    </div>
+                default:
+                    break;
+            }
         }
     }
 
     return (
-        <>
+        <div>
+            <div className="d-flex w-100 gap-2 py-2">
+                <button className={"btn btn-outline-light flex-fill " + (currentConfigType === ConfigType.BASE ? "active" : "") } onClick={() => setCurrentConfigType(ConfigType.BASE)}>Base config</button>
+                <button className={"btn btn-outline-light flex-fill " + (currentConfigType === ConfigType.SERDE ? "active" : "") } onClick={() => setCurrentConfigType(ConfigType.SERDE)}>Serdes</button>
+                <button className={"btn btn-outline-light flex-fill " + (currentConfigType === ConfigType.AGENTS ? "active" : "") } onClick={() => setCurrentConfigType(ConfigType.AGENTS)}>Agents</button>
+            </div>
+
             {render()}
-        </>
+        </div>
 
     )
 }
