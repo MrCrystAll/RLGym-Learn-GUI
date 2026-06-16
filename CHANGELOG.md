@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - The project list has been redesigned and the version of the GUI is available at the top right of the screen when opening the project list
+- The serde configuration has been redesigned to offer a cleaner and better experience
+- The agent controller configuration has been redesigned to offer a cleaner and better experience
+- The different configurations have been moved to their separate pages. This makes the active content less loaded.
 
 ### Added
 
