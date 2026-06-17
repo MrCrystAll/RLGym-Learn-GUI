@@ -46,7 +46,8 @@ function App() {
       return (
         <div className="p-3">
           {header}
-          <p className="mt-3">This is the project list, you can add and access your projects from here</p>
+          <p className="display-5 mt-3">Project list</p>
+          <p className="mt-3">Here is the projects list, this list is organized in the following way. The topmost level of hierarchy is folders, you got asked for a specific folder before. Folders store projects, and in order to retrieve and organize those projects, this list aggregates the projects per folder. For now, you can only have 1 folder, but i plan on adding a multi-folder support later.</p>
           <ProjectList addProject={addProject} projects={projects} folderPath={folderPath} setCurrentProject={setCurrentProject} setFolderPath={setFolder}></ProjectList>
         </div>
       )
