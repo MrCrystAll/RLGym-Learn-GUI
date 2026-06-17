@@ -28,53 +28,6 @@ function RunPage({run, backToHome}: RunPageArgs){
         }
     }
 
-    // const sessionsDisplay = () => {
-    //     if(fetchingSession){
-    //         return <p className="text-secondary">Fetching sessions...</p>
-    //     }
-
-    //     if(sessions.length === 0){
-    //         return <p>No session found for this run</p>
-    //     }
-    //     else{
-    //         return (
-    //             <div>
-    //                 <p className="display-5">All sessions</p>
-    //                 <table className="table table-dark table-striped border">
-    //                 <thead>
-    //                     <tr>
-    //                         <th scope="col">#</th>
-    //                         <th scope="col">Status</th>
-    //                     </tr>
-    //                 </thead>
-    //                 <tbody>
-    //                     {sessions.map((session) => <tr style={{cursor: "pointer"}} onClick={() => setActivePage(getSessionPage(session.session_id))} key={session.session_id}>
-    //                     <th scope="row"><p>{session.session_id}</p></th>
-    //                     <td><p>{session.status}</p></td>
-    //                 </tr>)}
-    //                 </tbody>
-                    
-    //             </table>
-    //         </div>
-    //         )
-    //     }
-    // }
-
-    // const sessionActions = () => {
-    //     return <button className="btn btn-primary" onClick={() => {
-    //         startSession().then(
-    //             (startedSession) => {
-    //                 const page: SessionPageModel = {
-    //                     name: startedSession.session_id,
-    //                     type: PageType.PROCESS,
-    //                     session: startedSession
-    //                 }
-    //                 setActivePage(page)
-    //             }
-    //         )
-    //     }}>Start session</button>
-    // }
-
     const sessionsDisplay = () => {
         if(selectedSession === null) return <SessionList run={run} onSelectSession={setSelectedSession}></SessionList>
         else return <ProcessPage session={selectedSession} backToRunPage={() => {setMode(PageType.MAIN); setSelectedSession(null)}}></ProcessPage>
