@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The serde configuration has been redesigned to offer a cleaner and better experience
 - The agent controller configuration has been redesigned to offer a cleaner and better experience
 - The different configurations have been moved to their separate pages. This makes the active content less loaded.
+- The project header now only appears in the project main page along with a new description, the run page only display run elements.
 
 ### Added
 
