@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-06-17
+
 ### Changed
 
 - The project list has been redesigned and the version of the GUI is available at the top right of the screen when opening the project list
