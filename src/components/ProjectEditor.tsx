@@ -26,44 +26,43 @@ function ProjectEditor({project, updateProjectList, setCurrentProject, removePro
         removeProject(project.id);
     }
 
-    const runDisplay = () => {
-        if(selectedRun === null){
-            return <RunList onSelectRun={setSelectedRun} projectId={project.id}></RunList>
-        }
-        else{
-            return <RunPage run={selectedRun} backToHome={() => setSelectedRun(null)}></RunPage>
-        }
-    }
-
-    return (
-        <div className="bg-dark text-light">
-            <header>
-                <div className="pt-2">
-                    <ProjectMetadataEditor updateProjectName={updateProjectName} projectMetadata={project}></ProjectMetadataEditor>
-                </div>
-            </header>
-            <hr className="border border-light mx-5"/>
-
-            <div className="p-3">
-                <div>
-
-                    <div className="d-flex">
-                        <p className="me-2">Current python interpreter: "{project.interpreter}"</p>
-                        <ChoosePythonPath setPythonPath={(path) => updateProjectInterpreter(path)}></ChoosePythonPath>
+    if(selectedRun === null){
+        return (
+            <div className="bg-dark text-light">
+                <header>
+                    <div className="pt-2">
+                        <ProjectMetadataEditor updateProjectName={updateProjectName} projectMetadata={project}></ProjectMetadataEditor>
                     </div>
+                </header>
+                <hr className="border border-light mx-5"/>
 
-                    {runDisplay()}
-
-                    <footer className="border border-dark bg-dark">
-                        <div className="m-2">
-                            <ActionButtons setCurrentProject={setCurrentProject} removeProject={removeProjectNoArgs}></ActionButtons>
+                <div className="p-3">
+                    <div>
+                        <p className="display-6">Project details</p>
+                        <p>In a project, you can specify a python interpeter. By default, it uses the global python interpeter, but i recommend you make a virtual environment and select the python of this virtual environment. You can create a run below using the button, you will be prompted to give a name to the run, i recommend you use semantic versioning or vibe versioning.</p>
+                        <div className="d-flex">
+                            <p className="me-2 my-auto">Current python interpreter: "{project.interpreter}"</p>
+                            <ChoosePythonPath setPythonPath={(path) => updateProjectInterpreter(path)}></ChoosePythonPath>
                         </div>
-                    </footer>
-                    
-                </div>
-            </div>            
-        </div>
-    )
+
+                        <RunList onSelectRun={setSelectedRun} projectId={project.id}></RunList>
+
+                        <footer className="border border-dark bg-dark">
+                            <div className="m-2">
+                                <ActionButtons setCurrentProject={setCurrentProject} removeProject={removeProjectNoArgs}></ActionButtons>
+                            </div>
+                        </footer>
+                        
+                    </div>
+                </div>            
+            </div>
+        )
+    }
+    return <div className="mt-3">
+        <RunPage run={selectedRun} backToHome={() => setSelectedRun(null)}></RunPage>
+    </div>
+
+    
 }
 
 export default ProjectEditor
