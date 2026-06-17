@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - A button to change the data folder, making it possible to change folder during the app runtime
+- There is now a home page!
+- Some description for the project list
 
 ## [0.1.2] - 2026-06-02
 
