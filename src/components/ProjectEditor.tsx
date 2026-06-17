@@ -1,112 +1,68 @@
 import ActionButtons from "./project/ActionButtons"
 import ProjectMetadataEditor from "./project/ProjectMetadataEditor"
-import projectService from "../services/project.service";
-import type { ProjectMetadata, RLGymLearnApiExceptionModel, Run } from "rlgym-learn-client";
+import type { ProjectMetadata, Run } from "rlgym-learn-client";
 import { useState } from "react";
 import RunPage from "./project/rlgym-learn/run-handling/RunPage";
 import ChoosePythonPath from "./ChoosePythonPath";
 import RunList from "./project/rlgym-learn/run-handling/RunList";
-import { useNotifications } from "../hooks/useNotifications";
+import { useProject } from "../hooks/useProject";
 
 interface ProjectEditorArgs{
-    projectMetadata: ProjectMetadata,
-    updateProjectMetadata: (metadata: ProjectMetadata) => void,
+    project: ProjectMetadata,
+    updateProjectList: (metadata: ProjectMetadata) => void,
 
     setCurrentProject: (project: string | null) => void,
     removeProject: (projectId: string) => void
 }
 
-function ProjectEditor({projectMetadata, updateProjectMetadata, setCurrentProject, removeProject}: ProjectEditorArgs) {
+function ProjectEditor({project, updateProjectList, setCurrentProject, removeProject}: ProjectEditorArgs) {
     const [selectedRun, setSelectedRun] = useState<Run | null>(null);
-    const {pushNotification} = useNotifications();
 
-    const updateProjectName = async (name: string) => {
-        (await projectService.updateProjectName(projectMetadata.id, name)).map(
-            () => {updateProjectMetadata({
-                ...projectMetadata,
-                name: name
-            }); pushNotification({
-                message: `Project name has successfully been updated to "${name}"`,
-                severity: "success",
-                title: "Project updated successfully"
-            })}
-        ).mapErr(
-            (e) => {
-                const err = e.response?.data as RLGymLearnApiExceptionModel
-                pushNotification({
-                    title: err.title,
-                    message: err.description,
-                    severity: "error"
-                })
-            }
-        )
-    }
-
-    const updateProjectInterpreter = async (path: string) => {
-        (await projectService.updateProjectInterpreter(projectMetadata.id, path)).map(
-            () => {updateProjectMetadata({
-                ...projectMetadata,
-                interpreter: path
-            }); pushNotification({
-                message: `Project interpreter has successfully been updated to "${path}"`,
-                severity: "success",
-                title: "Project updated successfully"
-            })}
-        ).mapErr(
-            (e) => {
-                const err = e.response?.data as RLGymLearnApiExceptionModel
-                pushNotification({
-                    title: err.title,
-                    message: err.description,
-                    severity: "error"
-                })
-            }
-        )
-    }
+    const {updateProjectInterpreter, updateProjectName} = useProject({project, updateProjectList});
+    
 
     const removeProjectNoArgs = () => {
         setCurrentProject(null);
-        removeProject(projectMetadata.id);
+        removeProject(project.id);
     }
 
-    const runDisplay = () => {
-        if(selectedRun === null){
-            return <RunList onSelectRun={setSelectedRun} projectId={projectMetadata.id}></RunList>
-        }
-        else{
-            return <RunPage run={selectedRun} backToHome={() => setSelectedRun(null)}></RunPage>
-        }
-    }
-
-    return (
-        <div className="bg-dark text-light">
-            <header>
-                <div className="pt-2">
-                    <ProjectMetadataEditor updateProjectName={updateProjectName} projectMetadata={projectMetadata}></ProjectMetadataEditor>
-                </div>
-            </header>
-            <hr className="border border-light mx-5"/>
-
-            <div className="p-3">
-                <div>
-
-                    <div className="d-flex">
-                        <p className="me-2">Current python interpreter: "{projectMetadata.interpreter}"</p>
-                        <ChoosePythonPath setPythonPath={(path) => updateProjectInterpreter(path)}></ChoosePythonPath>
+    if(selectedRun === null){
+        return (
+            <div className="bg-dark text-light">
+                <header>
+                    <div className="pt-2">
+                        <ProjectMetadataEditor updateProjectName={updateProjectName} projectMetadata={project}></ProjectMetadataEditor>
                     </div>
+                </header>
+                <hr className="border border-light mx-5"/>
 
-                    {runDisplay()}
-
-                    <footer className="border border-dark bg-dark">
-                        <div className="m-2">
-                            <ActionButtons setCurrentProject={setCurrentProject} removeProject={removeProjectNoArgs}></ActionButtons>
+                <div className="p-3">
+                    <div>
+                        <p className="display-6">Project details</p>
+                        <p>In a project, you can specify a python interpeter. By default, it uses the global python interpeter, but i recommend you make a virtual environment and select the python of this virtual environment. You can create a run below using the button, you will be prompted to give a name to the run, i recommend you use semantic versioning or vibe versioning.</p>
+                        <div className="d-flex">
+                            <p className="me-2 my-auto">Current python interpreter: "{project.interpreter}"</p>
+                            <ChoosePythonPath setPythonPath={(path) => updateProjectInterpreter(path)}></ChoosePythonPath>
                         </div>
-                    </footer>
-                    
-                </div>
-            </div>            
-        </div>
-    )
+
+                        <RunList onSelectRun={setSelectedRun} projectId={project.id}></RunList>
+
+                        <footer className="border border-dark bg-dark">
+                            <div className="m-2">
+                                <ActionButtons setCurrentProject={setCurrentProject} removeProject={removeProjectNoArgs}></ActionButtons>
+                            </div>
+                        </footer>
+                        
+                    </div>
+                </div>            
+            </div>
+        )
+    }
+    return <div className="mt-3">
+        <RunPage run={selectedRun} backToHome={() => setSelectedRun(null)}></RunPage>
+    </div>
+
+    
 }
 
 export default ProjectEditor

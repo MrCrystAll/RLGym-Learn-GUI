@@ -37,17 +37,21 @@ function TupleSerdeEditor({serdeConfig, setSerdeConfig}:TupleSerdeEditorArgs) {
     }
 
     return (
-        <div className="border p-2">
+        <div>
             {serdeConfig.item_serde_types.map((value: PyAnySerdeType, index: number) => {
-                return <div className="border-bottom pb-3 mt-2" key={index}>
+                return (
+                <div className="d-flex mt-2" key={index}>
+                    <div className="flex-fill">
                      <SerdesSelect serdeConfig={value} setSerdeConfig={
                         (value) => updateAtIndex(value, index)
                     }></SerdesSelect>
-                    <button className="btn btn-danger mt-3" onClick={() => deleteAt(index)}><i className="bi bi-x"></i></button>
+                    </div>
+                    <button className="btn btn-danger ms-3" onClick={() => deleteAt(index)}><i className="bi bi-x"></i></button>
                 </div>
+                )
             })}
 
-            <button className="btn btn-primary mt-3" onClick={addElement}>Add element</button>
+            <button className="btn btn-outline-light mt-2" onClick={addElement}>Add element</button>
         </div>
     )
 }

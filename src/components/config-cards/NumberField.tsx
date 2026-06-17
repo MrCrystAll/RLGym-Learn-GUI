@@ -8,11 +8,12 @@ interface NumberFieldArgs{
     icon: string
     help: string
     required?: boolean
+    intOnly?: boolean
 
     onChange: (value: number | null) => void
 }
 
-function NumberField({value, text, icon, help, required, onChange}: NumberFieldArgs) {
+function NumberField({value, text, icon, help, required, intOnly, onChange}: NumberFieldArgs) {
     const [editMode, setEditMode] = useState(false);
     const {register, handleSubmit} = useForm({defaultValues: {value: value}})
 
@@ -33,7 +34,7 @@ function NumberField({value, text, icon, help, required, onChange}: NumberFieldA
     const fieldValue = () => {
         if(editMode){
             return <form onSubmit={handleSubmit(onSubmit)}>
-                <input className="form-control" step={1e-10} type="number" {...register("value", {valueAsNumber: true, required: required === undefined ? false : required})}></input>
+                <input className="form-control" step={intOnly ? 1 : 1e-10} type="number" {...register("value", {valueAsNumber: true, required: required === undefined ? false : required})}></input>
             </form>
         }
         return <p>{value === null ? "--" : value.toLocaleString(undefined, {useGrouping: true})}</p>

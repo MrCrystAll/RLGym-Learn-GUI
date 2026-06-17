@@ -5,11 +5,10 @@ interface NumpySerdeEditorArgs{
 }
 
 function NumpySerdeEditor({serdeConfig, setSerdeConfig}:NumpySerdeEditorArgs) {
-    return <div className="border p-2">
-                <div className="form-group mb-3 mt-3 row">
-                    <label className="col-sm-1 col-form-label">Value serde</label>
-                    <div className="col-sm-11">
-                        <select className="form-select" onChange={(event) => {
+    return <div>
+                <div>
+                    <div className="mt-2 ms-4">
+                        <select className="form-select" data-bs-theme="dark" onChange={(event) => {
                             setSerdeConfig({
                                 ...serdeConfig,
                                 dtype: event.target.value

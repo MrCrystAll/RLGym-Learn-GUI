@@ -1,5 +1,4 @@
-import { type BaseConfigModel, type SerdeTypesModel } from "../../../../models/rlgym-learn/api";
-import SerdesConfigEditor from "./serdes/SerdesConfigEditor";
+import { type BaseConfigModel } from "../../../../models/rlgym-learn/api";
 import ToggleField from "../../../config-cards/ToggleCard";
 import StringField from "../../../config-cards/StringField";
 import NumberField from "../../../config-cards/NumberField";
@@ -32,12 +31,6 @@ function BaseConfigEditor({baseConfig, setBaseConfig}:BaseConfigEditorArgs) {
                     <NumberField value={baseConfig.shm_buffer_size} required help="The size of the buffer for the shared memory, don't touch unless you have a lot of data to send in the shared memory" icon="box" onChange={(value) => {if(value === null) return; else setBaseConfig({...baseConfig, shm_buffer_size: value})}} text="Shared memory buffer size"></NumberField>
                 </div>
             </div>
-            <SerdesConfigEditor serdesTypesModel={baseConfig.serde_types} setSerdesTypesModel={
-                (model: SerdeTypesModel) => setBaseConfig({
-                    ...baseConfig,
-                    serde_types: model
-                })
-            }></SerdesConfigEditor>
         </>
     )
 }
