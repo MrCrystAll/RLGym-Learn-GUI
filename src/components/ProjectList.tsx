@@ -42,9 +42,11 @@ export function ProjectList({folderPath, projects, addProject, setCurrentProject
     <div className="project-list-container border rounded p-2">
         <div className="d-flex gap-2 mb-2">
           <small className="bg-dark p-2 rounded border text-break" style={{fontFamily: "monospace"}}>{folderPath}</small>
-          <div className="btn-group border">
+          <div className="d-flex rounded border">
             <ChooseDataFolder setFolderPath={setFolderPath}></ChooseDataFolder>
-            <AddProject addProject={addProjectFromName}></AddProject>
+            <div className="border-start">
+              <AddProject addProject={addProjectFromName}></AddProject>
+            </div>
           </div>
         </div>
         {projectsRender()}

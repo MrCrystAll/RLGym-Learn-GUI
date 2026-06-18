@@ -1,18 +1,16 @@
 import { useState } from "react"
+import { CloseButton, Modal } from "react-bootstrap"; 
 
 interface AddProjectArgs{
   addProject: (name: string) => void
 }
 
 function AddProject({addProject}: AddProjectArgs) {
-  const [creating, setCreating] = useState(false);
+  const [nameError, setNameError] = useState<string | null>(null);
+  const [show, setShow] = useState(false);
 
-  const [nameError, setNameError] = useState("");
-
-  const createProject = (name: string) => {
-    setCreating(false);
-    addProject(name);
-  }
+  const handleClose = () => {setNameError(null); setShow(false);}
+  const handleShow = () => setShow(true);
 
   const create = (formData: FormData) => {
     
@@ -24,36 +22,41 @@ function AddProject({addProject}: AddProjectArgs) {
       return;
     }
 
-    setNameError("");
+    setNameError(null);
 
-    createProject(name.trim())
+    addProject(name.trim());
+    handleClose();
   }
 
-  if(creating){
     return (
-      <div className="bg-dark rounded p-3">
-        <form action={create}>
-          <div className="form-group text-light">
-            <label htmlFor="pName">Project name</label>
-            <input type="text" name="projectName" className="form-control" id="pName" aria-describedby="pName-help" placeholder="My best project"/>
-            <small id="pName-help" className="form-text text-muted">The name for your project</small>
-            <p className="form-text text-danger">{nameError}</p>
-          </div>
+        <div>
+          <Modal contentClassName="bg-dark border-light text-light" show={show} onHide={handleClose}>
+              <Modal.Header>
+                  <Modal.Title>Create your own project</Modal.Title>
+                  <CloseButton variant="white" onClick={handleClose}></CloseButton>
+              </Modal.Header>
+              <Modal.Body>
+                <form action={create}>
+                    <div className="form-group">
+                      <label htmlFor="pName">Project name</label>
+                      <input type="text" name="projectName" className="form-control" id="pName" aria-describedby="pName-help" placeholder="My best project"/>
+                      <small id="pName-help" className="form-text text-secondary">The name for your project</small>
+                      <p className="form-text text-danger">{nameError}</p>
+                    </div>
 
+                    <div className="btn-group">
+                      <button type="submit" className="btn btn-primary">Create project</button>
+                      <button className="btn btn-secondary" type="reset" onClick={handleClose}>Cancel</button>
+                    </div>
+                  </form>
+              </Modal.Body>
+          </Modal>
 
-        <button type="submit" className="btn btn-primary">Create project</button>
-        <button className="btn btn-secondary" onClick={() => setCreating(false)}>Cancel</button>
-        </form>
-        </div>
-    )
-  }
-  else{
-    return (
-        <button type="button" className="btn btn-dark" onClick={() => setCreating(true)}>
+        <button type="button" className="btn btn-dark" onClick={handleShow}>
           <i className="bi bi-plus"></i>
         </button>
+        </div>
     )
-  }
 }
 
 export default AddProject
