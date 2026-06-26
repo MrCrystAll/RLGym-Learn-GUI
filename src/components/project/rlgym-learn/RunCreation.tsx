@@ -36,10 +36,10 @@ function RunCreation({createRun, existingRuns}: RunCreationArgs) {
 
   return (
     <div>
-        <Modal show={show} contentClassName="border bg-dark text-light">
+        <Modal show={show} contentClassName="border">
             <Modal.Header>
                 <Modal.Title>Create your run</Modal.Title>
-                <CloseButton variant="white" onClick={handleClose}></CloseButton>
+                <CloseButton onClick={handleClose}></CloseButton>
             </Modal.Header>
             <Modal.Body>
                 <p>You must pick a new name for each run.</p>
@@ -52,7 +52,7 @@ function RunCreation({createRun, existingRuns}: RunCreationArgs) {
 
                     <div className="btn-group mt-3">
                         <button className="btn btn-primary" type="submit">Submit</button>
-                        <button className="btn btn-danger" onClick={handleClose} type="button">Cancel</button>
+                        <button className="btn btn-outline-danger" onClick={handleClose} type="button">Cancel</button>
                     </div>
                 </form>
             </Modal.Body>

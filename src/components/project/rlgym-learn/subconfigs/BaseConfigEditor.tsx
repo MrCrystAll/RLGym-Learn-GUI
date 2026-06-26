@@ -21,7 +21,7 @@ function BaseConfigEditor({baseConfig, setBaseConfig}:BaseConfigEditorArgs) {
                 <NumberCard intOnly text="Timestep limit" value={baseConfig.timestep_limit} help="The total amount of timestep to collect before stopping" onChange={(value) => {if(value === null) return; else setBaseConfig({...baseConfig, timestep_limit: value})}}></NumberCard>
 
                 <p className="fw-lighter mt-2">Miscellaneous</p>
-                <div className="bg-configuration-card rounded">
+                <div className="gray-bg rounded">
                     <ToggleField value={baseConfig.batched_tensor_action_associated_learning_data} help="No idea what that does?" icon="collection" onToggle={() => setBaseConfig({...baseConfig, batched_tensor_action_associated_learning_data: !baseConfig.batched_tensor_action_associated_learning_data})} text="Batch action associated learning data"></ToggleField>
                     <hr className="mx-2 my-1"></hr>
                     <StringField value={baseConfig.flinks_folder} help="Folder where the file links are stored" text="File links folder" icon="folder" onChange={(value) => {if(value === null) return; else setBaseConfig({...baseConfig, flinks_folder: value})}} required></StringField>

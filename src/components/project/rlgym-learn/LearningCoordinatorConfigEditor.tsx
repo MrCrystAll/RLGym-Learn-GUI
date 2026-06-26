@@ -170,7 +170,7 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
         <div>
             <div className="d-flex w-100 gap-2 py-2">
                 {
-                    Object.values(ConfigType).map((config) => <button key={config} className={"btn btn-outline-light flex-fill " + (currentConfigType === config ? "active" : "") } onClick={() => setCurrentConfigType(config)}>{config.toString()}</button>)
+                    Object.values(ConfigType).map((config) => <button key={config} className={"btn btn-primary flex-fill " + (currentConfigType === config ? "active" : "") } onClick={() => setCurrentConfigType(config)}>{config.toString()}</button>)
                 }
             </div>
 

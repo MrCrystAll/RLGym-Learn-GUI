@@ -30,10 +30,10 @@ function AddProject({addProject}: AddProjectArgs) {
 
     return (
         <div>
-          <Modal contentClassName="bg-dark border-light text-light" show={show} onHide={handleClose}>
+          <Modal show={show} onHide={handleClose}>
               <Modal.Header>
                   <Modal.Title>Create your own project</Modal.Title>
-                  <CloseButton variant="white" onClick={handleClose}></CloseButton>
+                  <CloseButton onClick={handleClose}></CloseButton>
               </Modal.Header>
               <Modal.Body>
                 <form action={create}>
@@ -46,13 +46,13 @@ function AddProject({addProject}: AddProjectArgs) {
 
                     <div className="btn-group">
                       <button type="submit" className="btn btn-primary">Create project</button>
-                      <button className="btn btn-secondary" type="reset" onClick={handleClose}>Cancel</button>
+                      <button className="btn btn-outline-danger" type="reset" onClick={handleClose}>Cancel</button>
                     </div>
                   </form>
               </Modal.Body>
           </Modal>
 
-        <button type="button" className="btn btn-dark" onClick={handleShow}>
+        <button type="button" className="btn btn-primary" onClick={handleShow}>
           <i className="bi bi-plus"></i>
         </button>
         </div>

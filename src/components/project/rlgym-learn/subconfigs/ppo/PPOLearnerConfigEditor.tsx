@@ -28,7 +28,7 @@ function PPOLearnerConfigEditor({ppoLearnerConfig, setPPOLearnerConfig}: PPOLear
                     </div>
                 </div>
 
-                <div className="bg-configuration-card rounded">
+                <div className="gray-bg rounded">
                     <SelectField defaultValue={ppoLearnerConfig.device} help="Device used by the learner to compute gradients and store batches. It is recommended to use your GPU." icon="cpu" text="Device" onChange={(value) => setPPOLearnerConfig({
                         ...ppoLearnerConfig,
                         device: value as PPOLearnerConfigModelDeviceEnum

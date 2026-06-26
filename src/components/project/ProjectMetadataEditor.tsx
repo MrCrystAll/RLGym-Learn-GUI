@@ -36,7 +36,7 @@ function ProjectMetadataEditor({projectMetadata, updateProjectName}: ProjectMeta
       return (
         <>
         <form action={applyNameEdit}>
-          <div className="form-group text-light"> 
+          <div className="form-group"> 
             <div className="d-flex">
               <input type="text" name="projectEditedName" defaultValue={projectMetadata.name} className="form-control" id="pName" aria-describedby="pName-help"></input>
               <button className="btn btn-success ms-2" type="submit">
@@ -56,8 +56,8 @@ function ProjectMetadataEditor({projectMetadata, updateProjectName}: ProjectMeta
       return (
         <div className="d-flex align-items-center">
           <p className="display-6">{projectMetadata.name}</p>
-          <button className="btn border ms-2" onClick={() => setEditingName(true)}>
-            <i className="bi bi-pencil-fill text-white"></i>
+          <button className="btn btn-primary ms-2" onClick={() => setEditingName(true)}>
+            <i className="bi bi-pencil-fill"></i>
           </button>
         </div>
       )
@@ -65,7 +65,7 @@ function ProjectMetadataEditor({projectMetadata, updateProjectName}: ProjectMeta
   }
 
   return (
-    <div className="d-flex flex-column text-light">
+    <div className="d-flex flex-column">
         <div className="d-flex justify-content-center ">
           {name()}
         </div>

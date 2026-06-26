@@ -3,6 +3,29 @@
 100% { transform: scale(1.6); opacity: 0; }
 }
 
+.btn-primary {
+  --bs-btn-bg: var(--bs-body-bg);
+  --bs-btn-border-color: var(--bs-body-color);
+
+  --bs-btn-hover-bg: var(--bs-body-color);
+  --bs-btn-hover-border-color: var(--bs-body-color);
+  --bs-btn-hover-color: var(--bs-body-bg);
+
+  --bs-btn-active-bg: var(--bs-body-color);
+  --bs-btn-active-border-color: var(--bs-body-color);
+  --bs-btn-active-color: var(--bs-body-bg);
+  
+  --bs-btn-color: var(--bs-body-color);
+}
+
+.border {
+  --bs-border-color: var(--bs-body-color)
+}
+
+.badge{
+    --bs-badge-color: var(--bs-body-color)
+}
+
 .pulse-wrapper {
 position: relative;
 width: 64px;
@@ -17,26 +40,24 @@ border: 2px solid #0d6efd; /* Bootstrap primary blue */
 animation: pulse-ring 1.8s ease-out infinite;
 }
 
-html {
-    background-color: var(--bs-dark);
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-}
-
 .pulse-ring:nth-child(2) { animation-delay: 0.6s; }
 .pulse-ring:nth-child(3) { animation-delay: 1.2s; }
 
-.bg-configuration-card{
-    background-color: rgb(50, 50, 50);
+
+
+[data-bs-theme=light]{
+    --gray-primary: rgb(200, 200, 200);
+    --grayer-primary: rgb(160, 160, 160);
+}
+[data-bs-theme=dark]{
+    --gray-primary: rgb(50, 50, 50);
+    --grayer-primary: rgb(80, 80, 80);
 }
 
-.project-list-card{
-    background-color: rgb(50, 50, 50);
-}
-.project-list-card:hover{
-    background-color: rgb(80, 80, 80);
-    cursor: pointer;
+.gray-bg{
+    background-color: var(--gray-primary);
 }
 
-.project-list-container{
-    background-color: rgb(80, 80, 80);
+.grayer-bg{
+    background-color: var(--grayer-primary);
 }

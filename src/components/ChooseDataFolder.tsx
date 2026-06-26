@@ -18,7 +18,7 @@ function ChooseDataFolder({setFolderPath, text}: ChooseDataFolderArgs) {
     }
 
   return (
-    <button className="btn btn-dark" onClick={openDialog}>
+    <button className="btn btn-primary" onClick={openDialog}>
         {text}
         <i className={"bi bi-folder " + (text !== undefined ? "ms-2" : "")}></i>
     </button>
