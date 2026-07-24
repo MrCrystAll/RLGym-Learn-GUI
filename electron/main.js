@@ -41,13 +41,9 @@ function createWindow() {
   }
 }
 
-ipcMain.handle("open-folder-path-dialog", () => {
-  return dialog.showOpenDialogSync({properties: ["openDirectory"]})
-})
-
-ipcMain.handle("open-python-path-dialog", () => {
-  return dialog.showOpenDialogSync({properties: ["openFile"], filters: [
-    {extensions: ["exe", ""], name: "python"}
+ipcMain.handle("open-explorer-dialog", (event, isFolder, extensions, name) => {
+  return dialog.showOpenDialogSync({properties: [isFolder ? "openDirectory" : "openFile"], filters: [
+    {extensions: extensions, name: name}
   ]})
 })
 

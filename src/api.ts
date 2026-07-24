@@ -14,7 +14,7 @@ export enum PageType{
 export function openDialog() {
         return new Promise<string>(
             (resolve, reject) => {
-                const result: Promise<string[] | undefined> = window.api.openPythonPathDialog();
+                const result: Promise<string[] | undefined> = window.api.openPathDialog(false, ["exe"], "python");
                 result.then(
                     (value: string[] | undefined) => {
                         if(value === undefined) reject("No value chosen by the user.");

@@ -18,6 +18,11 @@
   --bs-btn-color: var(--bs-body-color);
 }
 
+.btn-danger, .btn-secondary, .btn-info, .btn-success {
+  --bs-btn-bg: var(--bs-body-bg);
+  --bs-btn-color: var(--bs-body-color);
+}
+
 .border {
   --bs-border-color: var(--bs-body-color)
 }
