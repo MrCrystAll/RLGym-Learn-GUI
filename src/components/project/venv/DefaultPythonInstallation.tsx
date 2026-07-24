@@ -22,13 +22,17 @@ function DefaultPythonInterpreters({setPythonInterpreter}: DefaultPythonInterpre
 
             <Dropdown.Menu className="border">
                 {Object.entries(mockInterpreters).map(
-                 ([path, version]) => <Dropdown.Item  onClick={() => setPythonInterpreter(path)}>
+                 ([path, version]) => <>
+                    <Dropdown.Item key={path} text-wrap onClick={() => setPythonInterpreter(path)}>
 
                     <div>
-                        <p className="text-break">Python {version} - {path}</p>
+                        <p className="fw-bold">Python {version}</p>
+                        <p className="text-wrap text-break">{path}</p>
                     </div>
                         
-                    </Dropdown.Item>)}
+                    </Dropdown.Item>
+                    <Dropdown.Divider></Dropdown.Divider>
+                 </>)}
             </Dropdown.Menu>
         </Dropdown>
     )
