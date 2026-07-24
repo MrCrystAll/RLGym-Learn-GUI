@@ -40,8 +40,8 @@ function LogReader({logPath, streamName, sessionId}: LogReaderArgs) {
 
   return (
     <>
-    <div style={{ fontFamily: "monospace", background: "#111", color: "#0f0", padding: 16, overflow: "hidden"}} className="border border-light rounded my-2">
-      <button className="btn btn-outline-white float-end" style={{color: "white"}} onClick={() => setHidden(!hidden)}>{hidden ? "Show" : "Hide"}</button>
+    <div style={{ fontFamily: "monospace", background: "#111", color: "#0f0", padding: 16, overflow: "hidden"}} className="border rounded my-2">
+      <button className="btn btn-primary float-end" onClick={() => setHidden(!hidden)}>{hidden ? "Show" : "Hide"}</button>
       <p>Project logs <span style={{ color: "#F88" }}>({streamName})</span></p>
       {content()}
     </div>

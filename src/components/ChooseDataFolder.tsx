@@ -5,7 +5,7 @@ interface ChooseDataFolderArgs{
 
 function ChooseDataFolder({setFolderPath, text}: ChooseDataFolderArgs) {
     const openDialog = () => {
-        const result: Promise<string[] | undefined> = window.api.openFolderPathDialog();
+        const result: Promise<string[] | undefined> = window.api.openPathDialog(true);
         result.then(
             (value: string[] | undefined) => {
                 if(value === undefined) return;
@@ -18,7 +18,7 @@ function ChooseDataFolder({setFolderPath, text}: ChooseDataFolderArgs) {
     }
 
   return (
-    <button className="btn btn-dark" onClick={openDialog}>
+    <button className="btn btn-primary" onClick={openDialog}>
         {text}
         <i className={"bi bi-folder " + (text !== undefined ? "ms-2" : "")}></i>
     </button>

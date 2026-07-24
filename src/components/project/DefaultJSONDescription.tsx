@@ -23,7 +23,7 @@ function DefaultJSONDescription({object, updateValue, title}: DefaultJSONDescrip
     const display = () => {
         if(object === null) return <p>NULL</p>
         if(Object.keys(object).length === 0) return <p>Empty</p>
-        else return <div className="bg-configuration-card">
+        else return <div className="gray-bg">
         {
             Object.entries(object).map(
                 (entry) => {

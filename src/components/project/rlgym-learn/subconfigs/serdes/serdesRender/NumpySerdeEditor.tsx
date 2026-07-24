@@ -8,7 +8,7 @@ function NumpySerdeEditor({serdeConfig, setSerdeConfig}:NumpySerdeEditorArgs) {
     return <div>
                 <div>
                     <div className="mt-2 ms-4">
-                        <select className="form-select" data-bs-theme="dark" onChange={(event) => {
+                        <select className="form-select" onChange={(event) => {
                             setSerdeConfig({
                                 ...serdeConfig,
                                 dtype: event.target.value

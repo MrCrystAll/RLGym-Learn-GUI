@@ -49,9 +49,8 @@ function ToastItem({ id, title, message, severity, duration, exiting, onDismiss 
       autohide={duration > 0}
       delay={duration}
       bg={variantMap[severity]}
-      className="text-white"
     >
-      <Toast.Header closeVariant="white" className={`bg-${variantMap[severity]} text-white border-0`}>
+      <Toast.Header className={`bg-${variantMap[severity]} border-0`}>
         <strong className="me-auto">{title ?? labelMap[severity]}</strong>
       </Toast.Header>
       <Toast.Body>{message}</Toast.Body>

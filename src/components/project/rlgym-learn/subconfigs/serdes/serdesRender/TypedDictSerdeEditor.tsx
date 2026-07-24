@@ -56,7 +56,7 @@ function TypedDictSerdeEditor({serdeConfig, setSerdeConfig}:TypedDictSerdeEditor
 
     const addForm = () => {
         if(editMode){
-            return <form onSubmit={handleSubmit(onSubmit)} className="col-3" data-bs-theme="dark">
+            return <form onSubmit={handleSubmit(onSubmit)} className="col-3">
                 <div className="form-group">
                     <label className="mb-2">Key name</label>
                     <input className="form-control" {...register("key", createRules({required: true}))}></input>
@@ -69,7 +69,7 @@ function TypedDictSerdeEditor({serdeConfig, setSerdeConfig}:TypedDictSerdeEditor
             </form>
         }
         else{
-            return <button className="btn btn-outline-light mt-3" onClick={() => setEditMode(true)}>Add element</button>
+            return <button className="btn mt-3" onClick={() => setEditMode(true)}>Add element</button>
         }
     }
 

@@ -50,9 +50,9 @@ function PPOConfigEditor({ppoConfig, setPPOConfig, agentKey, deleteAgent}: PPOCo
             {/* <DefaultJSONDescription title="PPO Config" object={ppoConfig} updateValue={(key, value) => setPPOConfig({...ppoConfig, [key]: value})}></DefaultJSONDescription> */}
             {/* <PPOLearnerConfigEditor agentKey={agentKey} ppoLearnerConfig={ppoConfig.learner_config} setPPOLearnerConfig={setPPOLearnerConfig}></PPOLearnerConfigEditor> */}
             
-            <div className="bg-configuration-card px-3" onClick={getCheckpointFolder} style={{cursor: "pointer"}}>
+            <div className="gray-bg px-3" onClick={getCheckpointFolder} style={{cursor: "pointer"}}>
                 <p className="fs-6 fw-lighter mt-3">Checkpoint load folder</p>
-                <p className="text-break bg-dark p-2 rounded border" style={{fontFamily: "monospace"}}>{checkpointLoadFolder === null ? "Not specified, click to fetch a checkpoint" : checkpointLoadFolder}</p>
+                <p className="text-break p-2 rounded border" style={{fontFamily: "monospace"}}>{checkpointLoadFolder === null ? "Not specified, click to fetch a checkpoint" : checkpointLoadFolder}</p>
             </div>
             <div>
                 <PPOLearnerConfigEditor agentKey={agentKey} ppoLearnerConfig={ppoConfig.learner_config} setPPOLearnerConfig={setPPOLearnerConfig}></PPOLearnerConfigEditor>
@@ -82,7 +82,7 @@ function PPOConfigEditor({ppoConfig, setPPOConfig, agentKey, deleteAgent}: PPOCo
             <div className="d-flex justify-content-around gap-2 mt-3">
                 <div className="flex-fill">
                     <p>Serialization info</p>
-                    <div className="bg-configuration-card rounded">
+                    <div className="gray-bg rounded">
                         <NumberField text="Save every" required value={ppoConfig.save_every_ts} help="Saves the checkpoints every n steps" icon="bookmark-star-fill" onChange={(value) => 
                             setPPOConfig({
                                 ...ppoConfig, save_every_ts: value
@@ -104,7 +104,7 @@ function PPOConfigEditor({ppoConfig, setPPOConfig, agentKey, deleteAgent}: PPOCo
                 </div>
                 <div className="flex-fill">
                         <p>Miscellaneous</p>
-                        <div className="bg-configuration-card rounded">
+                        <div className="gray-bg rounded">
                             <StringField text="Run suffix" required value={ppoConfig.run_suffix} help="When saving, will save within a directory called <run_name><run_suffix>" icon="align-end" onChange={(value) => 
                                 setPPOConfig({
                                     ...ppoConfig, run_suffix: value

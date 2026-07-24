@@ -26,7 +26,7 @@ function ProjectDataEditor({backToHome, updateProjectConfig, projectConfig, getD
 
     
     return (
-        <div className="bg-dark text-light">
+        <div>
             <button className="btn btn-success" onClick={backToHome}>Back to run main</button>
             <LearningCoordinatorConfigEditor getDefaultConfig={getDefaultConfig} learningCoordinatorConfig={projectConfig} setLearningCoordinatorConfig={updateConfig}/>
         </div>

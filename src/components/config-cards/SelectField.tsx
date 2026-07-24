@@ -20,7 +20,7 @@ function SelectField({values, defaultValue, text, icon, help, onChange}: NumberF
         return () => tooltip.dispose()
     }, [])
     const fieldValue = () => {
-        return <select className="bg-dark text-light rounded mb-2" defaultValue={defaultValue} onChange={(event) => onChange(event.target.value)}>
+        return <select className="rounded mb-2" defaultValue={defaultValue} onChange={(event) => onChange(event.target.value)}>
             {values.map((value) => <option key={value} value={value} className="">{value}</option>)}
         </select>
     }

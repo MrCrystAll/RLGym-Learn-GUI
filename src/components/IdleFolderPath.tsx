@@ -3,11 +3,13 @@ import packageJson from "../../package.json"
 
 interface IdleFolderPathConfig{
   setFolderPath: (path: string) => void
+  setTheme: (path: string) => void
+  theme: string
 }
 
-function IdleFolderPath({setFolderPath}: IdleFolderPathConfig){
+function IdleFolderPath({setFolderPath, theme, setTheme}: IdleFolderPathConfig){
     return (
-      <div className="bg-dark">
+      <div>
         <p className="display-1 text-center">RLGym-Learn GUI</p>
         <p className="text-secondary text-center">v{packageJson.version} - Made by CryyStall</p>
 

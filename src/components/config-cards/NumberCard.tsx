@@ -39,7 +39,7 @@ function NumberCard({value, text, help, intOnly, onChange}: NumberFieldArgs) {
     }
 
     return (
-        <div className="d-flex flex-column border border-dark rounded px-3 flex-fill bg-configuration-card" data-bs-toggle="tooltip" data-bs-placement="top"
+        <div className="d-flex flex-column rounded px-3 flex-fill gray-bg" data-bs-toggle="tooltip" data-bs-placement="top"
     data-bs-title={help} ref={tooltipHolder} style={{cursor: "help"}}>
             {fieldValue()}
             <div className="d-flex flex-fill">

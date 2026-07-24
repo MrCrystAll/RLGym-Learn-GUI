@@ -1,5 +1,5 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import IdleAPI from "./components/IdleAPI";
 import IdleFolderPath from "./components/IdleFolderPath";
 import { useApp } from "./hooks/useApp";
@@ -16,6 +16,15 @@ function App() {
   // Projects
   const {projects, addProject, updateProject, deleteProject} = useProjects({folderPath});
 
+  const prefersDark = window.matchMedia(
+    "(prefers-color-scheme: dark)"
+  ).matches;
+  const [theme, setTheme] = useState(prefersDark ? "dark" : "light");
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-bs-theme", theme);
+  }, [theme]);
+
   useEffect(() => {
     startApi();
   }, [])
@@ -29,7 +38,7 @@ function App() {
   }
   else if(folderPath === null){
     return (
-      <IdleFolderPath setFolderPath={setFolder}></IdleFolderPath>
+      <IdleFolderPath theme={theme} setTheme={setTheme} setFolderPath={setFolder}></IdleFolderPath>
     )
   }
   else{
@@ -39,8 +48,21 @@ function App() {
 
   const projectRender = () => {
     const header = <div className="d-flex justify-content-between border-bottom mx-2">
-          <h1>RLGym-Learn GUI</h1>
+          <div className="mb-2">
+            <h1>RLGym-Learn GUI</h1>
+            <li className="d-flex" >
+              <i className="bi bi-sun"></i>
+
+              <div className="ms-2 form-check form-switch">
+                <input className="form-check-input" type="checkbox" defaultChecked={theme === "dark"} role="switch" onChange={(event) => setTheme(event.target.checked ? "dark" : "light")} />
+              </div>
+              <i className="bi bi-moon"></i>
+            </li>
+          </div>
+          
+          
           <p className="align-self-center">Version {packageJson.version}</p>
+
         </div>
     if(currentProject === null){
       return (
@@ -62,8 +84,8 @@ function App() {
   }
 
   return (
-    <div className="bg-dark text-light">
-        <div className="bg-dark text-light">
+    <div>
+        <div>
           {appRender()}
         </div>
         <NotificationContainer></NotificationContainer>

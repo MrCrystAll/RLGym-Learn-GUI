@@ -24,7 +24,7 @@ function SessionList({run, onSelectSession}: SessionListArgs) {
 
     const sessionTable = () => {
         if(sessions.length !== 0){
-            return <table className="table table-dark table-striped border">
+            return <table className="table table-striped border">
                  <thead>
                      <tr>
                          <th scope="col">#</th>

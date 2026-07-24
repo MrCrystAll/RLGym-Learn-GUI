@@ -51,7 +51,7 @@ function TupleSerdeEditor({serdeConfig, setSerdeConfig}:TupleSerdeEditorArgs) {
                 )
             })}
 
-            <button className="btn btn-outline-light mt-2" onClick={addElement}>Add element</button>
+            <button className="btn mt-2" onClick={addElement}>Add element</button>
         </div>
     )
 }

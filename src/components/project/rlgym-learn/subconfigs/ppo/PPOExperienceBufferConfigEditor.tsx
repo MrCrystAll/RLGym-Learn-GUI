@@ -23,7 +23,7 @@ function PPOExperienceBufferConfigEditor({ppoExperienceBufferConfig, setPPOExper
                     </div>
                 </div>
 
-                <div className="bg-configuration-card rounded mb-3">
+                <div className="gray-bg rounded mb-3">
                     <SelectField defaultValue={ppoExperienceBufferConfig.device} help="The device used by the experience buffer to store its data" icon="cpu" text="Device" values={Object.values(ExperienceBufferConfigModelDeviceEnum)} onChange={(value) => setPPOExperienceBufferConfig({
                         ...ppoExperienceBufferConfig,
                         device: value as ExperienceBufferConfigModelDeviceEnum

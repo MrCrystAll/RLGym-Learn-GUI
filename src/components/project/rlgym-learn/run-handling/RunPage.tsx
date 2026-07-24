@@ -49,7 +49,7 @@ function RunPage({run, backToHome}: RunPageArgs){
                 <hr></hr>
                 <p>See configuration: <button className="btn btn-primary" onClick={() => setMode(PageType.CONFIGURATION)}>Configuration</button> </p>     
 
-                <hr className="border border-light mx-2"/>
+                <hr className="border mx-2"/>
 
 
                 {sessionsDisplay()}

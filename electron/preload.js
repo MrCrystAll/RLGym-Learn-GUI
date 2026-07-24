@@ -7,11 +7,8 @@ contextBridge.exposeInMainWorld('electron', {
 });
 
 contextBridge.exposeInMainWorld('api', {
-  openFolderPathDialog(){
-      return ipcRenderer.invoke("open-folder-path-dialog");
-  },
-  openPythonPathDialog(){
-    return ipcRenderer.invoke("open-python-path-dialog");
+  openPathDialog(isFolder, extensions, name){
+    return ipcRenderer.invoke("open-explorer-dialog", isFolder, extensions, name);
   },
   watchLog(logPath, receiver){
     return ipcRenderer.send("watch-log", logPath, receiver);
