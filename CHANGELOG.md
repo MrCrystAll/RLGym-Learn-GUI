@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Light/dark mode is now available!
+
 ### Changed
 
 - The project creation form has been moved to a modal (floating window)
