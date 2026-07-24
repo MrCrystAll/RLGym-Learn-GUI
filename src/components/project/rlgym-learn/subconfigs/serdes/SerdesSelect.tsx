@@ -104,7 +104,7 @@ function SerdesSelect({serdeConfig, setSerdeConfig, canBeNull}: SerdesSelectArgs
     if(serdeConfig === null){
         return <div>
             <p>No serde given</p>
-            <button className="btn" onClick={
+            <button className="btn btn-primary" onClick={
                 () => {setSerdeConfig(Serde.STRING());}
             }>Create serde</button>
         </div>
