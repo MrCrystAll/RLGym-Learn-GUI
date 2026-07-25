@@ -6,10 +6,17 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { NotificationProvider } from './components/NotificationProvider.tsx';
 import './index.css'
+import { LoaderProvider } from './components/LoaderProvider.tsx';
 
 
 createRoot(document.getElementById('root')!).render(
   process.env.NODE_ENV === "development"
-    ? <StrictMode><NotificationProvider><App /></NotificationProvider></StrictMode>
-    : <NotificationProvider><App /></NotificationProvider>
+    ? <StrictMode>
+      <LoaderProvider>
+        <NotificationProvider>
+            <App />
+          </NotificationProvider>
+        </LoaderProvider>
+        </StrictMode>
+    : <LoaderProvider><NotificationProvider><App /></NotificationProvider></LoaderProvider>
 )

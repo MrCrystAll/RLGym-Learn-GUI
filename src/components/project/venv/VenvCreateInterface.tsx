@@ -41,6 +41,7 @@ function VenvCreateInterface({isOpen, handleClose, formSubmit}: VenvCreateInterf
                     setError("You must specify an interpreter to create a virtual environment.");
                     return;
                 }
+                setError(null);
                 formSubmit(interpreterPath);
             }}>Create</button>
         </Modal.Footer>

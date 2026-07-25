@@ -4,6 +4,7 @@ import type { ProjectMetadata } from "rlgym-learn-client";
 import { openDialog } from "../../../api";
 import VenvRLGymPackages from "./VenvRLGymPackages";
 import FullPackageList from "./FullPackageList";
+import { useVenv } from "../../../hooks/useVenv";
 
 const mockData = {
     packages: {
@@ -269,10 +270,11 @@ const mockData = {
 }
 
 interface VenvInterfaceArgs{
-    projectMetadata: ProjectMetadata
+    projectMetadata: ProjectMetadata,
+    updateProjectExecutable: (pythonExecutable: string | null) => void
 }
 
-function VenvInterface({projectMetadata}: VenvInterfaceArgs) {
+function VenvInterface({projectMetadata, updateProjectExecutable}: VenvInterfaceArgs) {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isPackageModalOpen, setIsPackageModalOpen] = useState(false);
 
@@ -282,15 +284,19 @@ function VenvInterface({projectMetadata}: VenvInterfaceArgs) {
     const handlePackageClose = () => setIsPackageModalOpen(false);
     const handlePackageShow = () => setIsPackageModalOpen(true);
 
-    const createVenv = (python_executable: string) => {
-        console.log(python_executable);
-        handleCreateClose();
+    const {createVenv} = useVenv({metadata: projectMetadata, updatePythonInterpreter: updateProjectExecutable})
+
+    const createVenvModal = (python_executable: string) => {
+        createVenv(python_executable).then(
+          () => handleCreateClose()
+        );
+        
     }
 
     if(projectMetadata.interpreter === null){
-        return <div className="p-2 mb-2 rounded">
+        return <div className="mb-2 rounded">
             <div>
-                <VenvCreateInterface isOpen={isCreateModalOpen} handleClose={handleCreateClose} formSubmit={createVenv}></VenvCreateInterface>
+                <VenvCreateInterface isOpen={isCreateModalOpen} handleClose={handleCreateClose} formSubmit={createVenvModal}></VenvCreateInterface>
             </div>
             <div>
                 <div>
@@ -301,7 +307,7 @@ function VenvInterface({projectMetadata}: VenvInterfaceArgs) {
 
                 <div className="btn-group">
                     <button className="btn btn-primary" onClick={() => openDialog().then(
-                        (path) => console.log("Update interpreter: " + path)
+                        (path) => updateProjectExecutable(path)
                     ).catch()}>
 
                     Pick a python executable <i className="bi bi-pencil-fill"></i>

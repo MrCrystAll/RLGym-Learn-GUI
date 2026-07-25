@@ -48,15 +48,27 @@ animation: pulse-ring 1.8s ease-out infinite;
 .pulse-ring:nth-child(2) { animation-delay: 0.6s; }
 .pulse-ring:nth-child(3) { animation-delay: 1.2s; }
 
-
-
 [data-bs-theme=light]{
     --gray-primary: rgb(200, 200, 200);
     --grayer-primary: rgb(160, 160, 160);
+    --transparent-bg: rgba(0, 0, 0, 0.5)
 }
 [data-bs-theme=dark]{
     --gray-primary: rgb(50, 50, 50);
     --grayer-primary: rgb(80, 80, 80);
+    --transparent-bg: rgba(255, 255, 255, 0.5)
+}
+
+[data-bs-theme=light]
+.loader {
+    background-color: rgba(60, 60, 60, 0.5);
+    color: white;
+}
+
+[data-bs-theme=dark]
+.loader {
+    background-color: rgba(255, 255, 255, 0.5);
+    color: black;
 }
 
 .gray-bg{

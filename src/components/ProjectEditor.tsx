@@ -42,7 +42,7 @@ function ProjectEditor({project, updateProjectList, setCurrentProject, removePro
                         <p className="display-6">Project details</p>
                         <p>In a project, you can specify a python interpeter. By default, it uses the global python interpeter, but i recommend you make a virtual environment and select the python of this virtual environment. You can create a run below using the button, you will be prompted to give a name to the run, i recommend you use semantic versioning or vibe versioning.</p>
 
-                        <VenvInterface projectMetadata={project}></VenvInterface>
+                        <VenvInterface projectMetadata={project} updateProjectExecutable={updateProjectInterpreter}></VenvInterface>
 
                         <RunList onSelectRun={setSelectedRun} projectId={project.id}></RunList>
 

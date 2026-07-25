@@ -8,6 +8,7 @@ import { NotificationContainer } from "./components/NotificationContainer";
 import { ProjectList } from "./components/ProjectList";
 import { useProjects } from "./hooks/useProjects";
 import packageJson from "../package.json"
+import { LoaderScreen } from "./components/LoaderScreen";
 
 function App() {
   // API
@@ -89,6 +90,7 @@ function App() {
           {appRender()}
         </div>
         <NotificationContainer></NotificationContainer>
+        <LoaderScreen></LoaderScreen>
     </div>
   )
 
