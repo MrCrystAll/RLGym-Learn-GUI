@@ -1,8 +1,9 @@
 import { Card } from "react-bootstrap"
 import PackageStatus from "./PackageStatus"
+import type { PackageInfo } from "rlgym-learn-client"
 
 interface VenvRLGymPackagesArgs{
-    packages: Record<string, {name: string, version: string, summary: string}>
+    packages: Record<string, PackageInfo>;
     updateStatus: Record<string, boolean>
 
     install: (name: string) => void
@@ -28,9 +29,8 @@ function VenvRLGymPackages({packages, updateStatus, install, update, uninstall}:
                 {Object.entries(knownPackages).map(
                     ([name, _]) => {
                         const packageNames = Object.keys(packages);
-                        
-                        
-                        if(Object.keys(packages).includes(name)) return <PackageStatus key={name} canBeInstalled={!packageNames.includes(name)} install={() => install(name)} name={knownPackages[name]} canBeUpdated={updateStatus[name] !== undefined} update={() => update(name)} uninstall={() => uninstall(name)} version={packages[name].version} summary={packages[name].summary}></PackageStatus>;
+                         
+                        if(packageNames.includes(name)) return <PackageStatus key={name} canBeInstalled={!packageNames.includes(name)} install={() => install(name)} name={knownPackages[name]} canBeUpdated={updateStatus[name] !== undefined} update={() => update(name)} uninstall={() => uninstall(name)} version={packages[name].version} summary={packages[name].summary}></PackageStatus>;
                         else return <Card key={name}>
                             <Card.Header>
                                 <button className="btn btn-primary float-end" onClick={() => install(name)}>Install</button>

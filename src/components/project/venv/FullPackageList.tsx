@@ -1,9 +1,10 @@
 import { CloseButton, Modal } from "react-bootstrap"
 import PackageStatus from "./PackageStatus"
 import { useState } from "react"
+import type { PackageInfo } from "rlgym-learn-client"
 
 interface FullPackageListArgs{
-    packages: Record<string, {name: string, version: string, summary: string}>
+    packages: Record<string, PackageInfo>
     updateStatus: Record<string, boolean>
 
     update: (name: string) => void
@@ -76,6 +77,7 @@ function FullPackageList({packages, updateStatus, update, uninstall, install, in
 
     const toUpdateList = () => {
         if(Object.keys(updateStatus).length === 0) return <p>No package to update.</p>
+        if(packages === null) return <p>No package to show.</p>
         return <div className="mb-2">
             <p className="fw-bold">Packages to update</p>
             <div className="d-grid gap-2 mt-2" style={{"gridTemplateColumns": "1fr 1fr"}}>
@@ -114,7 +116,7 @@ function FullPackageList({packages, updateStatus, update, uninstall, install, in
                 <hr></hr>
                 <div className="d-grid gap-2 mt-2" style={{"gridTemplateColumns": "1fr 1fr 1fr"}}>
                     {Object.entries(packages).map(
-                        ([name, data]) => <PackageStatus canBeInstalled={false} install={(name) => {}} name={name} canBeUpdated={updateStatus[name] !== undefined} update={update} uninstall={uninstall} version={data.version} summary={data.summary} key={name}></PackageStatus>
+                        ([name, data]) => <PackageStatus canBeInstalled={false} install={() => {}} name={name} canBeUpdated={updateStatus[name] !== undefined} update={() => update(name)} uninstall={() => uninstall(name)} version={data.version} summary={data.summary} key={name}></PackageStatus>
                     )}
                 </div>
             </Modal.Body>
