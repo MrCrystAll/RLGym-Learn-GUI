@@ -1,7 +1,8 @@
-import type { ProjectMetadata } from "rlgym-learn-client";
+import { type PackageInfo, type ProjectMetadata } from "rlgym-learn-client";
 import venvService from "../services/venv.service";
 import { useNotifications } from "./useNotifications";
 import { useLoader } from "./useLoader";
+import { useState } from "react";
 
 interface UseVenvArgs{
     metadata: ProjectMetadata
@@ -11,11 +12,15 @@ interface UseVenvArgs{
 interface UseVenvReturn{
     createVenv: (pythonExecutable: string) => Promise<void>
     deleteVenv: () => Promise<void>
+    getPackages: () => Promise<void>
+
+    packages: Record<string, PackageInfo>;
 }
 
 export function useVenv({metadata, updatePythonInterpreter}: UseVenvArgs): UseVenvReturn{
     const {pushNotification} = useNotifications();
     const {startWaiting, stopWaiting} = useLoader();
+    const [packages, setPackages] = useState<Record<string, PackageInfo>>({});
 
     const createVenv = async (pythonExecutable: string): Promise<void> => {
         startWaiting({
@@ -59,6 +64,31 @@ export function useVenv({metadata, updatePythonInterpreter}: UseVenvArgs): UseVe
         )
         stopWaiting("Deleting virtual environment...")
     }
+
+    const getPackages = async () => {
+        startWaiting({
+            name: "Getting packages from venv..."
+        });
+        (await venvService.getPackages(metadata.id)).map(
+            (data) => {
+                setPackages(data);
+                pushNotification({
+                    message: `Successfully managed to fetch ${Object.keys(data).length} packages from the virtual environment`,
+                    title: "Successfully fetched packages",
+                    severity: "success"
+                });
+                stopWaiting("Getting packages from venv...");
+            }
+        ).mapErr(
+            (r) => pushNotification({
+                message: r.response?.data.description,
+                title: r.response?.data.title,
+                severity: "error"
+            })
+        )
+
+        stopWaiting("Getting packages from venv...")
+    }
     
-    return {createVenv, deleteVenv}
+    return {createVenv, deleteVenv, getPackages, packages}
 }

@@ -21,5 +21,5 @@ export function LoaderScreen(){
             </div>
         </div>
     }
-    return <div>Wassup</div>
+    return <div></div>
 }

@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - You can now manage the environment your project is using to run
     - You can create a virtual environment for your project via the application
     - You can delete said virtual environment
+    - You can list and see all the packages in your environment
 - On long operations, a loading screen will appear so you know when the application is processing
 
 ### Changed
