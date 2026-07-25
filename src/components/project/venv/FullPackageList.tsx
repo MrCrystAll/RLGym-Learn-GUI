@@ -77,7 +77,6 @@ function FullPackageList({packages, updateStatus, update, uninstall, install, in
 
     const toUpdateList = () => {
         if(Object.keys(updateStatus).length === 0) return <p>No package to update.</p>
-        if(packages === null) return <p>No package to show.</p>
         return <div className="mb-2">
             <p className="fw-bold">Packages to update</p>
             <div className="d-grid gap-2 mt-2" style={{"gridTemplateColumns": "1fr 1fr"}}>
