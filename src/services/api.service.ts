@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 
-import {Configuration, DefaultApi, ProjectApi, RunsApi, SessionApi, type ProjectCreationArgs, type ProjectMetadata, type RLGymLearnApiExceptionModel} from "rlgym-learn-client"
+import {Configuration, DefaultApi, ProjectApi, RunsApi, SessionApi, VenvApi, type ProjectCreationArgs, type ProjectMetadata, type RLGymLearnApiExceptionModel} from "rlgym-learn-client"
 import {Result, ok, err} from "neverthrow"
 
 const port = (window as any).electron?.apiPort ?? '8000';
@@ -9,12 +9,13 @@ class APIService {
   public projectApi: ProjectApi
   public sessionApi: SessionApi
   public runsApi: RunsApi
+  public venvApi: VenvApi
   protected defaultApi: DefaultApi
 
   constructor() {
     const client = axios.create({
       baseURL: `http://localhost:${port}`,
-      timeout: 20_000,
+      timeout: 200_000,
       headers: {
         "Content-Type": "application/json",
       },
@@ -23,6 +24,7 @@ class APIService {
     this.projectApi = new ProjectApi(new Configuration(), undefined, client);
     this.defaultApi = new DefaultApi(new Configuration(), undefined, client);
     this.sessionApi = new SessionApi(new Configuration(), undefined, client);
+    this.venvApi = new VenvApi(new Configuration(), undefined, client);
     this.runsApi = new RunsApi(new Configuration(), undefined, client);
   }
 

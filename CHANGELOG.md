@@ -9,7 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Light/dark mode is now available!
+- Light/dark mode is now available
+- You can now manage the environment your project is using to run
+- On long operations, a loading screen will appear so you know when the application is processing
 
 ### Changed
 
