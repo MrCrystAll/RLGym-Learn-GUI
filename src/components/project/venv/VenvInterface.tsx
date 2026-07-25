@@ -5,6 +5,7 @@ import { openDialog } from "../../../api";
 import VenvRLGymPackages from "./VenvRLGymPackages";
 import FullPackageList from "./FullPackageList";
 import { useVenv } from "../../../hooks/useVenv";
+import { VenvDeleteConfirmationModal } from "./VenvDeleteConfirmation";
 
 const mockData = {
     packages: {
@@ -277,6 +278,7 @@ interface VenvInterfaceArgs{
 function VenvInterface({projectMetadata, updateProjectExecutable}: VenvInterfaceArgs) {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isPackageModalOpen, setIsPackageModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     const handleCreateClose = () => setIsCreateModalOpen(false);
     const handleCreateShow = () => setIsCreateModalOpen(true);
@@ -284,7 +286,10 @@ function VenvInterface({projectMetadata, updateProjectExecutable}: VenvInterface
     const handlePackageClose = () => setIsPackageModalOpen(false);
     const handlePackageShow = () => setIsPackageModalOpen(true);
 
-    const {createVenv} = useVenv({metadata: projectMetadata, updatePythonInterpreter: updateProjectExecutable})
+    const handleDeleteClose = () => setIsDeleteModalOpen(false);
+    const handleDeleteShow = () => setIsDeleteModalOpen(true);
+
+    const {createVenv, deleteVenv} = useVenv({metadata: projectMetadata, updatePythonInterpreter: updateProjectExecutable})
 
     const createVenvModal = (python_executable: string) => {
         createVenv(python_executable).then(
@@ -324,6 +329,12 @@ function VenvInterface({projectMetadata, updateProjectExecutable}: VenvInterface
 
     return (
         <div className="mb-2">
+          <VenvDeleteConfirmationModal isOpen={isDeleteModalOpen} deleteVenv={() => {
+            deleteVenv().then(
+              () => handleDeleteClose()
+            )
+            
+          }} handleClose={handleDeleteClose}></VenvDeleteConfirmationModal>
             <FullPackageList packages={mockData.packages} handleClose={handlePackageClose} isOpen={isPackageModalOpen} updateStatus={mockData.toUpdate} update={(name) => console.log(name, "Update")} installRequirements={(reqPath) => console.log("Install requirements at", reqPath)
             } uninstall={(name) => console.log(name, "Uninstall")} install={(name) => console.log(name, "Install")
             }></FullPackageList>
@@ -338,8 +349,7 @@ function VenvInterface({projectMetadata, updateProjectExecutable}: VenvInterface
 
             <div className="btn-group mt-2">
                 <button className="btn btn-outline-info" onClick={handlePackageShow}>Check packages</button>
-                <button className="btn btn-outline-danger" onClick={() => console.log("Delete venv")
-                }>Delete environment</button>
+                <button className="btn btn-outline-danger" onClick={handleDeleteShow}>Delete environment</button>
             </div>
         </div>
     )

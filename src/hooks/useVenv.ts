@@ -10,6 +10,7 @@ interface UseVenvArgs{
 
 interface UseVenvReturn{
     createVenv: (pythonExecutable: string) => Promise<void>
+    deleteVenv: () => Promise<void>
 }
 
 export function useVenv({metadata, updatePythonInterpreter}: UseVenvArgs): UseVenvReturn{
@@ -36,6 +37,28 @@ export function useVenv({metadata, updatePythonInterpreter}: UseVenvArgs): UseVe
         )
         stopWaiting("Creating virtual environment...")
     }
+
+    const deleteVenv = async () => {
+        startWaiting({
+            name: "Deleting virtual environment"
+        });
+        (await venvService.deleteEnvironment(metadata.id)).map(
+            (s) => {stopWaiting("Deleting virtual environment"); pushNotification({
+                title: "Virtual environement successfully deleted",
+                message: s,
+                severity: "success"
+            }); updatePythonInterpreter(null)}
+        ).mapErr(
+            (err) => {
+                pushNotification({
+                    title: err.response?.data.title,
+                    message: err.response?.data.description,
+                    severity: "error"
+                })
+            }
+        )
+        stopWaiting("Deleting virtual environment...")
+    }
     
-    return {createVenv}
+    return {createVenv, deleteVenv}
 }

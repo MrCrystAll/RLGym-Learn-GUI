@@ -10,6 +10,12 @@ class VenvService {
             python_executable: pythonExecutable
         }).then((r) => ok(r.data)).catch((e) => err(e))
     }
+
+    async deleteEnvironment(projectId: string): Promise<Result<string, AxiosError<RLGymLearnApiExceptionModel>>>{
+        return apiService.venvApi.deleteVenv(projectId).then(
+            (r) => ok(r.data)
+        ).catch((r) => err(r))
+    }
 }
 
 export default new VenvService();
