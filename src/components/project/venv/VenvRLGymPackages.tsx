@@ -4,7 +4,7 @@ import type { PackageInfo } from "rlgym-learn-client"
 
 interface VenvRLGymPackagesArgs{
     packages: Record<string, PackageInfo>;
-    updateStatus: Record<string, boolean>
+    updateStatus: Record<string, string>
 
     install: (name: string) => void
     update: (name: string) => void
@@ -12,7 +12,6 @@ interface VenvRLGymPackagesArgs{
 }
 
 const knownPackages: Record<string, string> = {
-    "rlgym": "RLGym",
     "rlgym-api": "RLGym API",
     "rlgym-rocket-league": "RLGym (Rocket League)",
     "rocketsim": "RocketSim",
@@ -30,7 +29,7 @@ function VenvRLGymPackages({packages, updateStatus, install, update, uninstall}:
                     ([name, _]) => {
                         const packageNames = Object.keys(packages);
                          
-                        if(packageNames.includes(name)) return <PackageStatus key={name} canBeInstalled={!packageNames.includes(name)} install={() => install(name)} name={knownPackages[name]} canBeUpdated={updateStatus[name] !== undefined} update={() => update(name)} uninstall={() => uninstall(name)} version={packages[name].version} summary={packages[name].summary}></PackageStatus>;
+                        if(packageNames.includes(name)) return <PackageStatus key={name} updateVersion={updateStatus[name]} canBeInstalled={!packageNames.includes(name)} install={() => install(name)} name={knownPackages[name]} canBeUpdated={updateStatus[name] !== undefined} update={() => update(name)} uninstall={() => uninstall(name)} version={packages[name].version} summary={packages[name].summary}></PackageStatus>;
                         else return <Card key={name}>
                             <Card.Header>
                                 <button className="btn btn-primary float-end" onClick={() => install(name)}>Install</button>

@@ -16,7 +16,7 @@ export function LoaderScreen(){
                 <div className="spinner-border " role="status" style={{width: "3rem", height: "3rem", zIndex: 20}}>
                     
                 </div>
-                <p className="display-5 mt-3 text-center">{title}</p>
+                <p className="fw-bold display-5 mt-3 text-center">{title}</p>
                 <p className="text-center" hidden={details === undefined}>{details}</p>
             </div>
         </div>

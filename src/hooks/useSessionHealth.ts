@@ -68,8 +68,6 @@ export function useSessionHealth(session: Session): UseSessionHealthReturn {
             title: "Session stopped"
         })).mapErr(
             (e) => {
-                console.log(e.response?.data);
-                
                 const err = e.response?.data as RLGymLearnApiExceptionModel;
                 pushNotification({
                     message: err.description,

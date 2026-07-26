@@ -22,6 +22,37 @@ class VenvService {
             (r) => ok(r.data)
         ).catch((r) => err(r))
     }
+
+    async installPackage(projectId: string, packageName: string): Promise<Result<string, AxiosError<RLGymLearnApiExceptionModel>>>{
+        return apiService.venvApi.installPackage({
+            package_name: packageName,
+            project_id: projectId
+        }).then((r) => ok(r.data)).catch((r) => err(r))
+    }
+
+    async installRequirements(projectId: string, reqPath: string): Promise<Result<string, AxiosError<RLGymLearnApiExceptionModel>>>{
+        return apiService.venvApi.installRequirements({
+            requirements_path: reqPath,
+            project_id: projectId
+        }).then((r) => ok(r.data)).catch((r) => err(r))
+    }
+
+    async uninstall(projectId: string, packageName: string): Promise<Result<string, AxiosError<RLGymLearnApiExceptionModel>>>{
+        return apiService.venvApi.uninstallPackage({
+            package_name: packageName,
+            project_id: projectId
+        }).then((r) => ok(r.data)).catch((r) => err(r))
+    }
+
+    async getPackageUpdateStatus(projectId: string): Promise<Result<Record<string, string>, AxiosError<RLGymLearnApiExceptionModel>>>{
+        return apiService.venvApi.getUpdatablePackages(projectId).then((r) => ok(r.data)).catch((r) => err(r))
+    }
+    async update(projectId: string, packageName: string): Promise<Result<string, AxiosError<RLGymLearnApiExceptionModel>>>{
+        return apiService.venvApi.updatePackage({
+            package_name: packageName,
+            project_id: projectId
+        }).then((r) => ok(r.data)).catch((r) => err(r))
+    }
 }
 
 export default new VenvService();

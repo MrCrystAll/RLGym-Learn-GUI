@@ -19,16 +19,12 @@ function ProjectDataEditor({backToHome, updateProjectConfig, projectConfig, getD
             window.api.removeAllListeners();
         }
     }, [])
-    
-    const updateConfig = (config: LearningCoordinatorConfigModel) => {
-        updateProjectConfig(config);
-    }
 
     
     return (
         <div>
             <button className="btn btn-success" onClick={backToHome}>Back to run main</button>
-            <LearningCoordinatorConfigEditor getDefaultConfig={getDefaultConfig} learningCoordinatorConfig={projectConfig} setLearningCoordinatorConfig={updateConfig}/>
+            <LearningCoordinatorConfigEditor getDefaultConfig={getDefaultConfig} learningCoordinatorConfig={projectConfig} setLearningCoordinatorConfig={updateProjectConfig}/>
         </div>
     )
 
