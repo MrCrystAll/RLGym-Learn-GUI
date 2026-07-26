@@ -6,7 +6,6 @@ import RunPage from "./project/rlgym-learn/run-handling/RunPage";
 import RunList from "./project/rlgym-learn/run-handling/RunList";
 import { useProject } from "../hooks/useProject";
 import VenvInterface from "./project/venv/VenvInterface";
-import { openDialog } from "../api";
 
 interface ProjectEditorArgs{
     project: ProjectMetadata,

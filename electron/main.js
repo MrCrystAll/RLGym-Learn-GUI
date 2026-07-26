@@ -41,10 +41,10 @@ function createWindow() {
   }
 }
 
-ipcMain.handle("open-explorer-dialog", (event, isFolder, extensions, name) => {
+ipcMain.handle("open-explorer-dialog", (event, isFolder, extensions, name, defaultPath) => {
   return dialog.showOpenDialogSync({properties: [isFolder ? "openDirectory" : "openFile"], filters: [
     {extensions: extensions, name: name}
-  ]})
+  ], defaultPath: defaultPath})
 })
 
 
