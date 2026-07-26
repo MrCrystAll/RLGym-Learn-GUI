@@ -9,7 +9,7 @@ interface UseProjectArgs{
 
 interface UseProjectReturn{
     updateProjectName: (name: string) => Promise<void>
-    updateProjectInterpreter: (path: string) => Promise<void>
+    updateProjectInterpreter: (path: string | null) => Promise<void>
 }
 
 export function useProject({project, updateProjectList}: UseProjectArgs): UseProjectReturn {

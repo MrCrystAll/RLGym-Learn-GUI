@@ -114,8 +114,7 @@ function VenvInterface({projectMetadata, updateProjectExecutable}: VenvInterface
             <FullPackageList packages={packages} handleClose={handlePackageClose} isOpen={isPackageModalOpen} updateStatus={packagesToUpdate} update={updateAndRefresh} installRequirements={installReqAndRefresh} uninstall={uninstallAndRefresh} install={installAndRefresh}></FullPackageList>
             <div className="d-flex gap-2">
                 <p className="display-6">Python environment</p>
-                <button className="btn btn-primary p-2 my-auto bi bi-folder" onClick={() => console.error("TODO: Open dialog to python executable.")
-                }></button>
+                <button className="btn btn-primary p-2 my-auto bi bi-folder" onClick={() => window.api.openPathDialog(false, ["exe"], "python", projectMetadata.interpreter)}></button>
             </div>
 
             <p className="fw-bold">RLGym related packages</p>
