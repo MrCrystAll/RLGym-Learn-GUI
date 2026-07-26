@@ -6,16 +6,17 @@ interface PackageStatusArgs{
     summary: string
     canBeUpdated: boolean
     canBeInstalled: boolean
+    updateVersion?: string
 
     install: () => void
     update: () => void
     uninstall: () => void
 }
 
-function PackageStatus({name, version, summary, canBeUpdated, canBeInstalled, install, update, uninstall}: PackageStatusArgs){
+function PackageStatus({name, version, summary, canBeUpdated, canBeInstalled, install, update, updateVersion, uninstall}: PackageStatusArgs){
     const updateButton = () => {
         if(canBeUpdated){
-            return <button className="btn btn-info" onClick={() => update()}>Update</button>
+            return <button className="btn btn-info" onClick={() => update()}>Update to {updateVersion}</button>
         }
     }
 

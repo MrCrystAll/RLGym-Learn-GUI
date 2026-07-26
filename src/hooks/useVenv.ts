@@ -13,14 +13,22 @@ interface UseVenvReturn{
     createVenv: (pythonExecutable: string) => Promise<void>
     deleteVenv: () => Promise<void>
     getPackages: () => Promise<void>
+    installPackage: (packageName: string) => Promise<void>
+    installRequirements: (reqPath: string) => Promise<void>
+
+    uninstall: (packageName: string) => Promise<void>
+    update: (packageName: string) => Promise<void>
+    getPackagesToUpdate: () => Promise<void>
 
     packages: Record<string, PackageInfo>;
+    packagesToUpdate: Record<string, string>
 }
 
 export function useVenv({metadata, updatePythonInterpreter}: UseVenvArgs): UseVenvReturn{
     const {pushNotification} = useNotifications();
     const {startWaiting, stopWaiting} = useLoader();
     const [packages, setPackages] = useState<Record<string, PackageInfo>>({});
+    const [packagesToUpdate, setPackagesToUpdate] = useState<Record<string, string>>({});
 
     const createVenv = async (pythonExecutable: string): Promise<void> => {
         startWaiting({
@@ -44,6 +52,7 @@ export function useVenv({metadata, updatePythonInterpreter}: UseVenvArgs): UseVe
     }
 
     const deleteVenv = async () => {
+        if(metadata.interpreter === null) return;
         startWaiting({
             name: "Deleting virtual environment"
         });
@@ -65,7 +74,110 @@ export function useVenv({metadata, updatePythonInterpreter}: UseVenvArgs): UseVe
         stopWaiting("Deleting virtual environment...")
     }
 
+    const installPackage = async (packageName: string) => {
+        if(metadata.interpreter === null) return;
+        startWaiting({
+            name: `Installing ${packageName}...`,
+            details: "This can take either a few seconds or several minutes depending on the package. Sit tight if you chose a big package like torch (or anything using torch)."
+        });
+        (await venvService.installPackage(metadata.id, packageName)).map(
+            (s) => {
+                pushNotification({
+                    message: s,
+                    title: "Package install successful",
+                    severity: "success"
+                })
+            } 
+        ).mapErr(
+            (e) => {
+                pushNotification({
+                    message: e.response?.data.description,
+                    title: e.response?.data.title,
+                    severity: "error"
+                })
+            }
+        )
+        stopWaiting(`Installing ${packageName}...`)
+    }
+
+    const installRequirements = async (reqPath: string) => {
+        if(metadata.interpreter === null) return;
+        startWaiting({
+            name: `Installing packages from ${reqPath}...`
+        });
+        (await venvService.installRequirements(metadata.id, reqPath)).map(
+            async (s) => {
+                await getPackages();
+                pushNotification({
+                    message: s,
+                    title: "Requirements install successful",
+                    severity: "success"
+                })
+            } 
+        ).mapErr(
+            (e) => {
+                pushNotification({
+                    message: e.response?.data.description,
+                    title: e.response?.data.title,
+                    severity: "error"
+                })
+            }
+        )
+        stopWaiting(`Installing packages from ${reqPath}...`)
+    }
+
+    const uninstall = async (packageName: string) => {
+        if(metadata.interpreter === null) return;
+        startWaiting({
+            name: `Uninstalling ${packageName}...`
+        });
+        (await venvService.uninstall(metadata.id, packageName)).map(
+            async (s) => {
+                pushNotification({
+                    message: s,
+                    title: "Package uninstall successful",
+                    severity: "success"
+                })
+            } 
+        ).mapErr(
+            (e) => {
+                pushNotification({
+                    message: e.response?.data.description,
+                    title: e.response?.data.title,
+                    severity: "error"
+                })
+            }
+        )
+        stopWaiting(`Uninstalling ${packageName}...`)
+    }
+
+    const getPackagesToUpdate = async () => {
+        if(metadata.interpreter === null) return;
+        startWaiting({
+            name: "Getting packages to update from the environment..."
+        });
+        (await venvService.getPackageUpdateStatus(metadata.id)).map(
+            (data) => {
+                setPackagesToUpdate(data);
+                pushNotification({
+                    message: `Successfully managed to check the packages to update from the virtual environment`,
+                    title: "Successfully checked packages",
+                    severity: "success"
+                });
+            }
+        ).mapErr(
+            (r) => pushNotification({
+                message: r.response?.data.description,
+                title: r.response?.data.title,
+                severity: "error"
+            })
+        )
+
+        stopWaiting("Getting packages to update from the environment...")
+    }
+
     const getPackages = async () => {
+        if(metadata.interpreter === null) return;
         startWaiting({
             name: "Getting packages from venv..."
         });
@@ -77,7 +189,6 @@ export function useVenv({metadata, updatePythonInterpreter}: UseVenvArgs): UseVe
                     title: "Successfully fetched packages",
                     severity: "success"
                 });
-                stopWaiting("Getting packages from venv...");
             }
         ).mapErr(
             (r) => pushNotification({
@@ -89,6 +200,31 @@ export function useVenv({metadata, updatePythonInterpreter}: UseVenvArgs): UseVe
 
         stopWaiting("Getting packages from venv...")
     }
-    
-    return {createVenv, deleteVenv, getPackages, packages}
+
+    const update = async (packageName: string) => {
+        if(metadata.interpreter === null) return;
+        startWaiting({
+            name: `Updating ${packageName}...`
+        });
+        (await venvService.update(metadata.id, packageName)).map(
+            async (s) => {
+                pushNotification({
+                    message: s,
+                    title: "Package update successful",
+                    severity: "success"
+                })
+            } 
+        ).mapErr(
+            (e) => {
+                pushNotification({
+                    message: e.response?.data.description,
+                    title: e.response?.data.title,
+                    severity: "error"
+                })
+            }
+        )
+        stopWaiting(`Updating ${packageName}...`)
+    }
+
+    return {createVenv, deleteVenv, getPackages, packages, installPackage, installRequirements, uninstall, getPackagesToUpdate, packagesToUpdate, update}
 }

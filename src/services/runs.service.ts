@@ -25,7 +25,7 @@ class RunsService {
     }
 
     async updateRunConfig(projectId: string, runName: string, config: LearningCoordinatorConfigModel): Promise<Result<void, AxiosError<RLGymLearnApiExceptionModel>>>{
-        return apiService.runsApi.updateRunConfig(projectId, runName, {data: config}).then((r) => ok(r.data)).catch((e) => err(e));
+        return apiService.runsApi.updateRunConfig(projectId, runName, config).then((r) => ok(r.data)).catch((e) => err(e));
     }
 
 

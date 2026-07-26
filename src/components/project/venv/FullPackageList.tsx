@@ -5,7 +5,7 @@ import type { PackageInfo } from "rlgym-learn-client"
 
 interface FullPackageListArgs{
     packages: Record<string, PackageInfo>
-    updateStatus: Record<string, boolean>
+    updateStatus: Record<string, string>
 
     update: (name: string) => void
     uninstall: (name: string) => void
@@ -24,6 +24,7 @@ enum PackageInstallType{
 function FullPackageList({packages, updateStatus, update, uninstall, install, installRequirements, isOpen, handleClose}:FullPackageListArgs) {
     const [requirementsPath, setRequirementsPath] = useState<string | null>(null);
     const [installType, setInstallType] = useState<PackageInstallType>(PackageInstallType.NAME);
+    const [error, setError] = useState<string | null>(null);
 
     const openDialogForRequirements = () => {
         const result: Promise<string[] | undefined> = window.api.openPathDialog(false, ["txt"], "requirements");
@@ -40,6 +41,12 @@ function FullPackageList({packages, updateStatus, update, uninstall, install, in
     const installPackage = (formData: FormData) => {
         const packageName: string | undefined = formData.get("packageName")?.toString();
 
+        if(packageName === undefined || packageName.trim().length === 0){
+            setError("Please specify a package name to install.");
+            return;
+        }
+
+        setError(null);
         install(packageName)
     }
 
@@ -58,6 +65,7 @@ function FullPackageList({packages, updateStatus, update, uninstall, install, in
                     <form action={installPackage}>
                         <label>Package name</label>
                         <input className="form-control" type="text" name="packageName"></input>
+                        <p className="text-danger">{error}</p>
                         <button className="btn btn-primary mt-2" type="submit">Install</button>
                     </form>
             </div>
@@ -81,7 +89,7 @@ function FullPackageList({packages, updateStatus, update, uninstall, install, in
             <p className="fw-bold">Packages to update</p>
             <div className="d-grid gap-2 mt-2" style={{"gridTemplateColumns": "1fr 1fr"}}>
                 {Object.entries(packages).filter(([value, _]) => Object.keys(updateStatus).includes(value)).map(
-                    ([value, details]) => <PackageStatus canBeInstalled={false} install={() => install(value)} canBeUpdated={updateStatus[value]} name={value} version={details.version} summary={details.summary} key={value} update={() => update(value)} uninstall={() => uninstall(value)}></PackageStatus> 
+                    ([value, details]) => <PackageStatus canBeInstalled={false} install={() => install(value)} updateVersion={updateStatus[value]} canBeUpdated={updateStatus[value] !== undefined} name={value} version={details.version} summary={details.summary} key={value} update={() => update(value)} uninstall={() => uninstall(value)}></PackageStatus> 
                 )}
             </div>
         </div>
@@ -115,7 +123,7 @@ function FullPackageList({packages, updateStatus, update, uninstall, install, in
                 <hr></hr>
                 <div className="d-grid gap-2 mt-2" style={{"gridTemplateColumns": "1fr 1fr 1fr"}}>
                     {Object.entries(packages).map(
-                        ([name, data]) => <PackageStatus canBeInstalled={false} install={() => {}} name={name} canBeUpdated={updateStatus[name] !== undefined} update={() => update(name)} uninstall={() => uninstall(name)} version={data.version} summary={data.summary} key={name}></PackageStatus>
+                        ([name, data]) => <PackageStatus canBeInstalled={false} install={() => {}} updateVersion={updateStatus[name]} name={name} canBeUpdated={updateStatus[name] !== undefined} update={() => update(name)} uninstall={() => uninstall(name)} version={data.version} summary={data.summary} key={name}></PackageStatus>
                     )}
                 </div>
             </Modal.Body>

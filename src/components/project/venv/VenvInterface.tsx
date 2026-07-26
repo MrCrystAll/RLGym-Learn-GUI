@@ -7,12 +7,6 @@ import FullPackageList from "./FullPackageList";
 import { useVenv } from "../../../hooks/useVenv";
 import { VenvDeleteConfirmationModal } from "./VenvDeleteConfirmation";
 
-const mockData = {
-    toUpdate: {
-        "rlviser-py": true
-    }
-}
-
 interface VenvInterfaceArgs{
     projectMetadata: ProjectMetadata,
     updateProjectExecutable: (pythonExecutable: string | null) => void
@@ -32,7 +26,7 @@ function VenvInterface({projectMetadata, updateProjectExecutable}: VenvInterface
     const handleDeleteClose = () => setIsDeleteModalOpen(false);
     const handleDeleteShow = () => setIsDeleteModalOpen(true);
 
-    const {createVenv, deleteVenv, getPackages, packages} = useVenv({metadata: projectMetadata, updatePythonInterpreter: updateProjectExecutable})
+    const {createVenv, deleteVenv, getPackages, packages, installPackage, installRequirements, uninstall, packagesToUpdate, getPackagesToUpdate, update} = useVenv({metadata: projectMetadata, updatePythonInterpreter: updateProjectExecutable})
 
     const createVenvModal = (python_executable: string) => {
         createVenv(python_executable).then(
@@ -41,8 +35,43 @@ function VenvInterface({projectMetadata, updateProjectExecutable}: VenvInterface
         
     }
 
+    const installAndRefresh = (name: string) => {
+      installPackage(name).then(
+        () => getPackages().then(() => 
+          getPackagesToUpdate()
+        )
+      )
+    }
+
+    const uninstallAndRefresh = (name: string) => {
+      uninstall(name).then(
+        () => getPackages().then(() => 
+          getPackagesToUpdate()
+        )
+      )
+    }
+
+    const updateAndRefresh = (name: string) => {
+      update(name).then(
+        () => getPackages().then(() => 
+          getPackagesToUpdate()
+        )
+      )
+    }
+
+    const installReqAndRefresh = (reqPath: string) => {
+      installRequirements(reqPath).then(
+        () => getPackages().then(() => 
+          getPackagesToUpdate()
+        )
+      )
+    }
+
     useEffect(() => {
-      getPackages();
+      getPackages().then(
+        () => getPackagesToUpdate()
+      )
+      
     }, [projectMetadata.interpreter])
 
     if(projectMetadata.interpreter === null){
@@ -82,9 +111,7 @@ function VenvInterface({projectMetadata, updateProjectExecutable}: VenvInterface
             )
             
           }} handleClose={handleDeleteClose}></VenvDeleteConfirmationModal>
-            <FullPackageList packages={packages} handleClose={handlePackageClose} isOpen={isPackageModalOpen} updateStatus={mockData.toUpdate} update={(name) => console.log(name, "Update")} installRequirements={(reqPath) => console.log("Install requirements at", reqPath)
-            } uninstall={(name) => console.log(name, "Uninstall")} install={(name) => console.log(name, "Install")
-            }></FullPackageList>
+            <FullPackageList packages={packages} handleClose={handlePackageClose} isOpen={isPackageModalOpen} updateStatus={packagesToUpdate} update={updateAndRefresh} installRequirements={installReqAndRefresh} uninstall={uninstallAndRefresh} install={installAndRefresh}></FullPackageList>
             <div className="d-flex gap-2">
                 <p className="display-6">Python environment</p>
                 <button className="btn btn-primary p-2 my-auto bi bi-folder" onClick={() => console.error("TODO: Open dialog to python executable.")
@@ -92,7 +119,7 @@ function VenvInterface({projectMetadata, updateProjectExecutable}: VenvInterface
             </div>
 
             <p className="fw-bold">RLGym related packages</p>
-            <VenvRLGymPackages packages={packages} install={(name) => console.log(name + " install")} updateStatus={mockData.toUpdate} update={(name) => console.log(name, "Update")} uninstall={(name) => console.log(name, "Uninstall")}></VenvRLGymPackages>
+            <VenvRLGymPackages packages={packages} install={installAndRefresh} updateStatus={packagesToUpdate} update={updateAndRefresh} uninstall={uninstallAndRefresh}></VenvRLGymPackages>
 
             <div className="btn-group mt-2">
                 <button className="btn btn-outline-info" onClick={handlePackageShow}>Check packages</button>

@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - You can create a virtual environment for your project via the application
     - You can delete said virtual environment
     - You can list and see all the packages in your environment
+    - You can install, update and uninstall packages
+    - You can install a requirements file
+    - You can see which package can be updated (this takes into consideration potential conflicts with other packages)
 - On long operations, a loading screen will appear so you know when the application is processing
 
 ### Changed

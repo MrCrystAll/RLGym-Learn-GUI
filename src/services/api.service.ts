@@ -15,7 +15,7 @@ class APIService {
   constructor() {
     const client = axios.create({
       baseURL: `http://localhost:${port}`,
-      timeout: 200_000,
+      timeout: 500_000_000, // I'll have to consider looking at how to remove the timeout since it's localhost <-> localhost
       headers: {
         "Content-Type": "application/json",
       },
