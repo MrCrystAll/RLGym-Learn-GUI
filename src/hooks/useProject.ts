@@ -37,13 +37,13 @@ export function useProject({project, updateProjectList}: UseProjectArgs): UsePro
         )
     }
 
-    const updateProjectInterpreter = async (path: string) => {
+    const updateProjectInterpreter = async (path: string | null) => {
         (await projectService.updateProjectInterpreter(project.id, path)).map(
             () => {updateProjectList({
                 ...project,
                 interpreter: path
             }); pushNotification({
-                message: `Project interpreter has successfully been updated to "${path}"`,
+                message: path === null ? "Project interpreter has been reset successfully" : `Project interpreter has successfully been updated to "${path}"`,
                 severity: "success",
                 title: "Project updated successfully"
             })}

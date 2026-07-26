@@ -124,6 +124,7 @@ function VenvInterface({projectMetadata, updateProjectExecutable}: VenvInterface
             <div className="btn-group mt-2">
                 <button className="btn btn-outline-info" onClick={handlePackageShow}>Check packages</button>
                 <button className="btn btn-outline-danger" onClick={handleDeleteShow}>Delete environment</button>
+                <button className="btn btn-outline-secondary" onClick={() => updateProjectExecutable(null)}>Unlink environment</button>
             </div>
         </div>
     )
