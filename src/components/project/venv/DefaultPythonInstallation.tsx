@@ -1,17 +1,11 @@
 import { Dropdown } from "react-bootstrap"
 
-const mockInterpreters = {
-    "A reaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaally long path": "3.14.1",
-    "Path2": "3.12.3"
-}
-
 interface DefaultPythonInterpretersArgs{
     setPythonInterpreter: (interpreter: string | null) => void
-    pythonInterpreter: string | null
+    pythonDefaults: Record<string, string>
 }
 
-function DefaultPythonInterpreters({setPythonInterpreter}: DefaultPythonInterpretersArgs){
-
+function DefaultPythonInterpreters({setPythonInterpreter, pythonDefaults}: DefaultPythonInterpretersArgs){
 
     return (
 
@@ -21,7 +15,7 @@ function DefaultPythonInterpreters({setPythonInterpreter}: DefaultPythonInterpre
             </Dropdown.Toggle>
 
             <Dropdown.Menu className="border">
-                {Object.entries(mockInterpreters).map(
+                {Object.entries(pythonDefaults).map(
                  ([path, version]) => <>
                     <Dropdown.Item key={path} text-wrap onClick={() => setPythonInterpreter(path)}>
 

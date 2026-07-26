@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Light/dark mode is now available
 - You can now manage the environment your project is using to run
-    - You can create a virtual environment for your project via the application
+    - You can create a virtual environment for your project via the application, you have to specify a base python executable for it, but you can use the default interpreters on your computer that the application found.
     - You can delete said virtual environment
     - You can list and see all the packages in your environment
     - You can install, update and uninstall packages

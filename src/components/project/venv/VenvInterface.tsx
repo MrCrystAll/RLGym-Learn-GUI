@@ -26,7 +26,7 @@ function VenvInterface({projectMetadata, updateProjectExecutable}: VenvInterface
     const handleDeleteClose = () => setIsDeleteModalOpen(false);
     const handleDeleteShow = () => setIsDeleteModalOpen(true);
 
-    const {createVenv, deleteVenv, getPackages, packages, installPackage, installRequirements, uninstall, packagesToUpdate, getPackagesToUpdate, update} = useVenv({metadata: projectMetadata, updatePythonInterpreter: updateProjectExecutable})
+    const {createVenv, deleteVenv, getPackages, packages, installPackage, installRequirements, uninstall, packagesToUpdate, getPackagesToUpdate, update, getPythonDefaultExecutables, pythonDefaults} = useVenv({metadata: projectMetadata, updatePythonInterpreter: updateProjectExecutable})
 
     const createVenvModal = (python_executable: string) => {
         createVenv(python_executable).then(
@@ -77,7 +77,7 @@ function VenvInterface({projectMetadata, updateProjectExecutable}: VenvInterface
     if(projectMetadata.interpreter === null){
         return <div className="mb-2 rounded">
             <div>
-                <VenvCreateInterface isOpen={isCreateModalOpen} handleClose={handleCreateClose} formSubmit={createVenvModal}></VenvCreateInterface>
+                <VenvCreateInterface getPythonDefaults={getPythonDefaultExecutables} pythonDefaults={pythonDefaults} isOpen={isCreateModalOpen} handleClose={handleCreateClose} formSubmit={createVenvModal}></VenvCreateInterface>
             </div>
             <div>
                 <div>

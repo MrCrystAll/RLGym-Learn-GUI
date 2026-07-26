@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { CloseButton, Modal } from "react-bootstrap"
 import { openDialog } from "../../../api"
 import DefaultPythonInterpreters from "./DefaultPythonInstallation"
@@ -6,13 +6,27 @@ import DefaultPythonInterpreters from "./DefaultPythonInstallation"
 interface VenvCreateInterfaceArgs{
     isOpen: boolean
 
+    getPythonDefaults: () => Promise<void>
+    pythonDefaults: Record<string, string>
+
     handleClose: () => void
     formSubmit: (python_executable: string) => void
 }
 
-function VenvCreateInterface({isOpen, handleClose, formSubmit}: VenvCreateInterfaceArgs) {
+function VenvCreateInterface({isOpen, handleClose, formSubmit, getPythonDefaults, pythonDefaults}: VenvCreateInterfaceArgs) {
     const [interpreterPath, setInterpreterPath] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
+
+    const defaultPythonInterpreters = () => {
+        if(Object.keys(pythonDefaults).length === 0){
+            return <p className="fw-bold text-danger">No default python installation have been found. Do you have python installed ? See <span style={{"cursor": "pointer"}} className="link-primary" onClick={() => window.api.openLink("https://www.python.org/downloads/release/python-31314/")}>Install python</span> to install.</p>
+        }
+        return <DefaultPythonInterpreters pythonDefaults={pythonDefaults} setPythonInterpreter={setInterpreterPath}></DefaultPythonInterpreters>
+    }
+
+    useEffect(() => {
+        getPythonDefaults();
+    }, [])
  
     return <Modal size="lg" contentClassName="border" show={isOpen} onHide={handleClose}>
         <Modal.Header>
@@ -21,7 +35,7 @@ function VenvCreateInterface({isOpen, handleClose, formSubmit}: VenvCreateInterf
         </Modal.Header>
         <Modal.Body>
             <p>In order for the application to handle python. You need to provide a python executable, either along the default ones found on your computer or by giving your own.</p>
-            <DefaultPythonInterpreters pythonInterpreter={interpreterPath} setPythonInterpreter={setInterpreterPath}></DefaultPythonInterpreters>
+            {defaultPythonInterpreters()}
             <div className="d-flex mt-2">
                 <div className="border rounded p-2 me-2">
                     <small className="text-break" style={{fontFamily: "monospace"}}>{interpreterPath === null ? "No interpreter selected" : interpreterPath}</small>
