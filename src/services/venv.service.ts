@@ -47,11 +47,16 @@ class VenvService {
     async getPackageUpdateStatus(projectId: string): Promise<Result<Record<string, string>, AxiosError<RLGymLearnApiExceptionModel>>>{
         return apiService.venvApi.getUpdatablePackages(projectId).then((r) => ok(r.data)).catch((r) => err(r))
     }
+    
     async update(projectId: string, packageName: string): Promise<Result<string, AxiosError<RLGymLearnApiExceptionModel>>>{
         return apiService.venvApi.updatePackage({
             package_name: packageName,
             project_id: projectId
         }).then((r) => ok(r.data)).catch((r) => err(r))
+    }
+
+    async getPythonDefaultExecutables(): Promise<Result<Record<string, string>, AxiosError<RLGymLearnApiExceptionModel>>>{
+        return apiService.venvApi.getDefaultPythonExecutables().then((r) => ok(r.data)).catch((r) => err(r))
     }
 }
 

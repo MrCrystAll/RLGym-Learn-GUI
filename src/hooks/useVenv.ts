@@ -19,9 +19,11 @@ interface UseVenvReturn{
     uninstall: (packageName: string) => Promise<void>
     update: (packageName: string) => Promise<void>
     getPackagesToUpdate: () => Promise<void>
+    getPythonDefaultExecutables: () => Promise<void>
 
     packages: Record<string, PackageInfo>;
     packagesToUpdate: Record<string, string>
+    pythonDefaults: Record<string, string>
 }
 
 export function useVenv({metadata, updatePythonInterpreter}: UseVenvArgs): UseVenvReturn{
@@ -29,6 +31,7 @@ export function useVenv({metadata, updatePythonInterpreter}: UseVenvArgs): UseVe
     const {startWaiting, stopWaiting} = useLoader();
     const [packages, setPackages] = useState<Record<string, PackageInfo>>({});
     const [packagesToUpdate, setPackagesToUpdate] = useState<Record<string, string>>({});
+    const [pythonDefaults, setPythonDefaults] = useState<Record<string, string>>({});
 
     const createVenv = async (pythonExecutable: string): Promise<void> => {
         startWaiting({
@@ -225,6 +228,30 @@ export function useVenv({metadata, updatePythonInterpreter}: UseVenvArgs): UseVe
         )
         stopWaiting(`Updating ${packageName}...`)
     }
+    const getPythonDefaultExecutables = async () => {
+        startWaiting({
+            name: `Fetching python executables on your computer...`
+        });
+        (await venvService.getPythonDefaultExecutables()).map(
+            (data) => {
+                setPythonDefaults(data);
+                pushNotification({
+                    message: `Fetched ${Object.keys(data).length} python executables`,
+                    title: "Python executables successfully fetched",
+                    severity: "success"
+                })
+            } 
+        ).mapErr(
+            (e) => {
+                pushNotification({
+                    message: e.response?.data.description,
+                    title: e.response?.data.title,
+                    severity: "error"
+                })
+            }
+        )
+        stopWaiting(`Fetching python executables on your computer...`)
+    }
 
-    return {createVenv, deleteVenv, getPackages, packages, installPackage, installRequirements, uninstall, getPackagesToUpdate, packagesToUpdate, update}
+    return {createVenv, deleteVenv, getPackages, packages, installPackage, installRequirements, uninstall, getPackagesToUpdate, packagesToUpdate, update, getPythonDefaultExecutables, pythonDefaults}
 }
