@@ -16,8 +16,8 @@ function DefaultPythonInterpreters({setPythonInterpreter, pythonDefaults}: Defau
 
             <Dropdown.Menu className="border">
                 {Object.entries(pythonDefaults).map(
-                 ([path, version]) => <>
-                    <Dropdown.Item key={path} text-wrap onClick={() => setPythonInterpreter(path)}>
+                 ([path, version]) => <div key={path}>
+                    <Dropdown.Item text-wrap="true" onClick={() => setPythonInterpreter(path)}>
 
                     <div>
                         <p className="fw-bold">Python {version}</p>
@@ -26,7 +26,7 @@ function DefaultPythonInterpreters({setPythonInterpreter, pythonDefaults}: Defau
                         
                     </Dropdown.Item>
                     <Dropdown.Divider></Dropdown.Divider>
-                 </>)}
+                 </div>)}
             </Dropdown.Menu>
         </Dropdown>
     )
