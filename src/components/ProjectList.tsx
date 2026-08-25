@@ -13,11 +13,6 @@ interface ProjectListArgs{
 }
 
 export function ProjectList({folderPath, projects, addProject, setCurrentProject, setFolderPath}: ProjectListArgs) {
-    const addProjectFromName = async (name: string) => {
-        addProject({
-            name: name
-        });
-    }
 
     const projectsRender = () => {
     if(Object.keys(projects).length > 0){
@@ -45,7 +40,7 @@ export function ProjectList({folderPath, projects, addProject, setCurrentProject
           <div className="d-flex rounded">
             <ChooseDataFolder setFolderPath={setFolderPath}></ChooseDataFolder>
             <div>
-              <AddProject addProject={addProjectFromName}></AddProject>
+              <AddProject addProject={addProject}></AddProject>
             </div>
           </div>
         </div>
