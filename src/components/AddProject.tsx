@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { CloseButton, Collapse, FormCheck, Modal } from "react-bootstrap"; 
 import FormCheckInput from "react-bootstrap/esm/FormCheckInput";
 import FormCheckLabel from "react-bootstrap/esm/FormCheckLabel";
@@ -6,32 +6,41 @@ import type { AdvancedConfigModel, ProjectCreationArgs } from "rlgym-learn-clien
 
 interface AddProjectArgs{
   addProject: (args: ProjectCreationArgs) => void
+  getDefaultAdvancedConfig: () => Promise<AdvancedConfigModel>
 }
 
-function AddProject({addProject}: AddProjectArgs) {
+function AddProject({addProject, getDefaultAdvancedConfig}: AddProjectArgs) {
   const [nameError, setNameError] = useState<string | null>(null);
   const [show, setShow] = useState(false);
+
+  const [advancedConfig, setAdvancedConfig] = useState<AdvancedConfigModel | null>(null);
 
   const [advancedOptionsOpen, setAdvancedOptionsOpen] = useState(false);
   const [hoverAdvancedOptions, setHoverAdvancedOptions] = useState(false);
 
   const handleClose = () => {setNameError(null); setAdvancedOptionsOpen(false); setShow(false);}
-  const handleShow = () => setShow(true);
+  const handleShow = () => {
+    getDefaultAdvancedConfig().then(
+      (v) => {setAdvancedConfig(v); setShow(true)}
+    )
+  }
 
   const create = (formData: FormData) => {
     
     // Name validation
     const name: string | undefined = formData.get("projectName")?.toString();
 
-    if(name === undefined || name.trim().length == 0 || name.trim().length > 25){
-      setNameError("Name needs to have a value or be shorter than 25 characters");
-      return;
-    }
-
     const userHandledVenv: boolean = Boolean(formData.get("userHandledVenv")?.valueOf()).valueOf()
 
     const advancedOptions: AdvancedConfigModel = {
       user_handled_venv: userHandledVenv
+    }
+
+    setAdvancedConfig(advancedOptions);
+
+    if(name === undefined || name.trim().length == 0 || name.trim().length > 25){
+      setNameError("Name needs to have a value or be shorter than 25 characters");
+      return;
     }
 
     setNameError(null);
@@ -43,8 +52,14 @@ function AddProject({addProject}: AddProjectArgs) {
     handleClose();
   }
 
+  const addButton = () => <button type="button" className="btn btn-primary" onClick={handleShow}>
+          <i className="bi bi-plus"></i>
+        </button>
+
+  if(advancedConfig === null) return addButton();
+
     return (
-        <div>
+        <>
           <Modal show={show} onHide={handleClose}>
               <Modal.Header>
                   <Modal.Title>Create your own project</Modal.Title>
@@ -76,7 +91,7 @@ function AddProject({addProject}: AddProjectArgs) {
                                 <div>
                                 <FormCheck>
                                   <FormCheckLabel>Handle the python environment on my own</FormCheckLabel>
-                                  <FormCheckInput name="userHandledVenv" type="checkbox" defaultChecked={false}></FormCheckInput>
+                                  <FormCheckInput name="userHandledVenv" type="checkbox" defaultChecked={advancedConfig.user_handled_venv}></FormCheckInput>
                                 </FormCheck>
                                 <small className="text-secondary">Checking this means the application will NOT try to do anything with the virtual environment like installing, checking packages to update or other operations. Everything is for you to do.</small>
                                 </div>
@@ -92,11 +107,8 @@ function AddProject({addProject}: AddProjectArgs) {
                   </form>
               </Modal.Body>
           </Modal>
-
-        <button type="button" className="btn btn-primary" onClick={handleShow}>
-          <i className="bi bi-plus"></i>
-        </button>
-        </div>
+          {addButton()}
+        </>
     )
 }
 

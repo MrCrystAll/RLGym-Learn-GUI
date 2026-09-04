@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import projectService from "../services/project.service";
 import apiService from "../services/api.service";
-import type { ProjectCreationArgs, ProjectMetadata, RLGymLearnApiExceptionModel } from "rlgym-learn-client";
+import type { AdvancedConfigModel, ProjectCreationArgs, ProjectMetadata, RLGymLearnApiExceptionModel } from "rlgym-learn-client";
 import { useNotifications } from "./useNotifications";
 
 interface UseProjectsArgs{
@@ -17,6 +17,7 @@ interface UseProjectsReturn{
     deleteProject: (projectId: string) => Promise<void>
 
     fetchProjects: () => Promise<void>
+    getDefaultAdvancedOptions: () => Promise<AdvancedConfigModel>
 
     setCurrentProject: (path: string | null) => void;
 }
@@ -94,5 +95,15 @@ export function useProjects({folderPath}: UseProjectsArgs): UseProjectsReturn {
             }
         );
     }
-    return {projects, currentProject, addProject, updateProject, deleteProject, setCurrentProject, fetchProjects}
+
+    const getDefaultAdvancedOptions = async (): Promise<AdvancedConfigModel> => {
+        let return_config: AdvancedConfigModel = {};
+        (await projectService.getDefaultAdvancedOptions()).map(
+            (v) => return_config = v
+        )
+
+        return Promise.resolve<AdvancedConfigModel>(return_config);
+    }
+
+    return {projects, currentProject, addProject, updateProject, deleteProject, setCurrentProject, fetchProjects, getDefaultAdvancedOptions}
 }

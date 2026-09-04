@@ -1,4 +1,4 @@
-import type { ProjectCreationArgs, ProjectMetadata } from "rlgym-learn-client"
+import type { AdvancedConfigModel, ProjectCreationArgs, ProjectMetadata } from "rlgym-learn-client"
 import AddProject from "./AddProject"
 import ChooseDataFolder from "./ChooseDataFolder"
 import ProjectInfo from "./ProjectInfo"
@@ -10,9 +10,10 @@ interface ProjectListArgs{
     addProject: (args: ProjectCreationArgs) => void
     setCurrentProject: (project: string | null) => void
     setFolderPath: (folderPath: string) => void
+    getDefaultAdvancedConfig: () => Promise<AdvancedConfigModel>
 }
 
-export function ProjectList({folderPath, projects, addProject, setCurrentProject, setFolderPath}: ProjectListArgs) {
+export function ProjectList({folderPath, projects, addProject, setCurrentProject, setFolderPath, getDefaultAdvancedConfig}: ProjectListArgs) {
 
     const projectsRender = () => {
     if(Object.keys(projects).length > 0){
@@ -39,9 +40,7 @@ export function ProjectList({folderPath, projects, addProject, setCurrentProject
           <small className="p-2 rounded border text-break" style={{fontFamily: "monospace"}}>{folderPath}</small>
           <div className="d-flex rounded">
             <ChooseDataFolder setFolderPath={setFolderPath}></ChooseDataFolder>
-            <div>
-              <AddProject addProject={addProject}></AddProject>
-            </div>
+            <AddProject addProject={addProject} getDefaultAdvancedConfig={getDefaultAdvancedConfig}></AddProject>
           </div>
         </div>
         {projectsRender()}
