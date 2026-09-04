@@ -78,6 +78,12 @@ function VenvInterface({projectMetadata, updateProjectExecutable}: VenvInterface
       
     }, [projectMetadata.interpreter])
 
+    const titleInterpreterButton = () =>
+      <div className="d-flex gap-2">
+        <p className="display-6">Python environment</p>
+        <button className="btn btn-primary p-2 my-auto bi bi-folder" onClick={() => window.api.openPathDialog(false, ["exe"], "python", projectMetadata.interpreter)}></button>
+      </div>
+
     if(projectMetadata.advanced_config?.user_handled_venv){
       if(projectMetadata.interpreter === null){
         return <div>
@@ -94,8 +100,8 @@ function VenvInterface({projectMetadata, updateProjectExecutable}: VenvInterface
       }
       else{
         return <div className="d-flex">
-          <p>Python executable: {projectMetadata.interpreter}</p>
-          <button className="btn btn-primary ms-2" onClick={() => openDialog().then(
+          {titleInterpreterButton()}
+          <button className="btn btn-primary ms-2 p-2 my-auto" onClick={() => openDialog().then(
               (path) => updateProjectExecutable(path)
           ).catch()}><i className="bi bi-pencil-fill"></i>
           </button>
@@ -133,10 +139,7 @@ function VenvInterface({projectMetadata, updateProjectExecutable}: VenvInterface
             
           }} handleClose={handleDeleteClose}></VenvDeleteConfirmationModal>
             <FullPackageList packages={packages} handleClose={handlePackageClose} isOpen={isPackageModalOpen} updateStatus={packagesToUpdate} update={updateAndRefresh} installRequirements={installReqAndRefresh} uninstall={uninstallAndRefresh} install={installAndRefresh}></FullPackageList>
-            <div className="d-flex gap-2">
-                <p className="display-6">Python environment</p>
-                <button className="btn btn-primary p-2 my-auto bi bi-folder" onClick={() => window.api.openPathDialog(false, ["exe"], "python", projectMetadata.interpreter)}></button>
-            </div>
+            {titleInterpreterButton()}
 
             <p className="fw-bold">RLGym related packages</p>
             <VenvRLGymPackages packages={packages} install={installAndRefresh} updateStatus={packagesToUpdate} update={updateAndRefresh} uninstall={uninstallAndRefresh}></VenvRLGymPackages>
@@ -144,7 +147,6 @@ function VenvInterface({projectMetadata, updateProjectExecutable}: VenvInterface
             <div className="btn-group mt-2">
                 <button className="btn btn-outline-info" onClick={handlePackageShow}>Check packages</button>
                 <button className="btn btn-outline-danger" onClick={handleDeleteShow}>Delete environment</button>
-                <button className="btn btn-outline-secondary" onClick={() => updateProjectExecutable(null)}>Unlink environment</button>
             </div>
         </div>
     )
