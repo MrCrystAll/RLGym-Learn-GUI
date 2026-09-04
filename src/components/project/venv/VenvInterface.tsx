@@ -18,7 +18,6 @@ function VenvInterface({projectMetadata, updateProjectExecutable}: VenvInterface
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     const handleCreateClose = () => setIsCreateModalOpen(false);
-    const handleCreateShow = () => setIsCreateModalOpen(true);
 
     const handlePackageClose = () => setIsPackageModalOpen(false);
     const handlePackageShow = () => setIsPackageModalOpen(true);
@@ -27,6 +26,8 @@ function VenvInterface({projectMetadata, updateProjectExecutable}: VenvInterface
     const handleDeleteShow = () => setIsDeleteModalOpen(true);
 
     const {createVenv, deleteVenv, getPackages, packages, installPackage, installRequirements, uninstall, packagesToUpdate, getPackagesToUpdate, update, getPythonDefaultExecutables, pythonDefaults} = useVenv({metadata: projectMetadata, updatePythonInterpreter: updateProjectExecutable})
+
+    const handleCreateShow = () => {getPythonDefaultExecutables().then(() => setIsCreateModalOpen(true))};
 
     const createVenvModal = (python_executable: string) => {
         createVenv(python_executable).then(
@@ -68,13 +69,48 @@ function VenvInterface({projectMetadata, updateProjectExecutable}: VenvInterface
     }
 
     useEffect(() => {
-      getPackages().then(
-        () => getPackagesToUpdate()
-      )
+      if(!projectMetadata.advanced_config?.user_handled_venv){
+        getPackages().then(
+          () => getPackagesToUpdate()
+        )
+      }
+      
       
     }, [projectMetadata.interpreter])
 
-    if(projectMetadata.interpreter === null){
+    const titleInterpreterButton = () =>
+      <div className="d-flex gap-2">
+        <p className="display-6">Python environment</p>
+        <button className="btn btn-primary p-2 my-auto bi bi-folder" onClick={() => window.api.openPathDialog(false, ["exe"], "python", projectMetadata.interpreter)}></button>
+      </div>
+
+    if(projectMetadata.advanced_config?.user_handled_venv){
+      if(projectMetadata.interpreter === null){
+        return <div>
+          <p className="display-6">No interpreter!</p>
+          <p>This project has no interpreter. You can't run a project without an interpreter.</p>
+
+          <button className="btn btn-primary" onClick={() => openDialog().then(
+              (path) => updateProjectExecutable(path)
+          ).catch()}>
+
+          Pick a python executable <i className="bi bi-pencil-fill"></i>
+          </button>
+        </div>
+      }
+      else{
+        return <div className="d-flex">
+          {titleInterpreterButton()}
+          <button className="btn btn-primary ms-2 p-2 my-auto" onClick={() => openDialog().then(
+              (path) => updateProjectExecutable(path)
+          ).catch()}><i className="bi bi-pencil-fill"></i>
+          </button>
+        </div>
+      }
+    }
+
+    else{
+      if(projectMetadata.interpreter === null){
         return <div className="mb-2 rounded">
             <div>
                 <VenvCreateInterface getPythonDefaults={getPythonDefaultExecutables} pythonDefaults={pythonDefaults} isOpen={isCreateModalOpen} handleClose={handleCreateClose} formSubmit={createVenvModal}></VenvCreateInterface>
@@ -82,23 +118,14 @@ function VenvInterface({projectMetadata, updateProjectExecutable}: VenvInterface
             <div>
                 <div>
                 <p className="display-6">No interpreter!</p>
-                <p>This project has no interpreter. You can't run a project without an interpreter. </p>
+                <p>This project has no interpreter. You can't run a project without an interpreter.</p>
 
-                <p>You can choose to pick an arbitrary python executable or let the application handle the python end.</p>
+                <p>Please select an interpreter for the application to use.</p>
 
-                <div className="btn-group">
-                    <button className="btn btn-primary" onClick={() => openDialog().then(
-                        (path) => updateProjectExecutable(path)
-                    ).catch()}>
-
-                    Pick a python executable <i className="bi bi-pencil-fill"></i>
-                    </button>
                     <button className="btn btn-primary" onClick={handleCreateShow}>
-
-                        Let the application handle my python
+                        Choose an interpreter
                     </button>
-                    </div>
-                </div>
+                  </div>
             </div>
         </div>
     }
@@ -112,10 +139,7 @@ function VenvInterface({projectMetadata, updateProjectExecutable}: VenvInterface
             
           }} handleClose={handleDeleteClose}></VenvDeleteConfirmationModal>
             <FullPackageList packages={packages} handleClose={handlePackageClose} isOpen={isPackageModalOpen} updateStatus={packagesToUpdate} update={updateAndRefresh} installRequirements={installReqAndRefresh} uninstall={uninstallAndRefresh} install={installAndRefresh}></FullPackageList>
-            <div className="d-flex gap-2">
-                <p className="display-6">Python environment</p>
-                <button className="btn btn-primary p-2 my-auto bi bi-folder" onClick={() => window.api.openPathDialog(false, ["exe"], "python", projectMetadata.interpreter)}></button>
-            </div>
+            {titleInterpreterButton()}
 
             <p className="fw-bold">RLGym related packages</p>
             <VenvRLGymPackages packages={packages} install={installAndRefresh} updateStatus={packagesToUpdate} update={updateAndRefresh} uninstall={uninstallAndRefresh}></VenvRLGymPackages>
@@ -123,10 +147,12 @@ function VenvInterface({projectMetadata, updateProjectExecutable}: VenvInterface
             <div className="btn-group mt-2">
                 <button className="btn btn-outline-info" onClick={handlePackageShow}>Check packages</button>
                 <button className="btn btn-outline-danger" onClick={handleDeleteShow}>Delete environment</button>
-                <button className="btn btn-outline-secondary" onClick={() => updateProjectExecutable(null)}>Unlink environment</button>
             </div>
         </div>
     )
+    }
+
+    
 }
 
 export default VenvInterface

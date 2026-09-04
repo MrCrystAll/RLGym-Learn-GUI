@@ -23,10 +23,6 @@ function VenvCreateInterface({isOpen, handleClose, formSubmit, getPythonDefaults
         }
         return <DefaultPythonInterpreters pythonDefaults={pythonDefaults} setPythonInterpreter={setInterpreterPath}></DefaultPythonInterpreters>
     }
-
-    useEffect(() => {
-        getPythonDefaults();
-    }, [])
  
     return <Modal size="lg" contentClassName="border" show={isOpen} onHide={handleClose}>
         <Modal.Header>
