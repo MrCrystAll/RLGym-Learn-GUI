@@ -1,4 +1,4 @@
-import type { ProjectMetadata, RLGymLearnApiExceptionModel } from "rlgym-learn-client";
+import type { AdvancedConfigModel, ProjectMetadata, RLGymLearnApiExceptionModel } from "rlgym-learn-client";
 import apiService from "./api.service";
 import { err, ok, type Result } from "neverthrow";
 import type { AxiosError } from "axios";
@@ -8,6 +8,10 @@ class ProjectService {
     // Getters (Unused for now)
     async getProjectMetadata(projectId: string): Promise<Result<ProjectMetadata, AxiosError<RLGymLearnApiExceptionModel>>>{
         return apiService.projectApi.getProjectMetadata(projectId).then((r) => ok(r.data)).catch((e) => err(e))
+    }
+
+    async getDefaultAdvancedOptions(): Promise<Result<AdvancedConfigModel, AxiosError<unknown>>> {
+        return apiService.projectApi.getDefaultAdvancedOptions().then((r) => ok(r.data)).catch((e) => err(e))
     }
     
     // Updaters
