@@ -17,9 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - You can install, update and uninstall packages
     - You can install a requirements file
     - You can see which package can be updated (this takes into consideration potential conflicts with other packages)
-    - At any point, you can just unlink the environment and choose another python executable, however, if the project already has a venv, you'll have to either reuse it or delete it (via the application or by yourself).
 - On long operations, a loading screen will appear so you know when the application is processing
 - You can now specify advanced options to customize what the application does with your project.
+- You can choose to handle the virtual environment by yourself or let the application handle it, if you let the application handle it, you won't be able to change your executable later (unless you delete and recreate your venv).
 
 ### Changed
 
