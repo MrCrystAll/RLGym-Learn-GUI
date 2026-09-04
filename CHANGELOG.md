@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - You can see which package can be updated (this takes into consideration potential conflicts with other packages)
     - At any point, you can just unlink the environment and choose another python executable, however, if the project already has a venv, you'll have to either reuse it or delete it (via the application or by yourself).
 - On long operations, a loading screen will appear so you know when the application is processing
+- You can now specify advanced options to customize what the application does with your project.
 
 ### Changed
 

@@ -1,15 +1,21 @@
 import { useState } from "react"
-import { CloseButton, Modal } from "react-bootstrap"; 
+import { CloseButton, Collapse, FormCheck, Modal } from "react-bootstrap"; 
+import FormCheckInput from "react-bootstrap/esm/FormCheckInput";
+import FormCheckLabel from "react-bootstrap/esm/FormCheckLabel";
+import type { AdvancedConfigModel, ProjectCreationArgs } from "rlgym-learn-client";
 
 interface AddProjectArgs{
-  addProject: (name: string) => void
+  addProject: (args: ProjectCreationArgs) => void
 }
 
 function AddProject({addProject}: AddProjectArgs) {
   const [nameError, setNameError] = useState<string | null>(null);
   const [show, setShow] = useState(false);
 
-  const handleClose = () => {setNameError(null); setShow(false);}
+  const [advancedOptionsOpen, setAdvancedOptionsOpen] = useState(false);
+  const [hoverAdvancedOptions, setHoverAdvancedOptions] = useState(false);
+
+  const handleClose = () => {setNameError(null); setAdvancedOptionsOpen(false); setShow(false);}
   const handleShow = () => setShow(true);
 
   const create = (formData: FormData) => {
@@ -22,9 +28,18 @@ function AddProject({addProject}: AddProjectArgs) {
       return;
     }
 
+    const userHandledVenv: boolean = Boolean(formData.get("userHandledVenv")?.valueOf()).valueOf()
+
+    const advancedOptions: AdvancedConfigModel = {
+      user_handled_venv: userHandledVenv
+    }
+
     setNameError(null);
 
-    addProject(name.trim());
+    addProject({
+      name: name.trim(),
+      advanced_config: advancedOptions
+    });
     handleClose();
   }
 
@@ -42,6 +57,32 @@ function AddProject({addProject}: AddProjectArgs) {
                       <input type="text" name="projectName" className="form-control" id="pName" aria-describedby="pName-help" placeholder="My best project"/>
                       <small id="pName-help" className="form-text text-secondary">The name for your project</small>
                       <p className="form-text text-danger">{nameError}</p>
+                    </div>
+
+                    <div className="my-3">
+                        <fieldset className="border-top border-bottom">
+                          <legend className="float-none w-auto mx-3">
+                            <span className="m-2">Advanced options (Optional)</span>
+                            
+                          </legend>
+                          <p className="text-muted small">
+                            These options are for your convenience, if you are a new user, i'd recommend you don't touch these. If you are an advanced user, you might want to tweak these in case the default options makes your job harder.
+                          </p>
+                          <div className="d-flex" style={{cursor: "pointer", opacity: hoverAdvancedOptions ? 0.8 : 1}} onMouseEnter={() => setHoverAdvancedOptions(true)} onMouseLeave={() => setHoverAdvancedOptions(false)} onClick={() => setAdvancedOptionsOpen(!advancedOptionsOpen)}>
+                            <i className={"me-2 bi bi-" + (advancedOptionsOpen ? "caret-down" : "caret-right")}></i>
+                            <p>See advanced options</p>
+                          </div>
+                              <Collapse className="pb-2" in={advancedOptionsOpen}>
+                                <div>
+                                <FormCheck>
+                                  <FormCheckLabel>Handle the python environment on my own</FormCheckLabel>
+                                  <FormCheckInput name="userHandledVenv" type="checkbox" defaultChecked={false}></FormCheckInput>
+                                </FormCheck>
+                                <small className="text-secondary">Checking this means the application will NOT try to do anything with the virtual environment like installing, checking packages to update or other operations. Everything is for you to do.</small>
+                                </div>
+                              </Collapse>
+                        </fieldset>
+                      
                     </div>
 
                     <div className="btn-group">
