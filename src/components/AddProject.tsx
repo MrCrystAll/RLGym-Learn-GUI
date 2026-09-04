@@ -52,14 +52,14 @@ function AddProject({addProject, getDefaultAdvancedConfig}: AddProjectArgs) {
     handleClose();
   }
 
-  if(advancedConfig === null) return <>
-    <button type="button" className="btn btn-primary" onClick={handleShow}>
+  const addButton = () => <button type="button" className="btn btn-primary" onClick={handleShow}>
           <i className="bi bi-plus"></i>
         </button>
-  </>
+
+  if(advancedConfig === null) return addButton();
 
     return (
-        <div>
+        <>
           <Modal show={show} onHide={handleClose}>
               <Modal.Header>
                   <Modal.Title>Create your own project</Modal.Title>
@@ -107,11 +107,8 @@ function AddProject({addProject, getDefaultAdvancedConfig}: AddProjectArgs) {
                   </form>
               </Modal.Body>
           </Modal>
-
-        <button type="button" className="btn btn-primary" onClick={handleShow}>
-          <i className="bi bi-plus"></i>
-        </button>
-        </div>
+          {addButton()}
+        </>
     )
 }
 
