@@ -17,13 +17,23 @@ function PPOLearnerConfigEditor({ppoLearnerConfig, setPPOLearnerConfig}: PPOLear
                 <p className="display-6">Learner settings</p>
                 <div className="mb-3">
                     <div className="d-flex gap-3">
-                        <NumberCard text="Actor LR" value={ppoLearnerConfig.actor_lr} required help="The learning rate of the actor, the recommended values are somewhere around 9e-5 at first, and then slowly go towards 2e-5 after a few billions of steps" icon="book" onChange={(value) => setPPOLearnerConfig({
+                        <NumberCard text="Actor LR" value={ppoLearnerConfig.optimizer_named_parameter_group_kwargs["actor"]["lr"]} required help="The learning rate of the actor, the recommended values are somewhere around 9e-5 at first, and then slowly go towards 2e-5 after a few billions of steps" icon="book" onChange={(value) => setPPOLearnerConfig({
                         ...ppoLearnerConfig,
-                        actor_lr: value
+                        optimizer_named_parameter_group_kwargs: {
+                            ...ppoLearnerConfig.optimizer_named_parameter_group_kwargs,
+                            "actor": {
+                                "lr": value
+                            }
+                        }
                     })}></NumberCard>
-                    <NumberCard text="Critic LR" value={ppoLearnerConfig.critic_lr} required help="The learning rate of the critic, the recommended values are somewhere around 9e-5 at first, and then slowly go towards 2e-5 after a few billions of steps" icon="book" onChange={(value) => setPPOLearnerConfig({
+                    <NumberCard text="Critic LR" value={ppoLearnerConfig.optimizer_named_parameter_group_kwargs["critic"]["lr"]} required help="The learning rate of the critic, the recommended values are somewhere around 9e-5 at first, and then slowly go towards 2e-5 after a few billions of steps" icon="book" onChange={(value) => setPPOLearnerConfig({
                         ...ppoLearnerConfig,
-                        critic_lr: value
+                        optimizer_named_parameter_group_kwargs: {
+                            ...ppoLearnerConfig.optimizer_named_parameter_group_kwargs,
+                            "critic": {
+                                "lr": value
+                            }
+                        }
                     })}></NumberCard>
                     </div>
                 </div>

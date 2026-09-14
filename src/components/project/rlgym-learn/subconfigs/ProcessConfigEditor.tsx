@@ -1,10 +1,10 @@
 import { useState } from "react";
-import type { ProcessConfigModel } from "../../../../models/rlgym-learn/api";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { createRules } from "../../../../models/validators";
 import ToggleField from "../../../config-cards/ToggleCard";
 import NumberField from "../../../config-cards/NumberField";
 import NumberCard from "../../../config-cards/NumberCard";
+import type { ProcessConfigModel } from "rlgym-learn-client";
 
 export interface ProcessConfigModelEditorArgs{
     processConfig: ProcessConfigModel
@@ -39,13 +39,13 @@ function ProcessConfigEditor({processConfig, setProcessConfig}:ProcessConfigMode
                             <label className="col-sm-3 col-form-label">Min process step per inference</label>
                             <div className="col-sm-9">
                                 <input type="number" className="form-control" {...register(
-                                    "min_process_steps_per_inference",
+                                    "min_frac_process_responses_per_collection",
                                     {...createRules({
                                         required: true,
-                                        min: 1
+                                        max: 1,
                                     }), valueAsNumber: true}
                                 )}/>
-                                <small className="text-danger">{errors.min_process_steps_per_inference?.message}</small>
+                                <small className="text-danger">{errors.min_frac_process_responses_per_collection?.message}</small>
                             </div>
                         </div>
                         <div className="form-group mb-3 row">
@@ -90,7 +90,7 @@ function ProcessConfigEditor({processConfig, setProcessConfig}:ProcessConfigMode
                             <label className="col-sm-3 col-form-label">Instance delay between launches</label>
                             <div className="col-sm-9">
                                 <input type="text" className="form-control" {...register(
-                                    "instance_launch_delay",
+                                    "launch_delay",
                                     {...createRules({required: false, min: 0}), valueAsNumber: true}
                                 )}/>
                             </div>
@@ -111,11 +111,11 @@ function ProcessConfigEditor({processConfig, setProcessConfig}:ProcessConfigMode
                     setProcessConfig({
                     ...processConfig,
                     n_proc: newProcValue,
-                    min_process_steps_per_inference: Math.min(processConfig.min_process_steps_per_inference, newProcValue)
+                    min_frac_process_responses_per_collection: Math.min(processConfig.min_frac_process_responses_per_collection, newProcValue)
                 })}} help="The number of processes"></NumberCard>
-                <NumberCard intOnly={true} text="Min steps / inference" value={processConfig.min_process_steps_per_inference} onChange={(value) => setProcessConfig({
+                <NumberCard intOnly={true} text="Min steps / inference" value={processConfig.min_frac_process_responses_per_collection} onChange={(value) => setProcessConfig({
                     ...processConfig,
-                    min_process_steps_per_inference: value === null ? 1 : Math.max(1, Math.min(processConfig.n_proc, value))
+                    min_frac_process_responses_per_collection: value === null ? 1 : Math.max(1, Math.min(processConfig.n_proc, value))
                 })} help="The minimum amount of steps needed before running an inference"></NumberCard>
             </div>
 
@@ -132,7 +132,7 @@ function ProcessConfigEditor({processConfig, setProcessConfig}:ProcessConfigMode
                 <div className="flex-fill">
                     <p className="fw-lighter">Miscellaneous</p>
                     <div className="gray-bg rounded flex-fill">
-                        <NumberField text="Instance launch delay" icon="rocket-takeoff-fill" value={processConfig.instance_launch_delay} help="The delay in between process launches" onChange={(value) => setProcessConfig({...processConfig, instance_launch_delay: value === null ? value : Math.max(0, value)})}></NumberField>
+                        <NumberField text="Instance launch delay" icon="rocket-takeoff-fill" value={processConfig.launch_delay} help="The delay in between process launches" onChange={(value) => setProcessConfig({...processConfig, launch_delay: value === null ? value : Math.max(0, value)})}></NumberField>
                         <hr className="mx-2 my-1"></hr>
                         <ToggleField help="Recalculates the agent ids every step" value={processConfig.recalculate_agent_id_every_step} onToggle={() => setProcessConfig({...processConfig, recalculate_agent_id_every_step: !processConfig.recalculate_agent_id_every_step})} icon="arrow-clockwise" text="Recalculate agent ID every step"></ToggleField>
                     </div>

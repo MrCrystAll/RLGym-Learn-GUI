@@ -1,58 +1,29 @@
-import { useState } from "react";
-import type { AgentControllerConfig, PPOAgentControllerConfigModel } from "../../../../models/rlgym-learn/api";
 import PPOConfigEditor from "./ppo/PPOConfigEditor";
+import type { PPOAgentControllerConfigModel } from "rlgym-learn-client";
 
 interface AgentControllersEditorArgs{
-    agentControllersConfigModel: Record<string, AgentControllerConfig>,
-    updateControllerConfigModel: (name: string, model: AgentControllerConfig) => void,
-    deleteAgent: (name: string) => void
+    agentControllerConfigModel: object | null,
+    updateControllerConfigModel: (model: object)  => void,
+    deleteAgent: () => void
 }
 
 
-function AgentControllersEditor({agentControllersConfigModel, updateControllerConfigModel, deleteAgent}: AgentControllersEditorArgs) {    
-    const [currentAgent, setCurrentAgent] = useState<string | null>(null);
-    
-    const updateAgentConfig = (name: string, model: AgentControllerConfig) => {
-        updateControllerConfigModel(name, model)
-    }
+function AgentControllersEditor({agentControllerConfigModel, updateControllerConfigModel, deleteAgent}: AgentControllersEditorArgs) {
 
-    const deleteAgentAndSetCurrent = (name: string) => {
-        deleteAgent(name);
-        setCurrentAgent(null);
-    }
-    
     const agentControllerEditors = () => {
 
-        if(agentControllersConfigModel === undefined){
+        if(agentControllerConfigModel === null){
             return <p>No agent config provided</p>
         }
 
-        const entries = Object.entries(agentControllersConfigModel);
 
-        if(entries.length === 0){
-            return (
-                <p>No agent controller config exist</p>
-            )
-        }
-        
-        if(currentAgent === null) return <p>No agent selected</p>
-
-        if(currentAgent.startsWith("PPO")){
-            return <PPOConfigEditor key={currentAgent} deleteAgent={deleteAgentAndSetCurrent} agentKey={currentAgent} ppoConfig={agentControllersConfigModel[currentAgent] as PPOAgentControllerConfigModel} setPPOConfig={(model: AgentControllerConfig) => updateAgentConfig(currentAgent, model)}/>
-        }
-        return <p key={currentAgent}>Unknown type for agent "{currentAgent}"</p>
+        return <PPOConfigEditor key={"PPO"} deleteAgent={deleteAgent} agentKey={"PPO"} ppoConfig={agentControllerConfigModel as PPOAgentControllerConfigModel} setPPOConfig={(model: object) => updateControllerConfigModel(model)}/>
     }
     
 
     return (
         <>
-            <p className="display-6">Agent controllers</p>
-
-            <div className="d-flex gap-2 mb-2">
-                {Object.keys(agentControllersConfigModel).map(
-                    (key) => <button key={key} className={"btn btn-primary " + (currentAgent === key ? "active" : "")} onClick={() => setCurrentAgent(key)}>{key}</button>
-                )}
-            </div>
+            <p className="display-6">Agent controller</p>
 
             {agentControllerEditors()}
         </>

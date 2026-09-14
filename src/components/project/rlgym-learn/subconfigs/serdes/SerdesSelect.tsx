@@ -1,10 +1,10 @@
-import { NumpyDType, Serde, SerdeType, type DictSerdeType, type NumpySerdeType, type OptionSerdeType, type PyAnySerdeType, type SetSerdeType, type TupleSerdeType, type TypedDictSerdeType } from "../../../../../models/rlgym-learn/api";
 import DictSerdeEditor from "./serdesRender/DictSerdeEditor";
 import TupleSerdeEditor from "./serdesRender/TupleSerdeEditor";
 import TypedDictSerdeEditor from "./serdesRender/TypedDictSerdeEditor";
 import OptionSerdeEditor from "./serdesRender/OptionSerdeEditor";
 import NumpySerdeEditor from "./serdesRender/NumpySerdeEditor";
 import SetSerdeEditor from "./serdesRender/SetSerdeEditor";
+import { NumpyDType, Serde, SerdeType, type DictSerdeType, type NumpySerdeType, type OptionSerdeType, type PyAnySerdeType, type SetSerdeType, type TupleSerdeType, type TypedDictSerdeType } from "../../../../../models/rlgym-learn/api";
 
 interface SerdesSelectArgs{
     serdeConfig: PyAnySerdeType | null,

@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { createRules } from "../../../../../models/validators";
 import type { PPOAgentControllerConfigModel, PPOLearnerConfigModel } from "rlgym-learn-client";
 import NumberField from "../../../../config-cards/NumberField";
 import ToggleField from "../../../../config-cards/ToggleCard";

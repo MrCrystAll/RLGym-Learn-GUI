@@ -1,4 +1,4 @@
-import { type PyAnySerdeType, type SerdeTypesModel } from "../../../../../models/rlgym-learn/api";
+import type { PyanySerdeTypeSchema, SerdeTypesModel } from "rlgym-learn-client";
 import SerdesSelect from "./SerdesSelect";
 
 interface SerdesConfigEditorArgs{
@@ -68,7 +68,7 @@ function SerdesConfigEditor({serdesTypesModel, setSerdesTypesModel}:SerdesConfig
                     <div className="gray-bg">
                         <div className="my-auto me-3 p-3">
                             <SerdesSelect serdeConfig={serdesTypesModel.agent_id_serde_type} setSerdeConfig={
-                                    (serde: PyAnySerdeType) => setSerdesTypesModel({
+                                    (serde: PyanySerdeTypeSchema) => setSerdesTypesModel({
                                         ...serdesTypesModel,
                                         agent_id_serde_type: serde
                                     })
@@ -82,7 +82,7 @@ function SerdesConfigEditor({serdesTypesModel, setSerdesTypesModel}:SerdesConfig
                     <div className="gray-bg">
                         <div className="my-auto me-3 p-3">
                             <SerdesSelect serdeConfig={serdesTypesModel.action_serde_type} setSerdeConfig={
-                                    (serde: PyAnySerdeType) => setSerdesTypesModel({
+                                    (serde: PyanySerdeTypeSchema) => setSerdesTypesModel({
                                         ...serdesTypesModel,
                                         action_serde_type: serde
                                     })
@@ -96,7 +96,7 @@ function SerdesConfigEditor({serdesTypesModel, setSerdesTypesModel}:SerdesConfig
                     <div className="gray-bg">
                         <div className="my-auto me-3 p-3">
                             <SerdesSelect serdeConfig={serdesTypesModel.obs_serde_type} setSerdeConfig={
-                                    (serde: PyAnySerdeType) => setSerdesTypesModel({
+                                    (serde: PyanySerdeTypeSchema) => setSerdesTypesModel({
                                         ...serdesTypesModel,
                                         obs_serde_type: serde
                                     })
@@ -110,7 +110,7 @@ function SerdesConfigEditor({serdesTypesModel, setSerdesTypesModel}:SerdesConfig
                     <div className="gray-bg">
                         <div className="my-auto me-3 p-3">
                             <SerdesSelect serdeConfig={serdesTypesModel.reward_serde_type} setSerdeConfig={
-                                    (serde: PyAnySerdeType) => setSerdesTypesModel({
+                                    (serde: PyanySerdeTypeSchema) => setSerdesTypesModel({
                                         ...serdesTypesModel,
                                         reward_serde_type: serde
                                     })
@@ -124,7 +124,7 @@ function SerdesConfigEditor({serdesTypesModel, setSerdesTypesModel}:SerdesConfig
                     <div className="gray-bg">
                         <div className="my-auto me-3 p-3">
                             <SerdesSelect serdeConfig={serdesTypesModel.obs_space_serde_type} setSerdeConfig={
-                                    (serde: PyAnySerdeType) => setSerdesTypesModel({
+                                    (serde: PyanySerdeTypeSchema) => setSerdesTypesModel({
                                         ...serdesTypesModel,
                                         obs_space_serde_type: serde
                                     })
@@ -138,7 +138,7 @@ function SerdesConfigEditor({serdesTypesModel, setSerdesTypesModel}:SerdesConfig
                     <div className="gray-bg">
                         <div className="my-auto me-3 p-3">
                             <SerdesSelect serdeConfig={serdesTypesModel.action_space_serde_type} setSerdeConfig={
-                                    (serde: PyAnySerdeType) => setSerdesTypesModel({
+                                    (serde: PyanySerdeTypeSchema) => setSerdesTypesModel({
                                         ...serdesTypesModel,
                                         action_space_serde_type: serde
                                     })
@@ -152,7 +152,7 @@ function SerdesConfigEditor({serdesTypesModel, setSerdesTypesModel}:SerdesConfig
                     <div className="gray-bg">
                         <div className="my-auto me-3 p-3">
                             <SerdesSelect canBeNull serdeConfig={serdesTypesModel.shared_info_serde_type} setSerdeConfig={
-                                    (serde: PyAnySerdeType) => setSerdesTypesModel({
+                                    (serde: PyanySerdeTypeSchema) => setSerdesTypesModel({
                                         ...serdesTypesModel,
                                         shared_info_serde_type: serde
                                     })
@@ -166,7 +166,7 @@ function SerdesConfigEditor({serdesTypesModel, setSerdesTypesModel}:SerdesConfig
                     <div className="gray-bg">
                         <div className="my-auto me-3 p-3">
                             <SerdesSelect canBeNull serdeConfig={serdesTypesModel.shared_info_setter_serde_type} setSerdeConfig={
-                                    (serde: PyAnySerdeType) => setSerdesTypesModel({
+                                    (serde: PyanySerdeTypeSchema) => setSerdesTypesModel({
                                         ...serdesTypesModel,
                                         shared_info_setter_serde_type: serde
                                     })
@@ -180,7 +180,7 @@ function SerdesConfigEditor({serdesTypesModel, setSerdesTypesModel}:SerdesConfig
                     <div className="gray-bg">
                         <div className="my-auto me-3 p-3">
                             <SerdesSelect canBeNull serdeConfig={serdesTypesModel.state_serde_type} setSerdeConfig={
-                                    (serde: PyAnySerdeType) => setSerdesTypesModel({
+                                    (serde: PyanySerdeTypeSchema) => setSerdesTypesModel({
                                         ...serdesTypesModel,
                                         state_serde_type: serde
                                     })

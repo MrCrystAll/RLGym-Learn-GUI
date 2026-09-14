@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - The project creation form has been moved to a modal (floating window)
 - The run creation form has been moved to a modal
+- The application now requires rlgym-learn v2.0.0 at least
 
 ## [0.1.3] - 2026-06-17
 

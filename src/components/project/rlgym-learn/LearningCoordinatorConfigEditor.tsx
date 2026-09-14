@@ -1,9 +1,8 @@
 import { useState } from "react"
-import { type AgentControllerConfig, type BaseConfigModel, type LearningCoordinatorConfigModel, type ProcessConfigModel } from "../../../models/rlgym-learn/api"
 import BaseConfigEditor from "./subconfigs/BaseConfigEditor"
 import ProcessConfigEditor from "./subconfigs/ProcessConfigEditor"
 import AgentControllersEditor from "./subconfigs/AgentControllersEditor"
-import type { PPOAgentControllerConfigModel } from "rlgym-learn-client"
+import type { BaseConfigModel, LearningCoordinatorConfigModel, PPOAgentControllerConfigModel, ProcessConfigModel } from "rlgym-learn-client"
 import type { AxiosError } from "axios"
 import SerdesConfigEditor from "./subconfigs/serdes/SerdesConfigEditor"
 
@@ -35,18 +34,12 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
         })
     }
 
-    const setAgentControllersConfigModel = (models: Record<string, AgentControllerConfig>) => {
+    const setAgentControllerConfigModel = (model: object) => {
         setLearningCoordinatorConfig({
             ...learningCoordinatorConfig,
-            agent_controllers_config: models
+            agent_controller_config: model
         })
     }
-
-    const setAgentControllerConfigModel = (agent: string, model: AgentControllerConfig) => setAgentControllersConfigModel({
-        ...learningCoordinatorConfig?.agent_controllers_config,
-        [agent]:  model
-    })
-
     // Agent controllers
     const [error, setError] = useState<string | null>(null);
 
@@ -70,22 +63,8 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
 
         getDefaultConfig(type).then(
             (defaultConfig) => {
-                const finalName = type.toUpperCase().concat("-", name);
-
-                if(learningCoordinatorConfig?.agent_controllers_config === undefined){
-                    setAgentControllersConfigModel({[finalName]:  defaultConfig})
-                }
-                else{
-                    if(learningCoordinatorConfig?.agent_controllers_config[finalName] !== undefined){
-                        setError("Agent key already exists, please choose another one.");
-                        return;
-                    }
-                    else{
-                        setAgentControllersConfigModel({
-                            ...learningCoordinatorConfig?.agent_controllers_config,
-                            [finalName]:  defaultConfig
-                        })
-                    }
+                if(learningCoordinatorConfig?.agent_controller_config === null){
+                    setAgentControllerConfigModel(defaultConfig)
                 }
 
                 setAddingController(false);
@@ -96,11 +75,11 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
         )
     }
 
-    const deleteController = (agent: string) => {
-        const object = {...learningCoordinatorConfig?.agent_controllers_config};
-        delete object[agent]
-
-        setAgentControllersConfigModel(object);
+    const deleteController = () => {
+        setLearningCoordinatorConfig({
+            ...learningCoordinatorConfig,
+            agent_controller_config: null
+        })
     }
 
     const addController = () => {
@@ -139,7 +118,7 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
             )
         }
         else{
-            return <button className="btn btn-primary mt-3" onClick={() => setAddingController(true)}>Add a controller</button>
+            return <button className="btn btn-primary mt-3" hidden={learningCoordinatorConfig.agent_controller_config !== null} onClick={() => setAddingController(true)}>Add a controller</button>
         }
     }
 
@@ -156,7 +135,7 @@ function LearningCoordinatorConfigEditor({learningCoordinatorConfig, setLearning
                 case ConfigType.AGENTS:
                     return <div>
                         {addController()}
-                        <AgentControllersEditor deleteAgent={deleteController} agentControllersConfigModel={learningCoordinatorConfig.agent_controllers_config} updateControllerConfigModel={setAgentControllerConfigModel}/>
+                        <AgentControllersEditor deleteAgent={deleteController} agentControllerConfigModel={learningCoordinatorConfig.agent_controller_config} updateControllerConfigModel={setAgentControllerConfigModel}/>
                     </div>
                 case ConfigType.PROCESS:
                     return <ProcessConfigEditor processConfig={learningCoordinatorConfig.process_config} setProcessConfig={setProcessConfigModel}></ProcessConfigEditor>
